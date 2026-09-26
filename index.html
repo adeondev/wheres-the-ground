@@ -4,10 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Where's the Ground?</title>
-    <link rel="stylesheet" href="style.css" />
-    <script type="module" src="src/game.js"></script>
+    <link rel="stylesheet" href="style.css?v=opening-video" />
+    <script type="module" src="src/game.js?v=opening-video"></script>
   </head>
-  <body>
+  <body class="loading">
+    <div id="loading-screen" role="status" aria-live="polite">
+      <div class="loading-title">WHERE'S THE GROUND?</div>
+      <div id="loading-label">CARREGANDO VÍDEO... 0%</div>
+      <div class="loading-track"><div id="loading-fill"></div></div>
+      <button id="loading-retry" type="button" hidden>TENTAR NOVAMENTE</button>
+    </div>
+    <video id="opening-video" playsinline preload="none" aria-label="Vídeo de abertura"></video>
     <canvas id="game" aria-label="Jogo de plataforma"></canvas>
 
     <div class="hud" aria-live="polite">

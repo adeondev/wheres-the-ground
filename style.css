@@ -17,6 +17,41 @@ html, body {
   touch-action: none;
 }
 
+#loading-screen {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 24px;
+  background: #05080e;
+  color: #f4f0df;
+  font: 16px monospace;
+  text-align: center;
+}
+body.loading #loading-screen { display: flex; }
+.loading-title { color: #f4ba79; font-size: clamp(18px, 4vw, 32px); }
+.loading-track { width: min(320px, 80vw); height: 12px; border: 2px solid #85ba9c; background: #172536; }
+#loading-fill { width: 0; height: 100%; background: #f4ba79; transition: width 120ms linear; }
+#loading-retry { padding: 10px 16px; border: 2px solid #85ba9c; background: #172536; color: #f4f0df; font: inherit; cursor: pointer; }
+#loading-retry[hidden] { display: none; }
+
+#opening-video {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  object-fit: contain;
+  background: #000;
+}
+body.video-open #opening-video { display: block; }
+
 body.crt-on { background: #05080e; }
 body.crt-on #game {
   filter: contrast(1.08) saturate(1.16) brightness(1.05);
@@ -108,9 +143,15 @@ body.crt-on .controls-hint { text-shadow: -1px 0 #ff8f8f80, 1px 0 #71dbe880, 1px
 .dialogue-open .hud,
 .dialogue-open .controls-hint,
 .intro-open .hud,
-.intro-open .controls-hint { display: none; }
+.intro-open .controls-hint,
+.video-open .hud,
+.video-open .controls-hint,
+.loading .hud,
+.loading .controls-hint { display: none; }
 .dialogue-open .touch-controls,
-.intro-open .touch-controls { display: none !important; }
+.intro-open .touch-controls,
+.video-open .touch-controls,
+.loading .touch-controls { display: none !important; }
 
 @media (max-width: 680px) {
   .controls-hint { display: none; }

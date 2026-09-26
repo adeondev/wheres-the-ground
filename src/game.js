@@ -16,6 +16,10 @@ import { createWorld, drawWorld, overlaps, solidBlocks } from './world.js';
 
 const canvas = document.querySelector('#game');
 const ctx = canvas.getContext('2d');
+const openingVideo = document.querySelector('#opening-video');
+const loadingLabel = document.querySelector('#loading-label');
+const loadingFill = document.querySelector('#loading-fill');
+const loadingRetry = document.querySelector('#loading-retry');
 const fuelFill = document.querySelector('#fuel-fill');
 const fuelLabel = document.querySelector('#fuel-label');
 const input = createInput();
@@ -24,7 +28,7 @@ const dialogue = createDialogue(canvas, dialogueScenes, { onOpen: () => input.cl
 const effects = createEffects();
 const cameraEffects = createCameraEffects();
 const audio = createAudio();
-const intro = createIntro(audio, { onFinish: () => input.clear() });
+const intro = createIntro(audio, { onFinish: () => { input.clear(); playOpeningVideo(); } });
 const projectiles = [];
 const STEP = 1 / 60;
 const CAMERA_ZOOM = 1.3;
@@ -45,6 +49,88 @@ let boostAnimationTime = 0;
 let dashAnimationTime = DASH_ANIMATION_DURATION;
 let lastTime = 0;
 let accumulator = 0;
+let booting = true;
+let videoPlaying = false;
+let videoUrl = null;
+
+async function loadOpeningVideo() {
+  loadingRetry.hidden = true;
+  loadingFill.style.width = '0%';
+  loadingLabel.textContent = 'CARREGANDO VÍDEO... 0%';
+  try {
+    const response = await fetch('assets/videos/intial.webm');
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const total = Number(response.headers.get('Content-Length'));
+    const chunks = [];
+    if (response.body) {
+      const reader = response.body.getReader();
+      let loaded = 0;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        chunks.push(value);
+        loaded += value.byteLength;
+        if (total > 0) {
+          const percent = Math.min(99, Math.round(loaded / total * 100));
+          loadingFill.style.width = `${percent}%`;
+          loadingLabel.textContent = `CARREGANDO VÍDEO... ${percent}%`;
+        }
+      }
+    } else {
+      chunks.push(await response.blob());
+    }
+
+    loadingLabel.textContent = 'PREPARANDO VÍDEO...';
+    if (videoUrl) URL.revokeObjectURL(videoUrl);
+    videoUrl = URL.createObjectURL(new Blob(chunks, { type: 'video/webm' }));
+    await new Promise((resolve, reject) => {
+      const cleanup = () => {
+        openingVideo.removeEventListener('loadeddata', onLoaded);
+        openingVideo.removeEventListener('error', onError);
+      };
+      const onLoaded = () => { cleanup(); resolve(); };
+      const onError = () => { cleanup(); reject(new Error('Formato de vídeo não suportado')); };
+      openingVideo.addEventListener('loadeddata', onLoaded);
+      openingVideo.addEventListener('error', onError);
+      openingVideo.src = videoUrl;
+      openingVideo.load();
+    });
+
+    loadingFill.style.width = '100%';
+    loadingRetry.blur();
+    booting = false;
+    document.body.classList.remove('loading');
+    intro.start();
+  } catch (error) {
+    console.error('Não foi possível carregar o vídeo de abertura:', error);
+    loadingLabel.textContent = 'ERRO AO CARREGAR O VÍDEO';
+    loadingRetry.hidden = false;
+  }
+}
+
+function endOpeningVideo() {
+  if (!videoPlaying) return;
+  videoPlaying = false;
+  openingVideo.pause();
+  document.body.classList.remove('video-open');
+  input.clear();
+}
+
+function playOpeningVideo() {
+  videoPlaying = true;
+  input.clear();
+  document.body.classList.remove('intro-open');
+  document.body.classList.add('video-open');
+  openingVideo.currentTime = 0;
+  openingVideo.play().catch(error => {
+    console.error('Não foi possível reproduzir o vídeo de abertura:', error);
+    endOpeningVideo();
+  });
+}
+
+openingVideo.addEventListener('ended', endOpeningVideo);
+openingVideo.addEventListener('error', endOpeningVideo);
+loadingRetry.addEventListener('click', loadOpeningVideo);
 
 function resize() {
   const previousGround = world?.groundY;
@@ -64,6 +150,7 @@ function resize() {
 }
 
 function update(dt) {
+  if (booting || videoPlaying) { input.clear(); audio.updateBooster(false); return; }
   if (input.takeCrt()) crt.toggle();
   if (input.takeIntro()) { intro.start(); }
   document.body.classList.toggle('intro-open', intro.active);
@@ -182,6 +269,11 @@ function drawPlayer() {
 }
 
 function draw() {
+  if (booting || videoPlaying) {
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    return;
+  }
   if (intro.active) {
     intro.draw(ctx, canvas.width, canvas.height);
     return;
@@ -221,7 +313,6 @@ function frame(time) {
 
 resize();
 player = createPlayer(world.groundY);
-intro.start();
 window.addEventListener('resize', resize);
 loadGabriel().then(result => { sprite = result; dialogue.setSprite(result); }).catch(error => console.error(error));
 loadGabrielRun().then(result => { runSprite = result; }).catch(error => console.error(error));
@@ -229,4 +320,5 @@ loadGabrielJump().then(result => { jumpSprite = result; }).catch(error => consol
 loadGabrielBoost().then(result => { boostSprite = result; }).catch(error => console.error(error));
 loadGabrielDash().then(result => { dashSprite = result; }).catch(error => console.error(error));
 loadGabrielLanding().then(result => { landingSprite = result; }).catch(error => console.error(error));
+loadOpeningVideo();
 requestAnimationFrame(frame);

@@ -57,7 +57,7 @@ export function createIntro(audio, { onFinish = () => {} } = {}) {
   let active = false;
   // Fases: idle, seg1_typing, seg1_wait, seg1_fade, seg1_pause,
   // seg2_typing, seg2_wait, seg2_fade, seg3_music,
-  // seg4_logo_in, seg4_logo_hold, seg5_logo_slide, seg6_showcase, seg7_start_fade, finished
+  // seg4_logo_in, seg4_logo_hold, seg5_logo_slide, seg6_showcase
   let phase = 'idle';
   let phaseTimer = 0;
   let alpha = 1;
@@ -205,9 +205,7 @@ export function createIntro(audio, { onFinish = () => {} } = {}) {
 
   function startGameFromShowcase() {
     if (phase === 'seg6_showcase') {
-      phase = 'seg7_start_fade';
-      phaseTimer = 0.7;
-      audio.stopIntroMusic(0.8);
+      finish(0.25);
     }
   }
 
@@ -271,7 +269,7 @@ export function createIntro(audio, { onFinish = () => {} } = {}) {
     if (!active) return;
 
     // Usa o relógio do áudio quando ele toca; segue visualmente se o autoplay for bloqueado.
-    if (phase === 'seg3_music' || phase.startsWith('seg4_logo') || phase === 'seg5_logo_slide' || phase === 'seg6_showcase' || phase === 'seg7_start_fade') {
+    if (phase === 'seg3_music' || phase.startsWith('seg4_logo') || phase === 'seg5_logo_slide' || phase === 'seg6_showcase') {
       const realTime = audio.getIntroMusicTime();
       if (audio.isIntroMusicPlaying() && realTime >= 84) {
         smoothMusicTime = realTime;
@@ -396,14 +394,6 @@ export function createIntro(audio, { onFinish = () => {} } = {}) {
         }
         break;
 
-      case 'seg7_start_fade':
-        phaseTimer -= dt;
-        alpha = Math.max(0, phaseTimer / 0.7);
-        if (phaseTimer <= 0) {
-          alpha = 0;
-          finish();
-        }
-        break;
     }
   }
 
@@ -729,12 +719,11 @@ export function createIntro(audio, { onFinish = () => {} } = {}) {
       // Pitch black silencioso/musical
     }
 
-    // Fases 4, 5, 6, 7: Logo e Showcase Hacker
+    // Fases 4, 5, 6: Logo e Showcase Hacker
     else if (
       phase.startsWith('seg4_logo') ||
       phase === 'seg5_logo_slide' ||
-      phase === 'seg6_showcase' ||
-      phase === 'seg7_start_fade'
+      phase === 'seg6_showcase'
     ) {
       drawLogo(ctx, width, height, alpha);
       drawShowcase(ctx, width, height, alpha);
@@ -747,11 +736,11 @@ export function createIntro(audio, { onFinish = () => {} } = {}) {
   window.addEventListener('keydown', event => {
     if (!active) return;
 
-    if (event.key === ' ' || event.key === 'Enter') {
+    if (event.key === ' ' || event.key === 'Enter' || event.key.toLowerCase() === 'z') {
       event.preventDefault();
       if (!event.repeat) {
         if (phase === 'seg6_showcase') startGameFromShowcase();
-        else if (phase !== 'seg7_start_fade') skipToTitle();
+        else skipToTitle();
       }
       return;
     }
