@@ -113,9 +113,9 @@ export function createRocketTransition({ onCovered = () => {}, onFinish = () => 
     for (let i = 0; i < count; i++) {
       const age = elapsed - i / stamps.length * SPAWN_DURATION;
       const progress = Math.min(1, Math.max(0, age / BUMP_DURATION));
-      // Impacto imediato, seguido de uma mola curta que volta ao tamanho exato.
-      const spring = Math.cos(progress * Math.PI * 3) * (1 - progress) ** 3;
-      stamp(context, stamps[i], 1 + spring * 0.28, spring * (i % 2 ? 0.12 : -0.12));
+      // Bump discreto: entra ligeiramente maior e acomoda sem oscilar.
+      const settle = (1 - progress) ** 3;
+      stamp(context, stamps[i], 1 + settle * 0.08, settle * (i % 2 ? 0.025 : -0.025));
     }
     ctx.save();
     ctx.imageSmoothingEnabled = false;
