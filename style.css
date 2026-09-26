@@ -133,6 +133,8 @@ body.crt-on .controls-hint { text-shadow: -1px 0 #ff8f8f80, 1px 0 #71dbe880, 1px
 .intro-open { background: #000000 !important; }
 .intro-open #game { background: #000000; }
 .dialogue-open .hud,
+.transition-open .hud,
+.transition-open .controls-hint,
 .dialogue-open .controls-hint,
 .intro-open .hud,
 .intro-open .controls-hint,
@@ -141,6 +143,7 @@ body.crt-on .controls-hint { text-shadow: -1px 0 #ff8f8f80, 1px 0 #71dbe880, 1px
 .loading .hud,
 .loading .controls-hint { display: none; }
 .dialogue-open .touch-controls,
+.transition-open .touch-controls,
 .intro-open .touch-controls,
 .video-open .touch-controls,
 .loading .touch-controls { display: none !important; }

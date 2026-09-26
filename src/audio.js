@@ -11,6 +11,7 @@ export function createAudio() {
     dialogA: 'assets/sounds/players/dialog/a.mp3',
     dialogO: 'assets/sounds/players/dialog/o.mp3',
     momDialogPop: 'assets/sounds/npc/pop/sfx.mp3',
+    transitionClick: 'assets/sounds/transition_click.mp3',
   };
   const htmlAudioFallback = {};
 
@@ -64,7 +65,7 @@ export function createAudio() {
       });
   }
 
-  function play(name, { volume = 1, playbackRate = 1 } = {}) {
+  function play(name, { volume = 1, playbackRate = 1, duration = 0 } = {}) {
     const c = getAudioContext();
     const buffer = buffers.get(name);
 
@@ -81,6 +82,11 @@ export function createAudio() {
         gainNode.connect(c.destination);
 
         source.start(0);
+        if (duration > 0) {
+          gainNode.gain.setValueAtTime(volume, c.currentTime + duration - 0.015);
+          gainNode.gain.linearRampToValueAtTime(0, c.currentTime + duration);
+          source.stop(c.currentTime + duration);
+        }
         return;
       } catch (err) {
         console.warn(`Erro ao tocar áudio WebAudio [${name}]:`, err);
@@ -96,6 +102,7 @@ export function createAudio() {
         clone.playbackRate = playbackRate;
         clone.preservesPitch = false;
         clone.play().catch(() => {});
+        if (duration > 0) setTimeout(() => clone.pause(), duration * 1000);
       } catch {
         // Ignora erros de autoplay em fallback
       }
@@ -121,6 +128,10 @@ export function createAudio() {
   function playStep(surface) {
     if (surface !== 'concrete') return;
     play('stepConcrete', { volume: 0.4, playbackRate: 0.95 + Math.random() * 0.1 });
+  }
+
+  function playTransitionClick() {
+    play('transitionClick', { volume: 0.22, playbackRate: 0.8 + Math.random() * 0.55, duration: 0.1 });
   }
 
   function startBoosterLoop() {
@@ -418,6 +429,7 @@ export function createAudio() {
     playLanding,
     playDash,
     playStep,
+    playTransitionClick,
     updateBooster,
     playDialogBlip,
     stopDialogBlip,

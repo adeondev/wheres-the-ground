@@ -1,6 +1,6 @@
 import { GAME_HEIGHT, PLAYER } from './config.js';
 import { DASH_ANIMATION_DURATION, playerPose } from './animation.js';
-import { createAudio } from './audio.js?v=integer-camera';
+import { createAudio } from './audio.js?v=rocket-bump';
 import { createCameraEffects } from './cameraEffects.js';
 import { createCrt } from './crt.js';
 import { createDialogue } from './dialogue.js?v=seamless-frame';
@@ -9,6 +9,7 @@ import { createEffects } from './effects.js?v=milenio';
 import { drawRocketFlame } from './fireVfx.js';
 import { createInput } from './input.js?v=milenio-greeting';
 import { createIntro } from './intro.js';
+import { createRocketTransition } from './rocketTransition.js';
 import { drawNpcs, nearbyNpc, npcJumpOffset, startNpcInteraction, updateNpcs } from './npcs.js?v=clear-dialogue';
 import { BOOST_FIRE } from './palette.js';
 import { createPlayer, fireBlast, updatePlayer } from './player.js?v=milenio';
@@ -37,9 +38,20 @@ const crt = createCrt();
 const audio = createAudio();
 let openingDialogue = false;
 let interactingNpc = null;
+const rocketTransition = createRocketTransition({
+  onPop: () => audio.playTransitionClick(),
+  onCovered: () => { openingDialogue = false; input.clear(); },
+  onFinish: () => { input.clear(); document.body.classList.remove('transition-open'); },
+});
 const dialogue = createDialogue(canvas, dialogueScenes, {
   onOpen: () => input.clear(),
-  onClose: () => { input.clear(); openingDialogue = false; },
+  onClose: () => {
+    input.clear();
+    if (openingDialogue) {
+      document.body.classList.add('transition-open');
+      rocketTransition.start(viewWidth, viewHeight);
+    }
+  },
   onCharacter: voice => audio.playDialogBlip(voice),
   onSilence: () => audio.stopDialogBlip(),
   coordinateScale: () => uiScale,
@@ -117,6 +129,7 @@ async function loadOpeningVideo() {
       openingVideo.load();
     });
 
+    await rocketTransition.ready;
     loadingFill.style.width = '100%';
     loadingRetry.blur();
     booting = false;
@@ -201,6 +214,12 @@ function resize() {
 
 function update(dt) {
   if (booting || videoPlaying) { input.clear(); audio.updateBooster(false); return; }
+  if (rocketTransition.active) {
+    input.clear();
+    audio.updateBooster(false);
+    rocketTransition.update(dt);
+    return;
+  }
   if (openingDialogue) {
     dialogue.update(dt);
     cameraEffects.clear();
@@ -407,6 +426,7 @@ function draw() {
     ctx.fillStyle = '#000000';
     ctx.fillRect(0, 0, viewWidth, viewHeight);
     dialogue.draw(ctx, viewWidth, viewHeight);
+    rocketTransition.draw(ctx, viewWidth, viewHeight);
     return;
   }
   if (intro.active) {
@@ -460,6 +480,7 @@ function draw() {
       (npc.y - npc.h - sourceY) * renderZoomY - 14, viewWidth);
   }
   dialogue.draw(ctx, viewWidth, viewHeight);
+  rocketTransition.draw(ctx, viewWidth, viewHeight);
   const fuelPercent = Math.round(player.fuel / PLAYER.maxFuel * 100);
   fuelFill.style.width = `${fuelPercent}%`;
   fuelLabel.textContent = `${fuelPercent}%`;
