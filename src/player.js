@@ -1,6 +1,6 @@
 import { TURN_DURATION, playerVisualFacing } from './animation.js';
 import { PLAYER } from './config.js';
-import { CLASSROOM_SCALE, inVacuum, overlaps, solidBlocks } from './world.js?v=classroom-final';
+import { CLASSROOM_SCALE, inVacuum, overlaps, solidBlocks } from './world.js?v=classroom-camera';
 
 export function createPlayer(groundY) {
   const height = 24 * CLASSROOM_SCALE;
@@ -27,6 +27,7 @@ function approach(value, target, amount) {
 
 export function updatePlayer(player, world, input, dt) {
   const powersEnabled = world.allowPowers !== false;
+  const moveSpeed = world.moveSpeed ?? PLAYER.speed;
   const vacuum = inVacuum(world, player);
   const wasOnGround = player.onGround;
   player.landLockTime = Math.max(0, player.landLockTime - dt);
@@ -100,19 +101,19 @@ export function updatePlayer(player, world, input, dt) {
     player.vx *= 0.992; // O impulso perde um pouco de força durante a arrancada.
   } else if (vacuum && !player.onGround) {
     // Continua deslizando, mas A/D ainda permite corrigir a rota.
-    if (horizontal) player.vx = approach(player.vx, horizontal * PLAYER.speed, 850 * dt);
+    if (horizontal) player.vx = approach(player.vx, horizontal * moveSpeed, 850 * dt);
     else player.vx *= Math.pow(0.997, dt * 60);
   } else if (player.onGround) {
     if (horizontal) {
       const reversing = player.vx * horizontal < 0;
-      const easingDash = player.vx * horizontal > 0 && Math.abs(player.vx) > PLAYER.speed;
+      const easingDash = player.vx * horizontal > 0 && Math.abs(player.vx) > moveSpeed;
       const rate = reversing ? PLAYER.groundBrake : easingDash ? PLAYER.dashEase : PLAYER.groundAcceleration;
-      player.vx = approach(player.vx, horizontal * PLAYER.speed, rate * dt);
+      player.vx = approach(player.vx, horizontal * moveSpeed, rate * dt);
     } else {
       player.vx = approach(player.vx, 0, (player.landSlideTime > 0 ? PLAYER.slideCoast : PLAYER.groundCoast) * dt);
     }
   } else {
-    player.vx = approach(player.vx, horizontal * PLAYER.speed,
+    player.vx = approach(player.vx, horizontal * moveSpeed,
       (horizontal ? PLAYER.airAcceleration : PLAYER.airCoast) * dt);
   }
 
@@ -177,7 +178,7 @@ export function updatePlayer(player, world, input, dt) {
     }
   }
   if (player.onGround) player.airApexY = player.y;
-  player.sliding = player.onGround && !player.dashing && Math.abs(player.vx) > PLAYER.speed * 1.1;
+  player.sliding = player.onGround && !player.dashing && Math.abs(player.vx) > moveSpeed * 1.1;
   if (player.y <= 0) {
     player.y = 0;
     if (player.vy < 0) player.vy = 0;

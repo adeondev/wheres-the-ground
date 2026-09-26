@@ -1,7 +1,7 @@
 // Efeitos visuais pequenos; não alteram a física.
 import { playerPose } from './animation.js';
 import { BOOST_FIRE } from './palette.js';
-import { CLASSROOM_SCALE } from './world.js?v=classroom-final';
+import { CLASSROOM_SCALE } from './world.js?v=classroom-camera';
 
 const boostColors = [BOOST_FIRE.outer, BOOST_FIRE.middle, BOOST_FIRE.core, BOOST_FIRE.spark];
 

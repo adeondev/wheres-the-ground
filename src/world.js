@@ -22,7 +22,10 @@ for (const [name, file] of Object.entries({
 export function createWorld() {
   return {
     width: ROOM_WIDTH,
+    height: FLOOR_Y + FLOOR_HEIGHT,
     groundY: FLOOR_Y,
+    moveSpeed: 105,
+    animationRate: 0.65,
     allowPowers: false,
     blocks: [{ x: 0, y: FLOOR_Y, w: ROOM_WIDTH, h: FLOOR_HEIGHT }],
   };

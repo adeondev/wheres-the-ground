@@ -5,14 +5,14 @@ import { createCameraEffects } from './cameraEffects.js';
 import { createCrt } from './crt.js';
 import { createDialogue } from './dialogue.js?v=larger-portrait';
 import { dialogueScenes } from './dialogueData.js?v=portrait-and-lowercase';
-import { createEffects } from './effects.js?v=classroom-final';
+import { createEffects } from './effects.js?v=classroom-camera';
 import { drawRocketFlame } from './fireVfx.js';
 import { createInput } from './input.js';
 import { createIntro } from './intro.js';
 import { BOOST_FIRE } from './palette.js';
-import { createPlayer, fireBlast, updatePlayer } from './player.js?v=classroom-final';
+import { createPlayer, fireBlast, updatePlayer } from './player.js?v=classroom-camera';
 import { loadGabriel, loadGabrielBoost, loadGabrielDash, loadGabrielJump, loadGabrielLanding, loadGabrielRun } from './sprites.js';
-import { CLASSROOM_SCALE, createWorld, drawWorld, overlaps, solidBlocks } from './world.js?v=classroom-final';
+import { CLASSROOM_SCALE, createWorld, drawWorld, overlaps, solidBlocks } from './world.js?v=classroom-camera';
 
 const canvas = document.querySelector('#game');
 const ctx = canvas.getContext('2d');
@@ -37,7 +37,7 @@ const audio = createAudio();
 const intro = createIntro(audio, { onFinish: () => { input.clear(); playOpeningVideo(); } });
 const projectiles = [];
 const STEP = 1 / 60;
-const CAMERA_ZOOM = 1;
+const CAMERA_ZOOM = 1.4;
 
 let world;
 let player;
@@ -209,15 +209,16 @@ function update(dt) {
   if (player.dashStarted) audio.playDash();
   if (player.landed) audio.playLanding(player.landedHard);
   audio.updateBooster(player.boosting);
-  jumpAnimationTime = player.onGround ? 0 : Math.min(1, jumpAnimationTime + dt);
+  const animationRate = world.animationRate ?? 1;
+  jumpAnimationTime = player.onGround ? 0 : Math.min(1, jumpAnimationTime + dt * animationRate);
   boostAnimationTime = player.boosting ? (player.boostStarted ? 0 : boostAnimationTime + dt) : 0;
   dashAnimationTime = player.dashStarted ? 0 : Math.min(DASH_ANIMATION_DURATION, dashAnimationTime + dt);
   if (player.dashStarted) cameraEffects.kick(7, 3, 0.2);
   if (player.boostStarted) cameraEffects.pulseZoom();
   if (player.landedHard) cameraEffects.kick(3, 6, 0.18);
-  animationTime += dt;
+  animationTime += dt * animationRate;
   runAnimationTime = player.onGround && player.landLockTime <= 0 && dashAnimationTime >= DASH_ANIMATION_DURATION && !player.sliding && Math.abs(player.vx) > 20
-    ? runAnimationTime + dt * Math.max(0.7, Math.min(1.5, Math.abs(player.vx) / PLAYER.speed))
+    ? runAnimationTime + dt * animationRate * Math.max(0.7, Math.min(1.5, Math.abs(player.vx) / (world.moveSpeed ?? PLAYER.speed)))
     : 0;
   effects.update(dt, player, animationTime, sprite, dashSprite, dashAnimationTime);
 
@@ -241,9 +242,12 @@ function update(dt) {
     }
   }
 
-  const maxCameraX = world.width - canvas.width;
-  cameraX = maxCameraX <= 0 ? maxCameraX / 2
-    : Math.max(0, Math.min(maxCameraX, player.x - canvas.width * 0.4));
+  const visibleWidth = canvas.width / (CAMERA_ZOOM * cameraEffects.zoom);
+  const maxCameraX = Math.max(0, world.width - visibleWidth);
+  const targetCameraX = Math.max(0, Math.min(maxCameraX,
+    player.x + player.w / 2 - visibleWidth * 0.42));
+  cameraX += (targetCameraX - cameraX) * Math.min(1, dt * 8);
+  cameraX = Math.max(0, Math.min(maxCameraX, cameraX));
 }
 
 function rect(x, y, w, h, color) {
@@ -326,13 +330,15 @@ function draw() {
     intro.draw(ctx, canvas.width, canvas.height);
     return;
   }
-  const focusX = player.x - cameraX + player.w / 2;
-  const focusY = player.y + player.h / 2;
+  const zoom = CAMERA_ZOOM * cameraEffects.zoom;
+  const visibleWidth = canvas.width / zoom;
+  const visibleHeight = canvas.height / zoom;
+  const cameraY = Math.max(0, world.height - visibleHeight);
+  const roomOffsetX = Math.max(0, (canvas.width - world.width * zoom) / 2);
   ctx.save();
-  ctx.translate(focusX, focusY);
-  ctx.scale(CAMERA_ZOOM * cameraEffects.zoom, CAMERA_ZOOM * cameraEffects.zoom);
-  ctx.translate(-focusX + cameraEffects.x, -focusY + cameraEffects.y);
-  drawWorld(ctx, world, cameraX, canvas.width, canvas.height, 12);
+  ctx.translate(roomOffsetX + cameraEffects.x * zoom, -cameraY * zoom + cameraEffects.y * zoom);
+  ctx.scale(zoom, zoom);
+  drawWorld(ctx, world, cameraX, visibleWidth, world.height, 12);
   effects.draw(ctx, cameraX, sprite);
   for (const shot of projectiles) {
     rect(shot.x - cameraX - 2, shot.y - 2, 8, 8, BOOST_FIRE.outer);
