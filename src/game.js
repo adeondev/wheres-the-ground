@@ -9,7 +9,7 @@ import { createEffects } from './effects.js?v=milenio';
 import { drawRocketFlame } from './fireVfx.js';
 import { createInput } from './input.js?v=milenio-greeting';
 import { createIntro } from './intro.js';
-import { createRocketTransition } from './rocketTransition.js?v=soft-bump';
+import { createRocketTransition } from './rocketTransition.js?v=exit-clicks';
 import { drawNpcs, nearbyNpc, npcJumpOffset, startNpcInteraction, updateNpcs } from './npcs.js?v=clear-dialogue';
 import { BOOST_FIRE } from './palette.js';
 import { createPlayer, fireBlast, updatePlayer } from './player.js?v=milenio';

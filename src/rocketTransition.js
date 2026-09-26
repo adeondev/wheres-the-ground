@@ -88,8 +88,10 @@ export function createRocketTransition({ onCovered = () => {}, onFinish = () => 
   function update(dt) {
     if (!active) return;
     elapsed += dt;
-    // Um clique por rajada, evitando centenas de sons sobrepostos.
-    if (elapsed < SPAWN_DURATION && elapsed - lastPop >= 0.055) {
+    // Cliques nas rajadas de entrada e saída, com pausa enquanto a tela está coberta.
+    const revealing = elapsed > COVER_DURATION + HOLD_DURATION
+      && elapsed < COVER_DURATION + HOLD_DURATION + REVEAL_DURATION;
+    if ((elapsed < SPAWN_DURATION || revealing) && elapsed - lastPop >= 0.055) {
       lastPop = elapsed;
       onPop();
     }
