@@ -3,6 +3,7 @@ const HOLD_DURATION = 0.12;
 const REVEAL_DURATION = 0.8;
 const BUMP_DURATION = 0.24;
 const SPAWN_DURATION = COVER_DURATION - BUMP_DURATION;
+const CLICK_INTERVAL = 0.02;
 const COLORS = ['#ffc281', '#e6d9ff', '#9767cf'];
 
 export function createRocketTransition({ onCovered = () => {}, onFinish = () => {}, onPop = () => {} } = {}) {
@@ -16,7 +17,7 @@ export function createRocketTransition({ onCovered = () => {}, onFinish = () => 
   let elapsed = 0;
   let active = false;
   let covered = false;
-  let lastPop = -1;
+  let clicksPlayed = 0;
 
   function stamp(target, item, scale = 1, twist = 0) {
     target.save();
@@ -81,20 +82,20 @@ export function createRocketTransition({ onCovered = () => {}, onFinish = () => 
     }
     elapsed = 0;
     covered = false;
-    lastPop = -1;
+    clicksPlayed = 0;
     active = true;
   }
 
   function update(dt) {
     if (!active) return;
     elapsed += dt;
-    // Cliques nas rajadas de entrada e saída, com pausa enquanto a tela está coberta.
-    const revealing = elapsed > COVER_DURATION + HOLD_DURATION
-      && elapsed < COVER_DURATION + HOLD_DURATION + REVEAL_DURATION;
-    if ((elapsed < SPAWN_DURATION || revealing) && elapsed - lastPop >= 0.055) {
-      lastPop = elapsed;
-      onPop();
-    }
+    // Cadência contínua nas duas fases, sem perder cliques entre frames.
+    const soundTime = Math.min(elapsed, SPAWN_DURATION)
+      + Math.min(REVEAL_DURATION, Math.max(0, elapsed - COVER_DURATION - HOLD_DURATION));
+    const targetClicks = Math.floor(soundTime / CLICK_INTERVAL);
+    const pendingClicks = Math.min(3, targetClicks - clicksPlayed);
+    for (let i = 0; i < pendingClicks; i++) onPop();
+    clicksPlayed = targetClicks;
     if (!covered && elapsed >= COVER_DURATION) {
       covered = true;
       onCovered();
