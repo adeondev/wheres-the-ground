@@ -736,6 +736,8 @@ export function createIntro(audio, { onFinish = () => {} } = {}) {
       return;
     }
 
+    if (smoothMusicTime >= 84) audio.resumeIntroMusicAt(smoothMusicTime);
+
     // Se estiver no showcase de foguetes: QUALQUER tecla inicia o jogo!
     if (phase === 'seg6_showcase') {
       startGameFromShowcase();
@@ -759,6 +761,8 @@ export function createIntro(audio, { onFinish = () => {} } = {}) {
     if (!active) return;
     if (phase === 'seg6_showcase') {
       startGameFromShowcase();
+    } else if (smoothMusicTime >= 84) {
+      audio.resumeIntroMusicAt(smoothMusicTime);
     }
   });
 

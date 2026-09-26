@@ -343,6 +343,16 @@ export function createAudio() {
     return Boolean(introMusic && !introMusic.paused && !introMusic.ended);
   }
 
+  function resumeIntroMusicAt(seconds) {
+    if (!introMusic || !introMusic.paused) return;
+    try {
+      introMusic.currentTime = Math.max(0, Math.min(introMusic.duration || 999, seconds));
+    } catch {}
+    introMusic.play().catch(err => {
+      if (err.name !== 'NotAllowedError') console.warn('Erro ao retomar música de introdução:', err);
+    });
+  }
+
   function setIntroMusicTime(seconds) {
     if (introMusic) {
       try {
@@ -394,6 +404,7 @@ export function createAudio() {
     startIntroMusic,
     getIntroMusicTime,
     isIntroMusicPlaying,
+    resumeIntroMusicAt,
     setIntroMusicTime,
     stopIntroMusic,
   };
