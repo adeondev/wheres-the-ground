@@ -10,8 +10,7 @@ export function createAudio() {
     boosterup: 'assets/sounds/players/physic/boosterup.mp3',
     dialogA: 'assets/sounds/players/dialog/a.mp3',
     dialogO: 'assets/sounds/players/dialog/o.mp3',
-    momDialogA: 'assets/sounds/npc/mom/a.mp3',
-    momDialogO: 'assets/sounds/npc/mom/o.mp3',
+    momDialogPop: 'assets/sounds/npc/pop/sfx.mp3',
   };
   const htmlAudioFallback = {};
 
@@ -219,7 +218,7 @@ export function createAudio() {
   let dialogFallbackTimer = null;
   const dialogueVoices = {
     gabriel: { sounds: ['dialogA', 'dialogO'], pitch: 0.92, variation: 0.24 },
-    mom: { sounds: ['momDialogA', 'momDialogO'], pitch: 1.04, variation: 0.24 },
+    mom: { sounds: ['momDialogPop'], pitch: 1.04, variation: 0.24 },
   };
 
   function stopDialogBlip() {
