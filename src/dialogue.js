@@ -55,7 +55,7 @@ function loadImage(name, basePath = UI_PATH) {
 function nineSlice(ctx, image, x, y, width, height) {
   const pointsX = [0, 8, 16, 24];
   const pointsY = [0, 8, 16, 24];
-  const corner = 16;
+  const corner = 24;
   const destX = [x, x + corner, x + width - corner, x + width];
   const destY = [y, y + corner, y + height - corner, y + height];
   for (let row = 0; row < 3; row++) {
@@ -106,7 +106,6 @@ export function createDialogue(canvas, scenes, { onOpen = () => {}, onClose = ()
   let choices = [];
   let selected = 0;
   let hitboxes = [];
-  let drawScale = 1;
 
   Promise.all([
     loadImage('dialogue_box.png', 'assets/sprites/ui/dialog/'), loadImage('font.png'), loadImage('heart.png'),
@@ -261,15 +260,11 @@ export function createDialogue(canvas, scenes, { onOpen = () => {}, onClose = ()
 
   function draw(ctx, viewWidth, viewHeight) {
     if (!active || !assets.frame) return;
-    drawScale = Math.min(1.6, Math.max(1.1, viewWidth / 260));
-    const layoutWidth = viewWidth / drawScale;
-    const layoutHeight = viewHeight / drawScale;
-    const box = metrics(layoutWidth, layoutHeight);
+    const box = metrics(viewWidth, viewHeight);
     ctx.save();
     ctx.imageSmoothingEnabled = false;
-    ctx.scale(drawScale, drawScale);
     ctx.fillStyle = '#05081088';
-    ctx.fillRect(0, 0, layoutWidth, layoutHeight);
+    ctx.fillRect(0, 0, viewWidth, viewHeight);
     nineSlice(ctx, assets.frame, box.x, box.y, box.width, box.height);
 
     const line = node.lines[lineIndex];
@@ -351,8 +346,8 @@ export function createDialogue(canvas, scenes, { onOpen = () => {}, onClose = ()
     if (!active) return;
     event.preventDefault();
     const bounds = canvas.getBoundingClientRect();
-    const x = (event.clientX - bounds.left) * canvas.width / bounds.width / drawScale;
-    const y = (event.clientY - bounds.top) * canvas.height / bounds.height / drawScale;
+    const x = (event.clientX - bounds.left) * canvas.width / bounds.width;
+    const y = (event.clientY - bounds.top) * canvas.height / bounds.height;
     if (choices.length) {
       const index = hitboxes.findIndex(box => x >= box.x && x < box.x + box.w && y >= box.y && y < box.y + box.h);
       if (index >= 0) choose(index);
