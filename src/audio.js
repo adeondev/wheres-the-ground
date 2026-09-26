@@ -321,9 +321,47 @@ export function createAudio() {
     }
   }
 
+  const classroomMusic = new Audio('assets/music/wheres-everyone.mp3');
+  classroomMusic.preload = 'auto';
+  classroomMusic.loop = true;
+  classroomMusic.volume = 0;
+  let classroomMusicActive = false;
+  let classroomFade = null;
+
+  function playClassroomMusic() {
+    classroomMusic.play().catch(error => {
+      if (error.name !== 'NotAllowedError') console.warn('Erro ao tocar música da sala:', error);
+    });
+  }
+
+  function setClassroomMusic(active, duration = 0.8) {
+    if (classroomMusicActive === active) return;
+    classroomMusicActive = active;
+    classroomFade = { from: classroomMusic.volume, to: active ? 0.45 : 0,
+      elapsed: 0, duration: Math.max(0, duration) };
+    if (active) playClassroomMusic();
+  }
+
+  function updateClassroomMusic(dt) {
+    if (!classroomFade) return;
+    const fade = classroomFade;
+    fade.elapsed += dt;
+    const progress = fade.duration > 0 ? Math.min(1, fade.elapsed / fade.duration) : 1;
+    const smooth = progress * progress * (3 - 2 * progress);
+    classroomMusic.volume = fade.from + (fade.to - fade.from) * smooth;
+    if (progress === 1) {
+      classroomFade = null;
+      if (!classroomMusicActive) {
+        classroomMusic.pause();
+        classroomMusic.currentTime = 0;
+      }
+    }
+  }
+
   let introMusic = null;
 
   function startIntroMusic({ startTime = 84.0, fadeInDuration = 3.0, targetVolume = 0.8 } = {}) {
+    setClassroomMusic(false);
     stopIntroMusic(0);
     try {
       introMusic = new Audio('assets/music/wheres-the-ground-introduction.mp3');
@@ -423,6 +461,7 @@ export function createAudio() {
 
   const unlockAudio = () => {
     getAudioContext();
+    if (classroomMusicActive && classroomMusic.paused) playClassroomMusic();
   };
   window.addEventListener('keydown', unlockAudio, { passive: true });
   window.addEventListener('pointerdown', unlockAudio, { passive: true });
@@ -433,6 +472,8 @@ export function createAudio() {
     playDash,
     playStep,
     playTransitionClick,
+    setClassroomMusic,
+    updateClassroomMusic,
     updateBooster,
     playDialogBlip,
     stopDialogBlip,

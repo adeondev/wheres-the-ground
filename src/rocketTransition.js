@@ -6,7 +6,7 @@ const SPAWN_DURATION = COVER_DURATION - BUMP_DURATION;
 const CLICK_INTERVAL = 0.02;
 const COLORS = ['#ffc281', '#e6d9ff', '#9767cf'];
 
-export function createRocketTransition({ onCovered = () => {}, onFinish = () => {}, onPop = () => {} } = {}) {
+export function createRocketTransition({ onStart = () => {}, onCovered = () => {}, onFinish = () => {}, onPop = () => {} } = {}) {
   const image = new Image();
   image.src = 'assets/ui/transition.png';
   const ready = image.decode();
@@ -84,6 +84,7 @@ export function createRocketTransition({ onCovered = () => {}, onFinish = () => 
     covered = false;
     clicksPlayed = 0;
     active = true;
+    onStart();
   }
 
   function update(dt) {

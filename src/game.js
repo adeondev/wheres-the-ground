@@ -1,6 +1,6 @@
 import { GAME_HEIGHT, PLAYER } from './config.js';
 import { DASH_ANIMATION_DURATION, playerPose } from './animation.js';
-import { createAudio } from './audio.js?v=random-transition-sounds';
+import { createAudio } from './audio.js?v=classroom-music';
 import { createCameraEffects } from './cameraEffects.js';
 import { createCrt } from './crt.js';
 import { createDialogue } from './dialogue.js?v=seamless-frame';
@@ -9,7 +9,7 @@ import { createEffects } from './effects.js?v=milenio';
 import { drawRocketFlame } from './fireVfx.js';
 import { createInput } from './input.js?v=milenio-greeting';
 import { createIntro } from './intro.js';
-import { createRocketTransition } from './rocketTransition.js?v=dense-clicks';
+import { createRocketTransition } from './rocketTransition.js?v=music-fades';
 import { drawNpcs, nearbyNpc, npcJumpOffset, startNpcInteraction, updateNpcs } from './npcs.js?v=clear-dialogue';
 import { BOOST_FIRE } from './palette.js';
 import { createPlayer, fireBlast, updatePlayer } from './player.js?v=milenio';
@@ -39,8 +39,9 @@ const audio = createAudio();
 let openingDialogue = false;
 let interactingNpc = null;
 const rocketTransition = createRocketTransition({
+  onStart: () => audio.setClassroomMusic(false, 1.05),
   onPop: () => audio.playTransitionClick(),
-  onCovered: () => { openingDialogue = false; input.clear(); },
+  onCovered: () => { openingDialogue = false; input.clear(); audio.setClassroomMusic(true); },
   onFinish: () => { input.clear(); document.body.classList.remove('transition-open'); },
 });
 const dialogue = createDialogue(canvas, dialogueScenes, {
@@ -153,6 +154,7 @@ function endOpeningVideo() {
 }
 
 function playOpeningVideo() {
+  audio.setClassroomMusic(false);
   videoPlaying = true;
   input.clear();
   document.body.classList.remove('intro-open');
@@ -213,6 +215,7 @@ function resize() {
 }
 
 function update(dt) {
+  audio.updateClassroomMusic(dt);
   if (booting || videoPlaying) { input.clear(); audio.updateBooster(false); return; }
   if (rocketTransition.active) {
     input.clear();
