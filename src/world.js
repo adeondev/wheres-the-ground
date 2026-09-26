@@ -26,6 +26,7 @@ export function createWorld() {
     groundY: FLOOR_Y,
     moveSpeed: 105,
     animationRate: 0.65,
+    stepSound: 'concrete',
     allowPowers: false,
     blocks: [{ x: 0, y: FLOOR_Y, w: ROOM_WIDTH, h: FLOOR_HEIGHT }],
   };

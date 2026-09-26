@@ -5,6 +5,7 @@ export function createAudio() {
   const soundPaths = {
     jump: 'assets/sounds/players/physic/jump.mp3',
     landing: 'assets/sounds/players/physic/landing.mp3',
+    stepConcrete: 'assets/sounds/players/physic/step_concrete.mp3',
     dash: 'assets/sounds/players/physic/dash.mp3',
     boosterup: 'assets/sounds/players/physic/boosterup.mp3',
     dialogA: 'assets/sounds/players/dialog/a.mp3',
@@ -93,6 +94,8 @@ export function createAudio() {
       try {
         const clone = fallback.cloneNode();
         clone.volume = Math.max(0, Math.min(1, volume));
+        clone.playbackRate = playbackRate;
+        clone.preservesPitch = false;
         clone.play().catch(() => {});
       } catch {
         // Ignora erros de autoplay em fallback
@@ -114,6 +117,11 @@ export function createAudio() {
   function playDash() {
     const pitch = 1.32 + Math.random() * 0.06;
     play('dash', { volume: 0.45, playbackRate: pitch });
+  }
+
+  function playStep(surface) {
+    if (surface !== 'concrete') return;
+    play('stepConcrete', { volume: 0.4, playbackRate: 0.95 + Math.random() * 0.1 });
   }
 
   function startBoosterLoop() {
@@ -409,6 +417,7 @@ export function createAudio() {
     playJump,
     playLanding,
     playDash,
+    playStep,
     updateBooster,
     playDialogBlip,
     stopDialogBlip,

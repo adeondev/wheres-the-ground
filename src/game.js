@@ -1,18 +1,18 @@
 import { GAME_HEIGHT, PLAYER } from './config.js';
 import { DASH_ANIMATION_DURATION, playerPose } from './animation.js';
-import { createAudio } from './audio.js?v=dialogue-voices';
+import { createAudio } from './audio.js?v=classroom-steps';
 import { createCameraEffects } from './cameraEffects.js';
 import { createCrt } from './crt.js';
 import { createDialogue } from './dialogue.js?v=dialogue-voices';
 import { dialogueScenes } from './dialogueData.js?v=dialogue-voices';
-import { createEffects } from './effects.js?v=classroom-camera';
+import { createEffects } from './effects.js?v=classroom-steps';
 import { drawRocketFlame } from './fireVfx.js';
 import { createInput } from './input.js';
 import { createIntro } from './intro.js';
 import { BOOST_FIRE } from './palette.js';
-import { createPlayer, fireBlast, updatePlayer } from './player.js?v=classroom-camera';
+import { createPlayer, fireBlast, updatePlayer } from './player.js?v=classroom-steps';
 import { loadGabriel, loadGabrielBoost, loadGabrielDash, loadGabrielJump, loadGabrielLanding, loadGabrielRun } from './sprites.js';
-import { CLASSROOM_SCALE, createWorld, drawWorld, overlaps, solidBlocks } from './world.js?v=classroom-camera';
+import { CLASSROOM_SCALE, createWorld, drawWorld, overlaps, solidBlocks } from './world.js?v=classroom-steps';
 
 const canvas = document.querySelector('#game');
 const ctx = canvas.getContext('2d');
@@ -206,6 +206,7 @@ function update(dt) {
     dialogue.start('intro');
     return;
   }
+  const previousX = player.x;
   updatePlayer(player, world, input, dt);
   if (player.jumpStarted) audio.playJump();
   if (player.dashStarted) audio.playDash();
@@ -219,9 +220,17 @@ function update(dt) {
   if (player.boostStarted) cameraEffects.pulseZoom();
   if (player.landedHard) cameraEffects.kick(3, 6, 0.18);
   animationTime += dt * animationRate;
+  const previousRunTime = runAnimationTime;
   runAnimationTime = player.onGround && player.landLockTime <= 0 && dashAnimationTime >= DASH_ANIMATION_DURATION && !player.sliding && Math.abs(player.vx) > 20
     ? runAnimationTime + dt * animationRate * Math.max(0.7, Math.min(1.5, Math.abs(player.vx) / (world.moveSpeed ?? PLAYER.speed)))
     : 0;
+  if (world.stepSound && runSprite && runAnimationTime > 0 && Math.abs(player.x - previousX) > 0.01) {
+    // Dois passos por ciclo de caminhada, acompanhando a velocidade da animação.
+    const stepsPerSecond = runSprite.fps * 2 / runSprite.count;
+    if (previousRunTime === 0 || Math.floor(runAnimationTime * stepsPerSecond) > Math.floor(previousRunTime * stepsPerSecond)) {
+      audio.playStep(world.stepSound);
+    }
+  }
   effects.update(dt, player, animationTime, sprite, dashSprite, dashAnimationTime);
 
   const request = input.takeBlast();
