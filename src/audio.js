@@ -2,6 +2,7 @@
 export function createAudio() {
   let ctx = null;
   const buffers = new Map();
+  const transitionSounds = [1, 2, 3, 4, 5, 7, 8, 9].map(number => `transitionClick${number}`);
   const soundPaths = {
     jump: 'assets/sounds/players/physic/jump.mp3',
     landing: 'assets/sounds/players/physic/landing.mp3',
@@ -11,7 +12,8 @@ export function createAudio() {
     dialogA: 'assets/sounds/players/dialog/a.mp3',
     dialogO: 'assets/sounds/players/dialog/o.mp3',
     momDialogPop: 'assets/sounds/npc/pop/sfx.mp3',
-    transitionClick: 'assets/sounds/transition_click.mp3',
+    ...Object.fromEntries([1, 2, 3, 4, 5, 7, 8, 9].map(number =>
+      [`transitionClick${number}`, `assets/sounds/transition/keyClick${number}.ogg`])),
   };
   const htmlAudioFallback = {};
 
@@ -131,7 +133,8 @@ export function createAudio() {
   }
 
   function playTransitionClick() {
-    play('transitionClick', { volume: 0.22, playbackRate: 0.8 + Math.random() * 0.55, duration: 0.1 });
+    const choice = transitionSounds[Math.floor(Math.random() * transitionSounds.length)];
+    play(choice, { volume: 0.22 });
   }
 
   function startBoosterLoop() {
