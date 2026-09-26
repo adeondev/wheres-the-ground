@@ -398,6 +398,17 @@ export function createDialogue(canvas, scenes, {
     ctx.restore();
   }
 
+  function drawPrompt(ctx, text, centerX, y, viewWidth) {
+    if (!assets.font) return;
+    const width = Array.from(text).length * 6;
+    const x = Math.round(Math.max(8, Math.min(viewWidth - width - 8, centerX - width / 2)));
+    ctx.save();
+    ctx.imageSmoothingEnabled = false;
+    plainText(ctx, text, x + 1, Math.round(y) + 1, '#05080e');
+    plainText(ctx, text, x, Math.round(y), '#ffc281');
+    ctx.restore();
+  }
+
   window.addEventListener('keydown', event => {
     if (!active) return;
     const key = event.key.toLowerCase();
@@ -431,6 +442,6 @@ export function createDialogue(canvas, scenes, {
   return {
     get active() { return active; },
     get state() { return state; },
-    start, close, update, draw,
+    start, close, update, draw, drawPrompt,
   };
 }

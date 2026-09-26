@@ -28,6 +28,8 @@ export function createWorld() {
     animationRate: 0.65,
     stepSound: 'concrete',
     allowPowers: false,
+    npcs: [{ id: 'milenio', name: 'Milênio', x: 224 * CLASSROOM_SCALE,
+      y: FLOOR_Y, w: 29 * CLASSROOM_SCALE, h: 37 * CLASSROOM_SCALE }],
     blocks: [{ x: 0, y: FLOOR_Y, w: ROOM_WIDTH, h: FLOOR_HEIGHT }],
   };
 }

@@ -1,6 +1,6 @@
 import { TURN_DURATION, playerVisualFacing } from './animation.js';
 import { PLAYER } from './config.js';
-import { CLASSROOM_SCALE, inVacuum, overlaps, solidBlocks } from './world.js?v=classroom-steps';
+import { CLASSROOM_SCALE, inVacuum, overlaps, solidBlocks } from './world.js?v=milenio';
 
 export function createPlayer(groundY) {
   const height = 24 * CLASSROOM_SCALE;

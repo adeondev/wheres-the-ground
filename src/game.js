@@ -3,16 +3,17 @@ import { DASH_ANIMATION_DURATION, playerPose } from './animation.js';
 import { createAudio } from './audio.js?v=mom-pop';
 import { createCameraEffects } from './cameraEffects.js';
 import { createCrt } from './crt.js';
-import { createDialogue } from './dialogue.js?v=dialogue-voices';
+import { createDialogue } from './dialogue.js?v=milenio';
 import { dialogueScenes } from './dialogueData.js?v=dialogue-voices';
-import { createEffects } from './effects.js?v=classroom-steps';
+import { createEffects } from './effects.js?v=milenio';
 import { drawRocketFlame } from './fireVfx.js';
 import { createInput } from './input.js';
 import { createIntro } from './intro.js';
+import { drawNpcs, nearbyNpc } from './npcs.js?v=milenio';
 import { BOOST_FIRE } from './palette.js';
-import { createPlayer, fireBlast, updatePlayer } from './player.js?v=classroom-steps';
+import { createPlayer, fireBlast, updatePlayer } from './player.js?v=milenio';
 import { loadGabriel, loadGabrielBoost, loadGabrielDash, loadGabrielJump, loadGabrielLanding, loadGabrielRun } from './sprites.js';
-import { CLASSROOM_SCALE, createWorld, drawWorld, overlaps, solidBlocks } from './world.js?v=classroom-steps';
+import { CLASSROOM_SCALE, createWorld, drawWorld, overlaps, solidBlocks } from './world.js?v=milenio';
 
 const canvas = document.querySelector('#game');
 const ctx = canvas.getContext('2d');
@@ -359,6 +360,7 @@ function draw() {
   ctx.translate(roomOffsetX + cameraEffects.x * zoom, -cameraY * zoom + cameraEffects.y * zoom);
   ctx.scale(zoom, zoom);
   drawWorld(ctx, world, cameraX, visibleWidth, world.height, 12);
+  drawNpcs(ctx, world, cameraX, animationTime);
   effects.draw(ctx, cameraX, sprite);
   for (const shot of projectiles) {
     rect(shot.x - cameraX - 2, shot.y - 2, 8, 8, BOOST_FIRE.outer);
@@ -367,6 +369,11 @@ function draw() {
   }
   drawPlayer();
   ctx.restore();
+  const npc = dialogue.active ? null : nearbyNpc(world, player);
+  if (npc) {
+    dialogue.drawPrompt(ctx, 'Z para Interagir', (npc.x - cameraX) * zoom + roomOffsetX,
+      (npc.y - npc.h - cameraY) * zoom - 14, canvas.width);
+  }
   dialogue.draw(ctx, canvas.width, canvas.height);
   const fuelPercent = Math.round(player.fuel / PLAYER.maxFuel * 100);
   fuelFill.style.width = `${fuelPercent}%`;
