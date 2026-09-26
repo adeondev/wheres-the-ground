@@ -18,7 +18,7 @@ O jogo é estático e pode rodar no GitHub Pages quando esse recurso estiver hab
 - **J**: rajada para onde Gabriel olha
 - **T**: abrir o diálogo de exemplo
 - **C**: ligar/desligar o modo CRT (a preferência fica salva no navegador)
-- A introdução começa ao abrir o jogo; **Espaço** ou **Enter** pulam direto para o jogo
+- A introdução começa ao abrir o jogo; **Espaço** ou **Enter** pulam para a tela de título. Na tela de título, pressione qualquer tecla para começar
 - Se o navegador bloquear o áudio automático, clique ou toque durante a introdução para ativar a música no ponto atual
 - **H**: rever a introdução cinematográfica durante o jogo
 - No diálogo: **Enter/Espaço** revela ou avança, **W/S** ou **setas** mudam a escolha, **1–9** escolhem direto e **Esc** fecha

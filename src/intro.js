@@ -186,6 +186,23 @@ export function createIntro(audio, { onFinish = () => {} } = {}) {
     }
   }
 
+  function skipToTitle() {
+    audio.stopDialogBlip();
+    if (audio.getIntroMusicTime() > 0) {
+      audio.setIntroMusicTime(89.45);
+      audio.resumeIntroMusicAt(89.45);
+    } else {
+      audio.startIntroMusic({ startTime: 89.45, fadeInDuration: 0.3, targetVolume: 0.8 });
+    }
+    smoothMusicTime = 89.45;
+    phase = 'seg6_showcase';
+    phaseTimer = 0;
+    alpha = 1;
+    slideProgress = 1;
+    currentRocketIdx = 0;
+    rocketTimer = 0;
+  }
+
   function startGameFromShowcase() {
     if (phase === 'seg6_showcase') {
       phase = 'seg7_start_fade';
@@ -732,7 +749,10 @@ export function createIntro(audio, { onFinish = () => {} } = {}) {
 
     if (event.key === ' ' || event.key === 'Enter') {
       event.preventDefault();
-      if (!event.repeat) finish(0);
+      if (!event.repeat) {
+        if (phase === 'seg6_showcase') startGameFromShowcase();
+        else if (phase !== 'seg7_start_fade') skipToTitle();
+      }
       return;
     }
 
