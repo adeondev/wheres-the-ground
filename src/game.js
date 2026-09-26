@@ -3,8 +3,8 @@ import { DASH_ANIMATION_DURATION, playerPose } from './animation.js';
 import { createAudio } from './audio.js';
 import { createCameraEffects } from './cameraEffects.js';
 import { createCrt } from './crt.js';
-import { createDialogue } from './dialogue.js';
-import { dialogueScenes } from './dialogueData.js';
+import { createDialogue } from './dialogue.js?v=portrait-and-lowercase';
+import { dialogueScenes } from './dialogueData.js?v=portrait-and-lowercase';
 import { createEffects } from './effects.js';
 import { drawRocketFlame } from './fireVfx.js';
 import { createInput } from './input.js';
@@ -24,7 +24,11 @@ const fuelFill = document.querySelector('#fuel-fill');
 const fuelLabel = document.querySelector('#fuel-label');
 const input = createInput();
 const crt = createCrt();
-const dialogue = createDialogue(canvas, dialogueScenes, { onOpen: () => input.clear(), onClose: () => input.clear() });
+let openingDialogue = false;
+const dialogue = createDialogue(canvas, dialogueScenes, {
+  onOpen: () => input.clear(),
+  onClose: () => { input.clear(); openingDialogue = false; },
+});
 const effects = createEffects();
 const cameraEffects = createCameraEffects();
 const audio = createAudio();
@@ -114,6 +118,8 @@ function endOpeningVideo() {
   openingVideo.pause();
   document.body.classList.remove('video-open');
   input.clear();
+  openingDialogue = true;
+  dialogue.start('despedida');
 }
 
 function playOpeningVideo() {
@@ -123,6 +129,7 @@ function playOpeningVideo() {
   document.body.classList.add('video-open');
   openingVideo.currentTime = 0;
   openingVideo.play().catch(error => {
+    if (!videoPlaying) return;
     console.error('Não foi possível reproduzir o vídeo de abertura:', error);
     endOpeningVideo();
   });
@@ -130,6 +137,18 @@ function playOpeningVideo() {
 
 openingVideo.addEventListener('ended', endOpeningVideo);
 openingVideo.addEventListener('error', endOpeningVideo);
+window.addEventListener('keydown', event => {
+  if (!videoPlaying || event.repeat || !['z', ' ', 'enter'].includes(event.key.toLowerCase())) return;
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  endOpeningVideo();
+}, true);
+window.addEventListener('pointerdown', event => {
+  if (!videoPlaying) return;
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  endOpeningVideo();
+}, true);
 loadingRetry.addEventListener('click', loadOpeningVideo);
 
 function resize() {
@@ -151,6 +170,13 @@ function resize() {
 
 function update(dt) {
   if (booting || videoPlaying) { input.clear(); audio.updateBooster(false); return; }
+  if (openingDialogue) {
+    dialogue.update(dt);
+    cameraEffects.clear();
+    input.clear();
+    audio.updateBooster(false);
+    return;
+  }
   if (input.takeCrt()) crt.toggle();
   if (input.takeIntro()) { intro.start(); }
   document.body.classList.toggle('intro-open', intro.active);
@@ -274,6 +300,12 @@ function draw() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     return;
   }
+  if (openingDialogue) {
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    dialogue.draw(ctx, canvas.width, canvas.height);
+    return;
+  }
   if (intro.active) {
     intro.draw(ctx, canvas.width, canvas.height);
     return;
@@ -314,7 +346,7 @@ function frame(time) {
 resize();
 player = createPlayer(world.groundY);
 window.addEventListener('resize', resize);
-loadGabriel().then(result => { sprite = result; dialogue.setSprite(result); }).catch(error => console.error(error));
+loadGabriel().then(result => { sprite = result; }).catch(error => console.error(error));
 loadGabrielRun().then(result => { runSprite = result; }).catch(error => console.error(error));
 loadGabrielJump().then(result => { jumpSprite = result; }).catch(error => console.error(error));
 loadGabrielBoost().then(result => { boostSprite = result; }).catch(error => console.error(error));

@@ -1,5 +1,33 @@
 const EFFECTS = new Set(['shake', 'rgb', 'fall', 'wave']);
 const UI_PATH = 'assets/ui/dialogue/';
+const LOWERCASE_BITMAP = {
+  a: ['.....', '.....', '.###.', '....#', '.####', '#...#', '.####'],
+  b: ['#....', '#....', '####.', '#...#', '#...#', '#...#', '####.'],
+  c: ['.....', '.....', '.###.', '#...#', '#....', '#...#', '.###.'],
+  d: ['....#', '....#', '.####', '#...#', '#...#', '#...#', '.####'],
+  e: ['.....', '.....', '.###.', '#...#', '#####', '#....', '.####'],
+  f: ['..##.', '.#..#', '.#...', '###..', '.#...', '.#...', '.#...'],
+  g: ['.....', '.....', '.####', '#...#', '#...#', '.####', '....#', '.###.'],
+  h: ['#....', '#....', '####.', '#...#', '#...#', '#...#', '#...#'],
+  i: ['..#..', '.....', '.##..', '..#..', '..#..', '..#..', '.###.'],
+  j: ['...#.', '.....', '..##.', '...#.', '...#.', '#..#.', '.##..'],
+  k: ['#....', '#....', '#..#.', '#.#..', '##...', '#.#..', '#..#.'],
+  l: ['.##..', '..#..', '..#..', '..#..', '..#..', '..#..', '.###.'],
+  m: ['.....', '.....', '##.#.', '#.#.#', '#.#.#', '#.#.#', '#.#.#'],
+  n: ['.....', '.....', '####.', '#...#', '#...#', '#...#', '#...#'],
+  o: ['.....', '.....', '.###.', '#...#', '#...#', '#...#', '.###.'],
+  p: ['.....', '.....', '####.', '#...#', '#...#', '####.', '#....', '#....'],
+  q: ['.....', '.....', '.####', '#...#', '#...#', '.####', '....#', '....#'],
+  r: ['.....', '.....', '#.##.', '##..#', '#....', '#....', '#....'],
+  s: ['.....', '.....', '.####', '#....', '.###.', '....#', '####.'],
+  t: ['.#...', '.#...', '####.', '.#...', '.#...', '.#..#', '..##.'],
+  u: ['.....', '.....', '#...#', '#...#', '#...#', '#..##', '.##.#'],
+  v: ['.....', '.....', '#...#', '#...#', '#...#', '.#.#.', '..#..'],
+  w: ['.....', '.....', '#...#', '#...#', '#.#.#', '#.#.#', '.#.#.'],
+  x: ['.....', '.....', '#...#', '.#.#.', '..#..', '.#.#.', '#...#'],
+  y: ['.....', '.....', '#...#', '#...#', '#...#', '.####', '....#', '.###.'],
+  z: ['.....', '.....', '#####', '...#.', '..#..', '.#...', '#####'],
+};
 
 // Tags podem ser aninhadas: [shake], [rgb], [fall], [wave],
 // [color=#RRGGBB], [speed=0.05] e [pause=0.3].
@@ -94,7 +122,7 @@ export function createDialogue(canvas, scenes, { onOpen = () => {}, onClose = ()
   const state = {};
   const assets = {};
   const tintCache = new Map();
-  let sprite = null;
+  const lowercaseCache = new Map();
   let active = false;
   let node = null;
   let lineIndex = 0;
@@ -110,12 +138,13 @@ export function createDialogue(canvas, scenes, { onOpen = () => {}, onClose = ()
   Promise.all([
     loadImage('dialogue_box.png', 'assets/sprites/ui/dialog/'), loadImage('font.png'), loadImage('heart.png'),
     loadImage('arrow.png'), loadImage('signal.png'),
+    loadImage('gabriel.png', 'assets/sprites/ui/dialog/characters/'),
     fetch(`${UI_PATH}font.json`).then(response => {
       if (!response.ok) throw new Error('Metadata da fonte não carregou');
       return response.json();
     }),
-  ]).then(([frame, font, heart, arrow, signal, meta]) => {
-    Object.assign(assets, { frame, font, heart, arrow, signal, meta });
+  ]).then(([frame, font, heart, arrow, signal, gabriel, meta]) => {
+    Object.assign(assets, { frame, font, heart, arrow, signal, gabriel, meta });
   }).catch(console.error);
 
   function tintedFont(color) {
@@ -135,14 +164,43 @@ export function createDialogue(canvas, scenes, { onOpen = () => {}, onClose = ()
 
   function glyph(ctx, char, x, y, color = '#ffffff') {
     const { chars, cellW, cellH, cols } = assets.meta;
-    const index = Math.max(0, chars.indexOf(char.toUpperCase()));
     if (char === ' ') return;
+    if (char === char.toLowerCase() && char !== char.toUpperCase()) {
+      const key = `${char}:${color}`;
+      if (!lowercaseCache.has(key)) {
+        const bitmap = document.createElement('canvas');
+        bitmap.width = cellW;
+        bitmap.height = cellH;
+        const bitmapCtx = bitmap.getContext('2d');
+        bitmapCtx.fillStyle = color;
+        const [base, ...marks] = Array.from(char.normalize('NFD'));
+        const rows = LOWERCASE_BITMAP[base] ?? [];
+        rows.forEach((row, rowIndex) => {
+          if (base === 'i' && marks.length && rowIndex === 0) return;
+          for (let col = 0; col < row.length; col++) {
+            if (row[col] === '#') bitmapCtx.fillRect(col, rowIndex + 1, 1, 1);
+          }
+        });
+        for (const mark of marks) {
+          if (mark === '\u0301') { bitmapCtx.fillRect(3, 0, 2, 1); }
+          else if (mark === '\u0300') { bitmapCtx.fillRect(0, 0, 2, 1); }
+          else if (mark === '\u0303') { bitmapCtx.fillRect(1, 0, 1, 1); bitmapCtx.fillRect(3, 0, 1, 1); }
+          else if (mark === '\u0302') { bitmapCtx.fillRect(2, 0, 1, 1); bitmapCtx.fillRect(1, 1, 1, 1); bitmapCtx.fillRect(3, 1, 1, 1); }
+          else if (mark === '\u0308') { bitmapCtx.fillRect(1, 0, 1, 1); bitmapCtx.fillRect(3, 0, 1, 1); }
+          else if (mark === '\u0327') { bitmapCtx.fillRect(2, 8, 1, 1); }
+        }
+        lowercaseCache.set(key, bitmap);
+      }
+      ctx.drawImage(lowercaseCache.get(key), Math.round(x), Math.round(y));
+      return;
+    }
+    const index = Math.max(0, chars.indexOf(char));
     ctx.drawImage(tintedFont(color), index % cols * cellW, Math.floor(index / cols) * cellH,
       cellW, cellH, Math.round(x), Math.round(y), cellW, cellH);
   }
 
   function plainText(ctx, text, x, y, color = '#ffffff') {
-    for (const char of Array.from(String(text).toUpperCase())) {
+    for (const char of Array.from(String(text))) {
       glyph(ctx, char, x, y, color);
       x += 6;
     }
@@ -245,7 +303,7 @@ export function createDialogue(canvas, scenes, { onOpen = () => {}, onClose = ()
     const compact = viewWidth < 220;
     const width = compact ? viewWidth - 8 : Math.min(400, viewWidth - 18);
     const x = Math.round((viewWidth - width) / 2);
-    const textX = compact ? x + 18 : x + 62;
+    const textX = compact || node.lines[lineIndex].portrait === 'none' ? x + 18 : x + 62;
     const textWidth = x + width - (compact ? 10 : 14) - textX;
     const lines = layoutLetters(tokens, Math.max(1, Math.floor(textWidth / 6)));
     const textY = 30;
@@ -268,11 +326,10 @@ export function createDialogue(canvas, scenes, { onOpen = () => {}, onClose = ()
     nineSlice(ctx, assets.frame, box.x, box.y, box.width, box.height);
 
     const line = node.lines[lineIndex];
-    if (!box.compact) {
-      const portrait = line.portrait === 'gabriel' && sprite ? sprite.image : assets.signal;
-      if (line.portrait === 'gabriel' && sprite) {
-        ctx.drawImage(portrait, 0, 0, sprite.frameW, sprite.frameH,
-          box.x + 14, box.y + 18, sprite.frameW * 2, sprite.frameH * 2);
+    if (!box.compact && line.portrait !== 'none') {
+      const portrait = line.portrait === 'gabriel' ? assets.gabriel : assets.signal;
+      if (line.portrait === 'gabriel') {
+        ctx.drawImage(portrait, box.x + 14, box.y + 18, portrait.width * 3, portrait.height * 3);
       } else {
         ctx.drawImage(portrait, box.x + 14, box.y + 18, portrait.width * 2, portrait.height * 2);
       }
@@ -358,6 +415,5 @@ export function createDialogue(canvas, scenes, { onOpen = () => {}, onClose = ()
     get active() { return active; },
     get state() { return state; },
     start, close, update, draw,
-    setSprite(value) { sprite = value; },
   };
 }
