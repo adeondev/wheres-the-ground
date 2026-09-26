@@ -40,17 +40,9 @@ body.loading #loading-screen { display: flex; }
 #loading-retry[hidden] { display: none; }
 
 #opening-video {
+  /* Decodifica o vídeo e toca seu áudio; os quadros são exibidos no canvas. */
   display: none;
-  position: fixed;
-  inset: 0;
-  z-index: 30;
-  width: 100vw;
-  height: 100vh;
-  height: 100dvh;
-  object-fit: contain;
-  background: #000;
 }
-body.video-open #opening-video { display: block; }
 
 body.crt-on { background: #05080e; }
 body.crt-on #game {

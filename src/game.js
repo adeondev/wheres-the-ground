@@ -1,10 +1,10 @@
 import { GAME_HEIGHT, PLAYER } from './config.js';
 import { DASH_ANIMATION_DURATION, playerPose } from './animation.js';
-import { createAudio } from './audio.js';
+import { createAudio } from './audio.js?v=dialogue-voices';
 import { createCameraEffects } from './cameraEffects.js';
 import { createCrt } from './crt.js';
-import { createDialogue } from './dialogue.js?v=larger-portrait';
-import { dialogueScenes } from './dialogueData.js?v=portrait-and-lowercase';
+import { createDialogue } from './dialogue.js?v=dialogue-voices';
+import { dialogueScenes } from './dialogueData.js?v=dialogue-voices';
 import { createEffects } from './effects.js?v=classroom-camera';
 import { drawRocketFlame } from './fireVfx.js';
 import { createInput } from './input.js';
@@ -26,14 +26,16 @@ const controlsHint = document.querySelector('.controls-hint');
 const fullControlsHint = controlsHint.textContent;
 const input = createInput();
 const crt = createCrt();
+const audio = createAudio();
 let openingDialogue = false;
 const dialogue = createDialogue(canvas, dialogueScenes, {
   onOpen: () => input.clear(),
   onClose: () => { input.clear(); openingDialogue = false; },
+  onCharacter: voice => audio.playDialogBlip(voice),
+  onSilence: () => audio.stopDialogBlip(),
 });
 const effects = createEffects();
 const cameraEffects = createCameraEffects();
-const audio = createAudio();
 const intro = createIntro(audio, { onFinish: () => { input.clear(); playOpeningVideo(); } });
 const projectiles = [];
 const STEP = 1 / 60;
@@ -318,6 +320,15 @@ function draw() {
   if (booting || videoPlaying) {
     ctx.fillStyle = '#000000';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+    if (videoPlaying && openingVideo.readyState >= 2 && openingVideo.videoWidth > 0) {
+      // O vídeo passa pelo mesmo canvas de baixa resolução e filtro CRT do jogo.
+      const scale = Math.min(canvas.width / openingVideo.videoWidth, canvas.height / openingVideo.videoHeight);
+      const width = Math.round(openingVideo.videoWidth * scale);
+      const height = Math.round(openingVideo.videoHeight * scale);
+      ctx.imageSmoothingEnabled = false;
+      ctx.drawImage(openingVideo, Math.round((canvas.width - width) / 2),
+        Math.round((canvas.height - height) / 2), width, height);
+    }
     return;
   }
   if (openingDialogue) {

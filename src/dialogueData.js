@@ -2,9 +2,9 @@
 export const dialogueScenes = {
   despedida: {
     lines: [
-      { speaker: 'Mãe', portrait: 'none', text: 'Tchau, filho. Boa aula.' },
-      { speaker: 'Gabriel', portrait: 'gabriel', text: 'Tchau. Obrigado, mãe.' },
-      { speaker: 'Mãe', portrait: 'none', text: 'Juízo.' },
+      { speaker: 'Mãe', voice: 'mom', portrait: 'none', text: 'Tchau, filho. Boa aula.' },
+      { speaker: 'Gabriel', voice: 'gabriel', portrait: 'gabriel', text: 'Tchau. Obrigado, mãe.' },
+      { speaker: 'Mãe', voice: 'mom', portrait: 'none', text: 'Juízo.' },
     ],
   },
   intro: {

@@ -8,8 +8,9 @@ export function createAudio() {
     dash: 'assets/sounds/players/physic/dash.mp3',
     boosterup: 'assets/sounds/players/physic/boosterup.mp3',
     dialogA: 'assets/sounds/players/dialog/a.mp3',
-    dialogI: 'assets/sounds/players/dialog/i.mp3',
     dialogO: 'assets/sounds/players/dialog/o.mp3',
+    momDialogA: 'assets/sounds/npc/mom/a.mp3',
+    momDialogO: 'assets/sounds/npc/mom/o.mp3',
   };
   const htmlAudioFallback = {};
 
@@ -207,8 +208,15 @@ export function createAudio() {
 
   let currentDialogSource = null;
   let currentDialogGain = null;
+  let dialogFallbackTimer = null;
+  const dialogueVoices = {
+    gabriel: { sounds: ['dialogA', 'dialogO'], pitch: 0.92, variation: 0.24 },
+    mom: { sounds: ['momDialogA', 'momDialogO'], pitch: 1.04, variation: 0.24 },
+  };
 
   function stopDialogBlip() {
+    if (dialogFallbackTimer) clearTimeout(dialogFallbackTimer);
+    dialogFallbackTimer = null;
     const c = getAudioContext();
     if (currentDialogGain && c) {
       try {
@@ -230,7 +238,7 @@ export function createAudio() {
         }
       } catch {}
     }
-    for (const key of ['dialogA', 'dialogO']) {
+    for (const key of Object.values(dialogueVoices).flatMap(voice => voice.sounds)) {
       const a = htmlAudioFallback[key];
       if (a) {
         try { a.pause(); a.currentTime = 0; } catch {}
@@ -238,13 +246,14 @@ export function createAudio() {
     }
   }
 
-  function playDialogBlip() {
+  function playDialogBlip(voiceName = 'gabriel') {
     stopDialogBlip();
     const c = getAudioContext();
-    const list = ['dialogA', 'dialogO'];
+    const voice = dialogueVoices[voiceName] ?? dialogueVoices.gabriel;
+    const list = voice.sounds;
     const choice = list[Math.floor(Math.random() * list.length)];
     const buffer = buffers.get(choice);
-    const pitch = 0.92 + Math.random() * 0.24;
+    const pitch = voice.pitch + Math.random() * voice.variation;
 
     if (c && buffer) {
       try {
@@ -280,8 +289,10 @@ export function createAudio() {
         fallback.currentTime = 0;
         fallback.volume = 0.4;
         fallback.playbackRate = pitch;
+        fallback.preservesPitch = false;
         fallback.play().catch(() => {});
-        setTimeout(() => {
+        dialogFallbackTimer = setTimeout(() => {
+          dialogFallbackTimer = null;
           try { fallback.pause(); fallback.currentTime = 0; } catch {}
         }, 65);
       } catch {}

@@ -121,7 +121,9 @@ function layoutLetters(tokens, maxCols) {
   return row + 1;
 }
 
-export function createDialogue(canvas, scenes, { onOpen = () => {}, onClose = () => {} } = {}) {
+export function createDialogue(canvas, scenes, {
+  onOpen = () => {}, onClose = () => {}, onCharacter = () => {}, onSilence = () => {},
+} = {}) {
   const state = {};
   const assets = {};
   const tintCache = new Map();
@@ -210,6 +212,7 @@ export function createDialogue(canvas, scenes, { onOpen = () => {}, onClose = ()
   }
 
   function setLine() {
+    onSilence();
     const line = node.lines[lineIndex];
     tokens = tokenizeDialogue(typeof line.text === 'function' ? line.text(state) : line.text);
     cursor = 0;
@@ -239,6 +242,7 @@ export function createDialogue(canvas, scenes, { onOpen = () => {}, onClose = ()
 
   function close() {
     if (!active) return;
+    onSilence();
     active = false;
     document.body.classList.remove('dialogue-open');
     canvas.setAttribute('aria-label', 'Jogo de plataforma');
@@ -260,6 +264,7 @@ export function createDialogue(canvas, scenes, { onOpen = () => {}, onClose = ()
   }
 
   function revealAll() {
+    onSilence();
     while (cursor < tokens.length) {
       if (tokens[cursor].type === 'char') tokens[cursor].revealedAt = elapsed;
       cursor++;
@@ -295,7 +300,10 @@ export function createDialogue(canvas, scenes, { onOpen = () => {}, onClose = ()
       if (timer < delay) break;
       timer -= delay;
       cursor++;
-      if (token.type === 'char') token.revealedAt = elapsed;
+      if (token.type === 'char') {
+        token.revealedAt = elapsed;
+        if (/\p{L}/u.test(token.char)) onCharacter(node.lines[lineIndex].voice);
+      }
     }
     if (cursor >= tokens.length) {
       ready = true;
