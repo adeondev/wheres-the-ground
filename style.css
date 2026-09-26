@@ -1,0 +1,151 @@
+* { box-sizing: border-box; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: #172536;
+}
+
+#game {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  image-rendering: pixelated;
+  touch-action: none;
+}
+
+body.crt-on { background: #05080e; }
+body.crt-on #game {
+  filter: contrast(1.08) saturate(1.16) brightness(1.05);
+  clip-path: inset(0 round 2.5% / 4%);
+}
+
+#crt-overlay { display: none; }
+body.crt-on #crt-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: block;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: 2.5% / 4%;
+  background:
+    repeating-linear-gradient(180deg, transparent 0 2px, #05080e38 2px 3px),
+    repeating-linear-gradient(90deg, #ff70800a 0 1px, #70ffbc08 1px 2px, #729cff0b 2px 3px);
+  box-shadow: inset 0 0 0 0.4vmin #9db5b326, inset 0 0 7vmin 3vmin #03050dcc;
+}
+
+body.crt-on #crt-overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 85% at 50% 48%, transparent 58%, #02040b8c 100%);
+}
+
+body.crt-on #crt-overlay::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: -22%;
+  width: 100%;
+  height: 18%;
+  background: linear-gradient(transparent, #b5e8dc12 55%, transparent);
+  animation: crtSweep 9s linear infinite;
+}
+
+body.crt-on .hud,
+body.crt-on .controls-hint { text-shadow: -1px 0 #ff8f8f80, 1px 0 #71dbe880, 1px 1px #101827; }
+
+@keyframes crtSweep { to { transform: translateY(700%); } }
+
+@media (prefers-reduced-motion: reduce) {
+  body.crt-on #crt-overlay::after { animation: none; }
+}
+
+.hud {
+  position: fixed;
+  top: calc(18px * var(--ui-scale, 1));
+  left: calc(20px * var(--ui-scale, 1));
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #f4f0df;
+  font: 12px monospace;
+  text-shadow: 1px 1px #101827;
+  pointer-events: none;
+  transform: scale(var(--ui-scale, 1));
+  transform-origin: top left;
+}
+
+.fuel-track {
+  width: 104px;
+  height: 10px;
+  border: 2px solid #d0d8d4;
+  background: #202635;
+}
+
+#fuel-fill { width: 100%; height: 100%; background: #f4ba79; }
+
+.controls-hint {
+  position: fixed;
+  top: calc(20px * var(--ui-scale, 1));
+  right: calc(20px * var(--ui-scale, 1));
+  color: #e4e8dc;
+  font: 10px monospace;
+  text-align: right;
+  text-shadow: 1px 1px #101827;
+  pointer-events: none;
+  transform: scale(var(--ui-scale, 1));
+  transform-origin: top right;
+}
+
+.touch-controls { display: none; }
+.intro-open { background: #000000 !important; }
+.intro-open #game { background: #000000; }
+.dialogue-open .hud,
+.dialogue-open .controls-hint,
+.intro-open .hud,
+.intro-open .controls-hint { display: none; }
+.dialogue-open .touch-controls,
+.intro-open .touch-controls { display: none !important; }
+
+@media (max-width: 680px) {
+  .controls-hint { display: none; }
+}
+
+@media (pointer: coarse) {
+  .touch-controls {
+    position: fixed;
+    inset: auto calc(12px * var(--touch-scale, 1)) calc(18px * var(--touch-scale, 1));
+    display: flex;
+    justify-content: space-between;
+    pointer-events: none;
+  }
+
+  .touch-controls > div { display: flex; gap: calc(6px * var(--touch-scale, 1)); }
+
+  .touch-controls button {
+    width: calc(44px * var(--touch-scale, 1));
+    height: calc(52px * var(--touch-scale, 1));
+    border: calc(2px * var(--touch-scale, 1)) solid #ffffff80;
+    border-radius: calc(12px * var(--touch-scale, 1));
+    background: #17253699;
+    color: white;
+    font-size: calc(22px * var(--touch-scale, 1));
+    pointer-events: auto;
+    touch-action: none;
+    user-select: none;
+  }
+
+  .touch-controls button:active { background: #ffffff55; }
+  .touch-controls button[data-key="crt"] { font-size: calc(11px * var(--touch-scale, 1)); font-weight: bold; }
+  .controls-hint { display: none; }
+}
+
+@media (pointer: coarse) and (max-width: 360px) {
+  .touch-controls button { width: calc(36px * var(--touch-scale, 1)); height: calc(48px * var(--touch-scale, 1)); font-size: calc(18px * var(--touch-scale, 1)); }
+  .touch-controls > div { gap: calc(4px * var(--touch-scale, 1)); }
+}

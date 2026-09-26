@@ -1,0 +1,12 @@
+{
+  "type": "animation",
+  "prompt": "Idle bounce",
+  "width": 19,
+  "height": 29,
+  "frame_w": 19,
+  "frame_h": 29,
+  "frame_count": 6,
+  "fps": 8,
+  "preview": "preview.webp",
+  "spritesheet": "spritesheet.png"
+}

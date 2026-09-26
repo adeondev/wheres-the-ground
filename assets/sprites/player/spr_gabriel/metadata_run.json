@@ -1,0 +1,9 @@
+{
+  "type": "animation",
+  "frame_w": 32,
+  "frame_h": 32,
+  "frame_count": 7,
+  "columns": 4,
+  "fps": 14,
+  "spritesheet": "spritesheet_run.png"
+}

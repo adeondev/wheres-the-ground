@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Where's the Ground?</title>
+    <link rel="stylesheet" href="style.css" />
+    <script type="module" src="src/game.js"></script>
+  </head>
+  <body>
+    <canvas id="game" aria-label="Jogo de plataforma"></canvas>
+
+    <div class="hud" aria-live="polite">
+      <div class="fuel-track" aria-label="Combustível"><div id="fuel-fill"></div></div>
+      <span id="fuel-label">100%</span>
+    </div>
+    <div class="controls-hint">A/D MOVER · ESPAÇO PULAR / BOOST ↑ · SHIFT DASH → · J RAJADA · T DIÁLOGO · C CRT · H INTRO</div>
+
+    <div id="crt-overlay" aria-hidden="true"></div>
+
+    <div class="touch-controls" aria-label="Controles de toque">
+      <div>
+        <button type="button" data-key="left" aria-label="Andar para a esquerda">←</button>
+        <button type="button" data-key="right" aria-label="Andar para a direita">→</button>
+      </div>
+      <div>
+        <button type="button" data-key="jump" aria-label="Pular, segurar para boost">⤴</button>
+        <button type="button" data-key="dash" aria-label="Dash para a frente">»</button>
+        <button type="button" data-key="blast" aria-label="Disparar rajada">●</button>
+        <button type="button" data-key="talk" aria-label="Abrir diálogo">▤</button>
+        <button type="button" data-key="crt" aria-label="Alternar efeito CRT">CRT</button>
+      </div>
+    </div>
+  </body>
+</html>
