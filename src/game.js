@@ -27,6 +27,7 @@ const audio = createAudio();
 const intro = createIntro(audio, { onFinish: () => input.clear() });
 const projectiles = [];
 const STEP = 1 / 60;
+const CAMERA_ZOOM = 1.3;
 
 let world;
 let player;
@@ -189,7 +190,7 @@ function draw() {
   const focusY = player.y + player.h / 2;
   ctx.save();
   ctx.translate(focusX, focusY);
-  ctx.scale(cameraEffects.zoom, cameraEffects.zoom);
+  ctx.scale(CAMERA_ZOOM * cameraEffects.zoom, CAMERA_ZOOM * cameraEffects.zoom);
   ctx.translate(-focusX + cameraEffects.x, -focusY + cameraEffects.y);
   drawWorld(ctx, world, cameraX, canvas.width, canvas.height, 12);
   effects.draw(ctx, cameraX, sprite);
