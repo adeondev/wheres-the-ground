@@ -153,6 +153,12 @@ body.crt-on .controls-hint { text-shadow: -1px 0 #ff8f8f80, 1px 0 #71dbe880, 1px
 .video-open .touch-controls,
 .loading .touch-controls { display: none !important; }
 
+.no-powers .hud,
+.no-powers .touch-controls [data-key="dash"],
+.no-powers .touch-controls [data-key="blast"],
+.no-powers .touch-controls [data-key="talk"],
+.no-powers .touch-controls [data-key="crt"] { display: none !important; }
+
 @media (max-width: 680px) {
   .controls-hint { display: none; }
 }

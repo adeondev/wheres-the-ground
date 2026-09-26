@@ -1,10 +1,30 @@
-export function createWorld(viewWidth, viewHeight) {
-  const groundY = viewHeight - 28;
-  const width = Math.max(2400, viewWidth + 400);
+export const CLASSROOM_SCALE = 2;
+
+const ROOM_PATH = 'assets/rooms/classroom/';
+const ROOM_WIDTH = 244 * CLASSROOM_SCALE;
+const FLOOR_Y = 112 * CLASSROOM_SCALE;
+const FLOOR_HEIGHT = 8 * CLASSROOM_SCALE;
+const DESKS = [32, 66, 100, 134];
+
+const images = {};
+for (const [name, file] of Object.entries({
+  background: 'room_background.png',
+  floor: 'floor_tile.png',
+  studentDesk: 'chair_table.png',
+  teacherDesk: 'professor_chair_table.png',
+  sideDesk: 'decorative_side_desk.png',
+})) {
+  const image = new Image();
+  image.src = ROOM_PATH + file;
+  images[name] = image;
+}
+
+export function createWorld() {
   return {
-    width,
-    groundY,
-    blocks: [{ x: 0, y: groundY, w: width, h: 28 }],
+    width: ROOM_WIDTH,
+    groundY: FLOOR_Y,
+    allowPowers: false,
+    blocks: [{ x: 0, y: FLOOR_Y, w: ROOM_WIDTH, h: FLOOR_HEIGHT }],
   };
 }
 
@@ -24,28 +44,25 @@ export function solidBlocks(world) {
   return world.blocks;
 }
 
-function rect(ctx, x, y, w, h, color) {
-  ctx.fillStyle = color;
-  ctx.fillRect(Math.round(x), Math.round(y), w, h);
+function drawSprite(ctx, image, x, y, cameraX) {
+  if (!image.complete || !image.naturalWidth) return;
+  ctx.drawImage(image, Math.round(x * CLASSROOM_SCALE - cameraX), y * CLASSROOM_SCALE,
+    image.width * CLASSROOM_SCALE, image.height * CLASSROOM_SCALE);
 }
 
 export function drawWorld(ctx, world, cameraX, viewWidth, viewHeight, overscan = 0) {
-  rect(ctx, -overscan, -overscan, viewWidth + overscan * 2, viewHeight + overscan * 2, '#263b55');
-  rect(ctx, -overscan, Math.round(world.groundY * 0.65), viewWidth + overscan * 2, viewHeight + overscan, '#1e3149');
+  ctx.imageSmoothingEnabled = false;
+  ctx.fillStyle = '#101417';
+  ctx.fillRect(-overscan, -overscan, viewWidth + overscan * 2, viewHeight + overscan * 2);
 
-  for (const block of world.blocks) {
-    const x = Math.round(block.x - cameraX);
-    if (x + block.w < 0 || x > viewWidth) continue;
-    const drawX = x <= 0 ? -overscan : x;
-    const drawW = block.w + x - drawX + (x + block.w >= viewWidth ? overscan : 0);
-    rect(ctx, drawX, block.y, drawW, block.h + overscan, '#534c56');
-    rect(ctx, drawX, block.y, drawW, 4, '#85ba9c');
-    rect(ctx, drawX, block.y + 4, drawW, 2, '#5c8d7f');
-    for (let tile = 0; tile < block.w; tile += 16) {
-      if (x + tile < -16 || x + tile > viewWidth) continue;
-      rect(ctx, x + tile + 4, block.y + 8, 4, 2, '#79636a');
-      if (block.h > 16) rect(ctx, x + tile + 10, block.y + 19, 4, 2, '#3d3d4b');
-    }
-  }
-
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(Math.round(-cameraX), 0, ROOM_WIDTH, FLOOR_Y + FLOOR_HEIGHT);
+  ctx.clip();
+  drawSprite(ctx, images.background, 0, 0, cameraX);
+  for (let x = 0; x < 244; x += 16) drawSprite(ctx, images.floor, x, 112, cameraX);
+  for (const x of DESKS) drawSprite(ctx, images.studentDesk, x, 94, cameraX);
+  drawSprite(ctx, images.teacherDesk, 176, 80, cameraX);
+  drawSprite(ctx, images.sideDesk, 208, 64, cameraX);
+  ctx.restore();
 }

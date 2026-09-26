@@ -1,10 +1,11 @@
 import { TURN_DURATION, playerVisualFacing } from './animation.js';
 import { PLAYER } from './config.js';
-import { inVacuum, overlaps, solidBlocks } from './world.js';
+import { CLASSROOM_SCALE, inVacuum, overlaps, solidBlocks } from './world.js?v=classroom-final';
 
 export function createPlayer(groundY) {
+  const height = 24 * CLASSROOM_SCALE;
   return {
-    x: 40, y: groundY - 24, w: 14, h: 24,
+    x: 16, y: groundY - height, w: 14 * CLASSROOM_SCALE, h: height,
     vx: 0, vy: 0, onGround: true, facing: 1,
     fuel: PLAYER.maxFuel, blastCooldown: 0,
     jumpHeldFor: 0, boosting: false, boostFlash: 0,
@@ -12,7 +13,7 @@ export function createPlayer(groundY) {
     dashing: false, dashStarted: false, dashStretch: 0,
     landSlideTime: 0, landImpactTime: 0, landImpactDuration: 0.2,
     landImpactStrength: 0, turnSquashTime: 0, turnFromFacing: 1, sliding: false,
-    landLockTime: 0, airApexY: groundY - 24,
+    landLockTime: 0, airApexY: groundY - height,
     boostStarted: false, landed: false, landedHard: false, landingSpeed: 0, landingHeight: 0,
     jumpStarted: false,
     ceilingBonk: false, jumpLockAfterDash: false,
@@ -25,6 +26,7 @@ function approach(value, target, amount) {
 }
 
 export function updatePlayer(player, world, input, dt) {
+  const powersEnabled = world.allowPowers !== false;
   const vacuum = inVacuum(world, player);
   const wasOnGround = player.onGround;
   player.landLockTime = Math.max(0, player.landLockTime - dt);
@@ -66,8 +68,14 @@ export function updatePlayer(player, world, input, dt) {
     player.turnSquashTime = player.turnFromFacing === horizontal ? 0 : TURN_DURATION;
   }
 
-  if (input.takeDash()) {
+  if (input.takeDash() && powersEnabled) {
     player.dashBufferTime = 0.12;
+  }
+
+  if (!powersEnabled) {
+    player.dashBufferTime = 0;
+    player.dashTime = 0;
+    player.dashing = false;
   }
 
   if (player.dashBufferTime > 0 && !locked && player.dashCooldown <= 0) {
@@ -109,7 +117,7 @@ export function updatePlayer(player, world, input, dt) {
   }
 
   const wasBoosting = player.boosting;
-  player.boosting = !player.dashing && player.dashCooldown <= 0 && !player.ceilingBonk && !player.jumpLockAfterDash &&
+  player.boosting = powersEnabled && !player.dashing && player.dashCooldown <= 0 && !player.ceilingBonk && !player.jumpLockAfterDash &&
     input.held.jump && !player.onGround && player.jumpHeldFor >= PLAYER.boostDelay && player.fuel > 0 && player.y > 0;
   if (player.boosting) {
     if (!wasBoosting) { player.boostFlash = 0.12; player.boostStarted = true; }

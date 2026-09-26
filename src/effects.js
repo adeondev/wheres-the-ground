@@ -1,6 +1,7 @@
 // Efeitos visuais pequenos; não alteram a física.
 import { playerPose } from './animation.js';
 import { BOOST_FIRE } from './palette.js';
+import { CLASSROOM_SCALE } from './world.js?v=classroom-final';
 
 const boostColors = [BOOST_FIRE.outer, BOOST_FIRE.middle, BOOST_FIRE.core, BOOST_FIRE.spark];
 
@@ -123,7 +124,7 @@ export function createEffects() {
           ? Math.min(dashSprite.count - 1, Math.floor(dashAnimationTime * dashSprite.fps))
           : sprite ? Math.floor(animationTime * sprite.fps) % sprite.count : 0;
         ghosts.push({
-          x: player.x, y: player.y, facing: scale.facing,
+          x: player.x, y: player.y, playerW: player.w, playerH: player.h, facing: scale.facing,
           sprite: ghostSprite, frame: ghostFrame,
           scaleX: scale.x, scaleY: scale.y,
           life: 0.26, maxLife: 0.26,
@@ -166,10 +167,10 @@ export function createEffects() {
       ctx.globalAlpha = 0.55 * ghost.life / ghost.maxLife;
       const ghostSprite = ghost.sprite ?? sprite;
       if (ghostSprite) {
-        const w = Math.round(ghostSprite.frameW * ghost.scaleX);
-        const h = Math.round(ghostSprite.frameH * ghost.scaleY);
-        const x = Math.round(ghost.x - cameraX + (14 - w) / 2);
-        const y = Math.round(ghost.y + 24 - h);
+        const w = Math.round(ghostSprite.frameW * CLASSROOM_SCALE * ghost.scaleX);
+        const h = Math.round(ghostSprite.frameH * CLASSROOM_SCALE * ghost.scaleY);
+        const x = Math.round(ghost.x - cameraX + (ghost.playerW - w) / 2);
+        const y = Math.round(ghost.y + ghost.playerH - h);
         const sourceX = (ghost.frame % ghostSprite.columns) * ghostSprite.frameW;
         const sourceY = Math.floor(ghost.frame / ghostSprite.columns) * ghostSprite.frameH;
         if (ghost.facing < 0) {
@@ -185,7 +186,7 @@ export function createEffects() {
         }
       } else {
         ctx.fillStyle = '#c4e8e0';
-        ctx.fillRect(Math.round(ghost.x - cameraX), Math.round(ghost.y), 14, 24);
+        ctx.fillRect(Math.round(ghost.x - cameraX), Math.round(ghost.y), ghost.playerW, ghost.playerH);
       }
     }
     for (const p of particles) {

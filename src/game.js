@@ -5,14 +5,14 @@ import { createCameraEffects } from './cameraEffects.js';
 import { createCrt } from './crt.js';
 import { createDialogue } from './dialogue.js?v=larger-portrait';
 import { dialogueScenes } from './dialogueData.js?v=portrait-and-lowercase';
-import { createEffects } from './effects.js';
+import { createEffects } from './effects.js?v=classroom-final';
 import { drawRocketFlame } from './fireVfx.js';
 import { createInput } from './input.js';
 import { createIntro } from './intro.js';
 import { BOOST_FIRE } from './palette.js';
-import { createPlayer, fireBlast, updatePlayer } from './player.js';
+import { createPlayer, fireBlast, updatePlayer } from './player.js?v=classroom-final';
 import { loadGabriel, loadGabrielBoost, loadGabrielDash, loadGabrielJump, loadGabrielLanding, loadGabrielRun } from './sprites.js';
-import { createWorld, drawWorld, overlaps, solidBlocks } from './world.js';
+import { CLASSROOM_SCALE, createWorld, drawWorld, overlaps, solidBlocks } from './world.js?v=classroom-final';
 
 const canvas = document.querySelector('#game');
 const ctx = canvas.getContext('2d');
@@ -22,6 +22,8 @@ const loadingFill = document.querySelector('#loading-fill');
 const loadingRetry = document.querySelector('#loading-retry');
 const fuelFill = document.querySelector('#fuel-fill');
 const fuelLabel = document.querySelector('#fuel-label');
+const controlsHint = document.querySelector('.controls-hint');
+const fullControlsHint = controlsHint.textContent;
 const input = createInput();
 const crt = createCrt();
 let openingDialogue = false;
@@ -35,7 +37,7 @@ const audio = createAudio();
 const intro = createIntro(audio, { onFinish: () => { input.clear(); playOpeningVideo(); } });
 const projectiles = [];
 const STEP = 1 / 60;
-const CAMERA_ZOOM = 1.3;
+const CAMERA_ZOOM = 1;
 
 let world;
 let player;
@@ -161,6 +163,10 @@ function resize() {
   document.documentElement.style.setProperty('--touch-scale', `${Math.min(pixelSize / 3, bounds.width / 390)}`);
   ctx.imageSmoothingEnabled = false;
   world = createWorld(canvas.width, canvas.height);
+  document.body.classList.toggle('no-powers', world.allowPowers === false);
+  controlsHint.textContent = world.allowPowers === false
+    ? 'A/D MOVER · ESPAÇO PULAR'
+    : fullControlsHint;
   if (player) {
     const groundShift = world.groundY - previousGround;
     player.y += groundShift;
@@ -177,8 +183,12 @@ function update(dt) {
     audio.updateBooster(false);
     return;
   }
-  if (input.takeCrt()) crt.toggle();
-  if (input.takeIntro()) { intro.start(); }
+  const crtRequested = input.takeCrt();
+  const introRequested = input.takeIntro();
+  if (world.allowPowers !== false) {
+    if (crtRequested) crt.toggle();
+    if (introRequested) intro.start();
+  }
   document.body.classList.toggle('intro-open', intro.active);
   if (intro.active) {
     cameraEffects.clear();
@@ -189,7 +199,11 @@ function update(dt) {
   }
   dialogue.update(dt);
   if (dialogue.active) { cameraEffects.clear(); input.clear(); audio.updateBooster(false); return; }
-  if (input.takeTalk()) { cameraEffects.clear(); dialogue.start('intro'); return; }
+  if (input.takeTalk() && world.allowPowers !== false) {
+    cameraEffects.clear();
+    dialogue.start('intro');
+    return;
+  }
   updatePlayer(player, world, input, dt);
   if (player.jumpStarted) audio.playJump();
   if (player.dashStarted) audio.playDash();
@@ -208,7 +222,7 @@ function update(dt) {
   effects.update(dt, player, animationTime, sprite, dashSprite, dashAnimationTime);
 
   const request = input.takeBlast();
-  if (request) {
+  if (request && world.allowPowers !== false) {
     const projectile = fireBlast(player, player.facing, 0);
     if (projectile) {
       projectiles.push(projectile);
@@ -227,7 +241,9 @@ function update(dt) {
     }
   }
 
-  cameraX = Math.max(0, Math.min(world.width - canvas.width, player.x - canvas.width * 0.4));
+  const maxCameraX = world.width - canvas.width;
+  cameraX = maxCameraX <= 0 ? maxCameraX / 2
+    : Math.max(0, Math.min(maxCameraX, player.x - canvas.width * 0.4));
 }
 
 function rect(x, y, w, h, color) {
@@ -279,8 +295,8 @@ function drawPlayer() {
   else if (activeSprite === runSprite) frame = Math.floor(runAnimationTime * fps) % count;
   const sourceX = (frame % columns) * frameW;
   const sourceY = Math.floor(frame / columns) * frameH;
-  const drawW = Math.max(1, Math.round(frameW * scale.x));
-  const drawH = Math.max(1, Math.round(frameH * scale.y));
+  const drawW = Math.max(1, Math.round(frameW * CLASSROOM_SCALE * scale.x));
+  const drawH = Math.max(1, Math.round(frameH * CLASSROOM_SCALE * scale.y));
   const spriteX = Math.round(x + (player.w - drawW) / 2);
   const spriteY = y + player.h - drawH;
   if (scale.facing < 0) {
