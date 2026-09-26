@@ -219,6 +219,7 @@ export function createAudio() {
   const dialogueVoices = {
     gabriel: { sounds: ['dialogA', 'dialogO'], pitch: 0.92, variation: 0.24 },
     mom: { sounds: ['momDialogPop'], pitch: 1.04, variation: 0.24 },
+    milenio: { sounds: ['momDialogPop'], pitch: 0.9, variation: 0.16 },
   };
 
   function stopDialogBlip() {

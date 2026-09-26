@@ -123,6 +123,7 @@ function layoutLetters(tokens, maxCols) {
 
 export function createDialogue(canvas, scenes, {
   onOpen = () => {}, onClose = () => {}, onCharacter = () => {}, onSilence = () => {},
+  coordinateScale = () => 1,
 } = {}) {
   const state = {};
   const assets = {};
@@ -431,8 +432,8 @@ export function createDialogue(canvas, scenes, {
     if (!active) return;
     event.preventDefault();
     const bounds = canvas.getBoundingClientRect();
-    const x = (event.clientX - bounds.left) * canvas.width / bounds.width;
-    const y = (event.clientY - bounds.top) * canvas.height / bounds.height;
+    const x = (event.clientX - bounds.left) * canvas.width / bounds.width / coordinateScale();
+    const y = (event.clientY - bounds.top) * canvas.height / bounds.height / coordinateScale();
     if (choices.length) {
       const index = hitboxes.findIndex(box => x >= box.x && x < box.x + box.w && y >= box.y && y < box.y + box.h);
       if (index >= 0) choose(index);

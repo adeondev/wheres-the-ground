@@ -3,7 +3,7 @@ export const dialogueScenes = {
   milenio: {
     lines: [
       { speaker: 'Gabriel', voice: 'gabriel', portrait: 'gabriel', text: 'Boa noite, professor.' },
-      { speaker: 'Milênio', portrait: 'none', text: 'Oi Gabriel, boa noite...' },
+      { speaker: 'Milênio', voice: 'milenio', portrait: 'none', text: 'Oi Gabriel, boa noite...' },
     ],
   },
   despedida: {

@@ -1,10 +1,10 @@
 import { GAME_HEIGHT, PLAYER } from './config.js';
 import { DASH_ANIMATION_DURATION, playerPose } from './animation.js';
-import { createAudio } from './audio.js?v=mom-pop';
+import { createAudio } from './audio.js?v=integer-camera';
 import { createCameraEffects } from './cameraEffects.js';
 import { createCrt } from './crt.js';
-import { createDialogue } from './dialogue.js?v=clear-dialogue';
-import { dialogueScenes } from './dialogueData.js?v=milenio-greeting';
+import { createDialogue } from './dialogue.js?v=integer-camera';
+import { dialogueScenes } from './dialogueData.js?v=integer-camera';
 import { createEffects } from './effects.js?v=milenio';
 import { drawRocketFlame } from './fireVfx.js';
 import { createInput } from './input.js?v=milenio-greeting';
@@ -19,6 +19,11 @@ const canvas = document.querySelector('#game');
 const ctx = canvas.getContext('2d');
 const sceneCanvas = document.createElement('canvas');
 const sceneCtx = sceneCanvas.getContext('2d');
+const videoFrameCanvas = document.createElement('canvas');
+const videoFrameCtx = videoFrameCanvas.getContext('2d');
+let uiScale = 1;
+let viewWidth = 1;
+const viewHeight = GAME_HEIGHT;
 const openingVideo = document.querySelector('#opening-video');
 const loadingLabel = document.querySelector('#loading-label');
 const loadingFill = document.querySelector('#loading-fill');
@@ -37,6 +42,7 @@ const dialogue = createDialogue(canvas, dialogueScenes, {
   onClose: () => { input.clear(); openingDialogue = false; },
   onCharacter: voice => audio.playDialogBlip(voice),
   onSilence: () => audio.stopDialogBlip(),
+  coordinateScale: () => uiScale,
 });
 const effects = createEffects();
 const cameraEffects = createCameraEffects();
@@ -163,13 +169,18 @@ function resize() {
   const previousGround = world?.groundY;
   const previousNpcs = world?.npcs;
   const bounds = canvas.getBoundingClientRect();
-  const pixelSize = bounds.height / GAME_HEIGHT;
-  canvas.width = Math.max(1, Math.ceil(bounds.width / pixelSize));
-  canvas.height = GAME_HEIGHT;
+  canvas.width = Math.max(1, Math.round(bounds.width));
+  canvas.height = Math.max(1, Math.round(bounds.height));
+  uiScale = canvas.height / GAME_HEIGHT;
+  viewWidth = canvas.width / uiScale;
+  const pixelSize = uiScale;
+  videoFrameCanvas.width = Math.ceil(viewWidth);
+  videoFrameCanvas.height = viewHeight;
+  videoFrameCtx.imageSmoothingEnabled = false;
   document.documentElement.style.setProperty('--ui-scale', `${pixelSize / 3}`);
   document.documentElement.style.setProperty('--touch-scale', `${Math.min(pixelSize / 3, bounds.width / 390)}`);
   ctx.imageSmoothingEnabled = false;
-  world = createWorld(canvas.width, canvas.height);
+  world = createWorld(viewWidth, viewHeight);
   sceneCanvas.width = world.width;
   sceneCanvas.height = world.height;
   sceneCtx.imageSmoothingEnabled = false;
@@ -294,7 +305,7 @@ function update(dt) {
 }
 
 function updateCamera(dt) {
-  const visibleWidth = canvas.width / (CAMERA_ZOOM * cameraEffects.zoom);
+  const visibleWidth = canvas.width / scenePixelScale();
   const maxCameraX = Math.max(0, world.width - visibleWidth);
   const targetCameraX = Math.max(0, Math.min(maxCameraX, player.x + player.w / 2 - visibleWidth * 0.42));
   cameraX += (targetCameraX - cameraX) * Math.min(1, dt * 8);
@@ -304,6 +315,10 @@ function updateCamera(dt) {
 function rect(x, y, w, h, color, context = ctx) {
   context.fillStyle = color;
   context.fillRect(Math.round(x), Math.round(y), w, h);
+}
+
+function scenePixelScale() {
+  return Math.max(1, Math.round(uiScale * CAMERA_ZOOM * cameraEffects.zoom));
 }
 
 function drawPlayer(context = ctx, viewCameraX = cameraX) {
@@ -367,31 +382,35 @@ function drawPlayer(context = ctx, viewCameraX = cameraX) {
 }
 
 function draw() {
+  ctx.setTransform(uiScale, 0, 0, uiScale, 0, 0);
   if (booting || videoPlaying) {
     ctx.fillStyle = '#000000';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillRect(0, 0, viewWidth, viewHeight);
     if (videoPlaying && openingVideo.readyState >= 2 && openingVideo.videoWidth > 0) {
       // O vídeo passa pelo mesmo canvas de baixa resolução e filtro CRT do jogo.
-      const scale = Math.min(canvas.width / openingVideo.videoWidth, canvas.height / openingVideo.videoHeight);
+      const scale = Math.min(viewWidth / openingVideo.videoWidth, viewHeight / openingVideo.videoHeight);
       const width = Math.round(openingVideo.videoWidth * scale);
       const height = Math.round(openingVideo.videoHeight * scale);
+      videoFrameCtx.fillStyle = '#000000';
+      videoFrameCtx.fillRect(0, 0, videoFrameCanvas.width, videoFrameCanvas.height);
+      videoFrameCtx.drawImage(openingVideo, Math.round((viewWidth - width) / 2),
+        Math.round((viewHeight - height) / 2), width, height);
       ctx.imageSmoothingEnabled = false;
-      ctx.drawImage(openingVideo, Math.round((canvas.width - width) / 2),
-        Math.round((canvas.height - height) / 2), width, height);
+      ctx.drawImage(videoFrameCanvas, 0, 0, viewWidth, viewHeight);
     }
     return;
   }
   if (openingDialogue) {
     ctx.fillStyle = '#000000';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    dialogue.draw(ctx, canvas.width, canvas.height);
+    ctx.fillRect(0, 0, viewWidth, viewHeight);
+    dialogue.draw(ctx, viewWidth, viewHeight);
     return;
   }
   if (intro.active) {
-    intro.draw(ctx, canvas.width, canvas.height);
+    intro.draw(ctx, viewWidth, viewHeight);
     return;
   }
-  const zoom = CAMERA_ZOOM * cameraEffects.zoom;
+  const zoom = scenePixelScale();
   const visibleWidth = canvas.width / zoom;
   const visibleHeight = canvas.height / zoom;
   const cameraY = Math.max(0, world.height - visibleHeight);
@@ -405,29 +424,29 @@ function draw() {
     rect(shot.x, shot.y, 4, 4, BOOST_FIRE.core, sceneCtx);
   }
   drawPlayer(sceneCtx, 0);
-  const sourceWidth = Math.round(visibleWidth);
-  const sourceHeight = Math.round(visibleHeight);
-  const sourceX = Math.round(world.width < sourceWidth ? (world.width - sourceWidth) / 2 : cameraX);
+  const sourceX = Math.round(world.width < visibleWidth ? (world.width - visibleWidth) / 2 : cameraX);
   const sourceY = Math.round(cameraY);
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.fillStyle = '#101417';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.imageSmoothingEnabled = false;
-  ctx.drawImage(sceneCanvas, sourceX, sourceY, sourceWidth, sourceHeight,
-    Math.round(cameraEffects.x * zoom), Math.round(cameraEffects.y * zoom), canvas.width, canvas.height);
-  const renderZoomX = canvas.width / sourceWidth;
-  const renderZoomY = canvas.height / sourceHeight;
+  ctx.drawImage(sceneCanvas, Math.round((-sourceX + cameraEffects.x) * zoom),
+    Math.round((-sourceY + cameraEffects.y) * zoom), world.width * zoom, world.height * zoom);
+  ctx.setTransform(uiScale, 0, 0, uiScale, 0, 0);
+  const renderZoomX = zoom / uiScale;
+  const renderZoomY = renderZoomX;
   for (const character of world.npcs ?? []) {
     if (character.surpriseTime > 0) {
       dialogue.drawPrompt(ctx, '!', (character.x - sourceX) * renderZoomX,
-        (character.y - character.h - npcJumpOffset(character) - sourceY) * renderZoomY - 24, canvas.width, 2);
+        (character.y - character.h - npcJumpOffset(character) - sourceY) * renderZoomY - 24, viewWidth, 2);
     }
   }
   const npc = dialogue.active || interactingNpc ? null : nearbyNpc(world, player);
   if (npc) {
     dialogue.drawPrompt(ctx, 'Z para Interagir', (npc.x - sourceX) * renderZoomX,
-      (npc.y - npc.h - sourceY) * renderZoomY - 14, canvas.width);
+      (npc.y - npc.h - sourceY) * renderZoomY - 14, viewWidth);
   }
-  dialogue.draw(ctx, canvas.width, canvas.height);
+  dialogue.draw(ctx, viewWidth, viewHeight);
   const fuelPercent = Math.round(player.fuel / PLAYER.maxFuel * 100);
   fuelFill.style.width = `${fuelPercent}%`;
   fuelLabel.textContent = `${fuelPercent}%`;
