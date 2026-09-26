@@ -3,7 +3,7 @@ import { DASH_ANIMATION_DURATION, playerPose } from './animation.js';
 import { createAudio } from './audio.js?v=integer-camera';
 import { createCameraEffects } from './cameraEffects.js';
 import { createCrt } from './crt.js';
-import { createDialogue } from './dialogue.js?v=integer-camera';
+import { createDialogue } from './dialogue.js?v=seamless-frame';
 import { dialogueScenes } from './dialogueData.js?v=integer-camera';
 import { createEffects } from './effects.js?v=milenio';
 import { drawRocketFlame } from './fireVfx.js';
@@ -60,6 +60,9 @@ let boostSprite = null;
 let dashSprite = null;
 let landingSprite = null;
 let cameraX = 0;
+let previousCameraX = 0;
+let previousPlayerX = 0;
+let previousPlayerY = 0;
 let animationTime = 0;
 let runAnimationTime = 0;
 let jumpAnimationTime = 0;
@@ -321,10 +324,10 @@ function scenePixelScale() {
   return Math.max(1, Math.round(uiScale * CAMERA_ZOOM * cameraEffects.zoom));
 }
 
-function drawPlayer(context = ctx, viewCameraX = cameraX) {
+function drawPlayer(context = ctx, viewCameraX = cameraX, viewCameraY = 0, position = player) {
   const ctx = context;
-  const x = Math.round(player.x - viewCameraX);
-  const y = Math.round(player.y);
+  const x = Math.round(position.x - viewCameraX);
+  const y = Math.round(position.y - viewCameraY);
   const scale = playerPose(player);
 
   if (player.boosting) {
@@ -414,6 +417,10 @@ function draw() {
   const visibleWidth = canvas.width / zoom;
   const visibleHeight = canvas.height / zoom;
   const cameraY = Math.max(0, world.height - visibleHeight);
+  const alpha = accumulator / STEP;
+  const renderPlayerX = previousPlayerX + (player.x - previousPlayerX) * alpha;
+  const renderPlayerY = previousPlayerY + (player.y - previousPlayerY) * alpha;
+  const renderCameraX = previousCameraX + (cameraX - previousCameraX) * alpha;
   // Desenha os sprites na grade original antes de ampliar a cena inteira.
   drawWorld(sceneCtx, world, 0, world.width, world.height, 12);
   drawNpcs(sceneCtx, world, 0, animationTime);
@@ -423,15 +430,21 @@ function draw() {
     rect(shot.x - 1, shot.y - 1, 6, 6, BOOST_FIRE.middle, sceneCtx);
     rect(shot.x, shot.y, 4, 4, BOOST_FIRE.core, sceneCtx);
   }
-  drawPlayer(sceneCtx, 0);
-  const sourceX = Math.round(world.width < visibleWidth ? (world.width - visibleWidth) / 2 : cameraX);
-  const sourceY = Math.round(cameraY);
+  const sourceX = world.width < visibleWidth ? (world.width - visibleWidth) / 2 : renderCameraX;
+  const sourceY = cameraY;
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.fillStyle = '#101417';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.imageSmoothingEnabled = false;
   ctx.drawImage(sceneCanvas, Math.round((-sourceX + cameraEffects.x) * zoom),
     Math.round((-sourceY + cameraEffects.y) * zoom), world.width * zoom, world.height * zoom);
+  // Arredonda a posição relativa uma só vez, já em pixels da tela.
+  ctx.save();
+  ctx.translate(Math.round((renderPlayerX - sourceX + cameraEffects.x) * zoom),
+    Math.round((renderPlayerY - sourceY + cameraEffects.y) * zoom));
+  ctx.scale(zoom, zoom);
+  drawPlayer(ctx, renderPlayerX, renderPlayerY, { x: renderPlayerX, y: renderPlayerY });
+  ctx.restore();
   ctx.setTransform(uiScale, 0, 0, uiScale, 0, 0);
   const renderZoomX = zoom / uiScale;
   const renderZoomY = renderZoomX;
@@ -457,6 +470,9 @@ function frame(time) {
   accumulator += Math.min((time - lastTime) / 1000, 0.05);
   lastTime = time;
   while (accumulator >= STEP) {
+    previousPlayerX = player.x;
+    previousPlayerY = player.y;
+    previousCameraX = cameraX;
     update(STEP);
     accumulator -= STEP;
   }
@@ -466,6 +482,8 @@ function frame(time) {
 
 resize();
 player = createPlayer(world.groundY);
+previousPlayerX = player.x;
+previousPlayerY = player.y;
 window.addEventListener('resize', resize);
 loadGabriel().then(result => { sprite = result; }).catch(error => console.error(error));
 loadGabrielRun().then(result => { runSprite = result; }).catch(error => console.error(error));

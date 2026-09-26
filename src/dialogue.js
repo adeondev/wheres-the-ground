@@ -83,18 +83,37 @@ function loadImage(name, basePath = UI_PATH) {
   });
 }
 
+const frameCache = new WeakMap();
+
 function nineSlice(ctx, image, x, y, width, height) {
+  width = Math.round(width);
+  height = Math.round(height);
+  let cache = frameCache.get(image);
+  if (!cache) { cache = new Map(); frameCache.set(image, cache); }
+  const key = `${width}x${height}`;
+  if (cache.has(key)) {
+    ctx.drawImage(cache.get(key), Math.round(x), Math.round(y));
+    return;
+  }
+  const frame = document.createElement('canvas');
+  frame.width = width;
+  frame.height = height;
+  const frameCtx = frame.getContext('2d');
+  frameCtx.imageSmoothingEnabled = false;
   const pointsX = [0, 8, 16, 24];
   const pointsY = [0, 8, 16, 24];
   const corner = 24;
-  const destX = [x, x + corner, x + width - corner, x + width];
-  const destY = [y, y + corner, y + height - corner, y + height];
+  const destX = [0, corner, width - corner, width];
+  const destY = [0, corner, height - corner, height];
   for (let row = 0; row < 3; row++) {
     for (let col = 0; col < 3; col++) {
-      ctx.drawImage(image, pointsX[col], pointsY[row], 8, 8,
+      frameCtx.drawImage(image, pointsX[col], pointsY[row], 8, 8,
         destX[col], destY[row], destX[col + 1] - destX[col], destY[row + 1] - destY[row]);
     }
   }
+  if (cache.size >= 8) cache.delete(cache.keys().next().value);
+  cache.set(key, frame);
+  ctx.drawImage(frame, Math.round(x), Math.round(y));
 }
 
 function layoutLetters(tokens, maxCols) {
