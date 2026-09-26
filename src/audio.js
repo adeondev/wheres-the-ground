@@ -337,7 +337,7 @@ export function createAudio() {
   function setClassroomMusic(active, duration = 0.8) {
     if (classroomMusicActive === active) return;
     classroomMusicActive = active;
-    classroomFade = { from: classroomMusic.volume, to: active ? 0.45 : 0,
+    classroomFade = { from: classroomMusic.volume, to: active ? 0.55 : 0,
       elapsed: 0, duration: Math.max(0, duration) };
     if (active) playClassroomMusic();
   }

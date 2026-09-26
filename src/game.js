@@ -1,6 +1,6 @@
 import { GAME_HEIGHT, PLAYER } from './config.js';
 import { DASH_ANIMATION_DURATION, playerPose } from './animation.js';
-import { createAudio } from './audio.js?v=classroom-music';
+import { createAudio } from './audio.js?v=classroom-volume';
 import { createCameraEffects } from './cameraEffects.js';
 import { createCrt } from './crt.js';
 import { createDialogue } from './dialogue.js?v=seamless-frame';
