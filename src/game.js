@@ -3,13 +3,13 @@ import { DASH_ANIMATION_DURATION, playerPose } from './animation.js';
 import { createAudio } from './audio.js?v=mom-pop';
 import { createCameraEffects } from './cameraEffects.js';
 import { createCrt } from './crt.js';
-import { createDialogue } from './dialogue.js?v=milenio-greeting';
+import { createDialogue } from './dialogue.js?v=clear-dialogue';
 import { dialogueScenes } from './dialogueData.js?v=milenio-greeting';
 import { createEffects } from './effects.js?v=milenio';
 import { drawRocketFlame } from './fireVfx.js';
 import { createInput } from './input.js?v=milenio-greeting';
 import { createIntro } from './intro.js';
-import { drawNpcs, nearbyNpc, npcJumpOffset, startNpcInteraction, updateNpcs } from './npcs.js?v=milenio-greeting';
+import { drawNpcs, nearbyNpc, npcJumpOffset, startNpcInteraction, updateNpcs } from './npcs.js?v=clear-dialogue';
 import { BOOST_FIRE } from './palette.js';
 import { createPlayer, fireBlast, updatePlayer } from './player.js?v=milenio';
 import { loadGabriel, loadGabrielBoost, loadGabrielDash, loadGabrielJump, loadGabrielLanding, loadGabrielRun } from './sprites.js';
@@ -17,6 +17,8 @@ import { CLASSROOM_SCALE, createWorld, drawWorld, overlaps, solidBlocks } from '
 
 const canvas = document.querySelector('#game');
 const ctx = canvas.getContext('2d');
+const sceneCanvas = document.createElement('canvas');
+const sceneCtx = sceneCanvas.getContext('2d');
 const openingVideo = document.querySelector('#opening-video');
 const loadingLabel = document.querySelector('#loading-label');
 const loadingFill = document.querySelector('#loading-fill');
@@ -168,6 +170,9 @@ function resize() {
   document.documentElement.style.setProperty('--touch-scale', `${Math.min(pixelSize / 3, bounds.width / 390)}`);
   ctx.imageSmoothingEnabled = false;
   world = createWorld(canvas.width, canvas.height);
+  sceneCanvas.width = world.width;
+  sceneCanvas.height = world.height;
+  sceneCtx.imageSmoothingEnabled = false;
   if (previousNpcs) world.npcs = previousNpcs;
   document.body.classList.toggle('no-powers', world.allowPowers === false);
   controlsHint.textContent = world.allowPowers === false
@@ -211,10 +216,15 @@ function update(dt) {
       interactingNpc = null;
       dialogue.start('milenio');
     }
+    updateCamera(dt);
     return;
   }
   dialogue.update(dt);
-  if (dialogue.active) { cameraEffects.clear(); input.clear(); audio.updateBooster(false); return; }
+  if (dialogue.active) {
+    cameraEffects.clear(); input.clear(); audio.updateBooster(false);
+    updateCamera(dt);
+    return;
+  }
   if (input.takeInteract()) {
     const npc = nearbyNpc(world, player);
     if (npc) {
@@ -280,21 +290,25 @@ function update(dt) {
     }
   }
 
+  updateCamera(dt);
+}
+
+function updateCamera(dt) {
   const visibleWidth = canvas.width / (CAMERA_ZOOM * cameraEffects.zoom);
   const maxCameraX = Math.max(0, world.width - visibleWidth);
-  const targetCameraX = Math.max(0, Math.min(maxCameraX,
-    player.x + player.w / 2 - visibleWidth * 0.42));
+  const targetCameraX = Math.max(0, Math.min(maxCameraX, player.x + player.w / 2 - visibleWidth * 0.42));
   cameraX += (targetCameraX - cameraX) * Math.min(1, dt * 8);
   cameraX = Math.max(0, Math.min(maxCameraX, cameraX));
 }
 
-function rect(x, y, w, h, color) {
-  ctx.fillStyle = color;
-  ctx.fillRect(Math.round(x), Math.round(y), w, h);
+function rect(x, y, w, h, color, context = ctx) {
+  context.fillStyle = color;
+  context.fillRect(Math.round(x), Math.round(y), w, h);
 }
 
-function drawPlayer() {
-  const x = Math.round(player.x - cameraX);
+function drawPlayer(context = ctx, viewCameraX = cameraX) {
+  const ctx = context;
+  const x = Math.round(player.x - viewCameraX);
   const y = Math.round(player.y);
   const scale = playerPose(player);
 
@@ -315,10 +329,10 @@ function drawPlayer() {
     const h = Math.round(player.h * scale.y);
     const left = Math.round(x + (player.w - w) / 2);
     const top = y + player.h - h;
-    rect(left + Math.round(w * 0.14), top + Math.round(h * 0.08), Math.round(w * 0.72), Math.round(h * 0.38), '#f3be92');
-    rect(left + 1, top + Math.round(h * 0.46), w - 2, Math.round(h * 0.42), '#e99c72');
-    rect(left + 2, top + h - 3, Math.round(w * 0.28), 3, '#2a344b');
-    rect(left + w - Math.round(w * 0.28) - 2, top + h - 3, Math.round(w * 0.28), 3, '#2a344b');
+    rect(left + Math.round(w * 0.14), top + Math.round(h * 0.08), Math.round(w * 0.72), Math.round(h * 0.38), '#f3be92', ctx);
+    rect(left + 1, top + Math.round(h * 0.46), w - 2, Math.round(h * 0.42), '#e99c72', ctx);
+    rect(left + 2, top + h - 3, Math.round(w * 0.28), 3, '#2a344b', ctx);
+    rect(left + w - Math.round(w * 0.28) - 2, top + h - 3, Math.round(w * 0.28), 3, '#2a344b', ctx);
     return;
   }
 
@@ -381,30 +395,37 @@ function draw() {
   const visibleWidth = canvas.width / zoom;
   const visibleHeight = canvas.height / zoom;
   const cameraY = Math.max(0, world.height - visibleHeight);
-  const roomOffsetX = Math.max(0, (canvas.width - world.width * zoom) / 2);
-  ctx.save();
-  ctx.translate(roomOffsetX + cameraEffects.x * zoom, -cameraY * zoom + cameraEffects.y * zoom);
-  ctx.scale(zoom, zoom);
-  drawWorld(ctx, world, cameraX, visibleWidth, world.height, 12);
-  drawNpcs(ctx, world, cameraX, animationTime);
-  effects.draw(ctx, cameraX, sprite);
+  // Desenha os sprites na grade original antes de ampliar a cena inteira.
+  drawWorld(sceneCtx, world, 0, world.width, world.height, 12);
+  drawNpcs(sceneCtx, world, 0, animationTime);
+  effects.draw(sceneCtx, 0, sprite);
   for (const shot of projectiles) {
-    rect(shot.x - cameraX - 2, shot.y - 2, 8, 8, BOOST_FIRE.outer);
-    rect(shot.x - cameraX - 1, shot.y - 1, 6, 6, BOOST_FIRE.middle);
-    rect(shot.x - cameraX, shot.y, 4, 4, BOOST_FIRE.core);
+    rect(shot.x - 2, shot.y - 2, 8, 8, BOOST_FIRE.outer, sceneCtx);
+    rect(shot.x - 1, shot.y - 1, 6, 6, BOOST_FIRE.middle, sceneCtx);
+    rect(shot.x, shot.y, 4, 4, BOOST_FIRE.core, sceneCtx);
   }
-  drawPlayer();
-  ctx.restore();
+  drawPlayer(sceneCtx, 0);
+  const sourceWidth = Math.round(visibleWidth);
+  const sourceHeight = Math.round(visibleHeight);
+  const sourceX = Math.round(world.width < sourceWidth ? (world.width - sourceWidth) / 2 : cameraX);
+  const sourceY = Math.round(cameraY);
+  ctx.fillStyle = '#101417';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.imageSmoothingEnabled = false;
+  ctx.drawImage(sceneCanvas, sourceX, sourceY, sourceWidth, sourceHeight,
+    Math.round(cameraEffects.x * zoom), Math.round(cameraEffects.y * zoom), canvas.width, canvas.height);
+  const renderZoomX = canvas.width / sourceWidth;
+  const renderZoomY = canvas.height / sourceHeight;
   for (const character of world.npcs ?? []) {
     if (character.surpriseTime > 0) {
-      dialogue.drawPrompt(ctx, '!', (character.x - cameraX) * zoom + roomOffsetX,
-        (character.y - character.h - npcJumpOffset(character) - cameraY) * zoom - 24, canvas.width, 2);
+      dialogue.drawPrompt(ctx, '!', (character.x - sourceX) * renderZoomX,
+        (character.y - character.h - npcJumpOffset(character) - sourceY) * renderZoomY - 24, canvas.width, 2);
     }
   }
   const npc = dialogue.active || interactingNpc ? null : nearbyNpc(world, player);
   if (npc) {
-    dialogue.drawPrompt(ctx, 'Z para Interagir', (npc.x - cameraX) * zoom + roomOffsetX,
-      (npc.y - npc.h - cameraY) * zoom - 14, canvas.width);
+    dialogue.drawPrompt(ctx, 'Z para Interagir', (npc.x - sourceX) * renderZoomX,
+      (npc.y - npc.h - sourceY) * renderZoomY - 14, canvas.width);
   }
   dialogue.draw(ctx, canvas.width, canvas.height);
   const fuelPercent = Math.round(player.fuel / PLAYER.maxFuel * 100);

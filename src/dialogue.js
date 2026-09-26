@@ -326,7 +326,7 @@ export function createDialogue(canvas, scenes, {
     const choiceRows = Math.ceil(choiceCount / (compact ? 1 : 2));
     const height = Math.max(compact ? 98 : 96,
       choiceRows ? optionY + choiceRows * 13 + 16 : textY + lines * 11 + 18);
-    const y = viewHeight - height - (compact ? 6 : 12);
+    const y = compact ? 6 : 12;
     return { x, y, width, height, textX, textWidth, textY, optionY, compact };
   }
 
@@ -335,8 +335,6 @@ export function createDialogue(canvas, scenes, {
     const box = metrics(viewWidth, viewHeight);
     ctx.save();
     ctx.imageSmoothingEnabled = false;
-    ctx.fillStyle = '#05081088';
-    ctx.fillRect(0, 0, viewWidth, viewHeight);
     nineSlice(ctx, assets.frame, box.x, box.y, box.width, box.height);
 
     const line = node.lines[lineIndex];
