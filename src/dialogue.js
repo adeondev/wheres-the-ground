@@ -1,5 +1,8 @@
 const EFFECTS = new Set(['shake', 'rgb', 'fall', 'wave']);
 const UI_PATH = 'assets/ui/dialogue/';
+const GABRIEL_PORTRAIT_SCALE = 5;
+const GABRIEL_PORTRAIT_INSET = 10;
+const GABRIEL_PORTRAIT_GAP = 8;
 const LOWERCASE_BITMAP = {
   a: ['.....', '.....', '.###.', '....#', '.####', '#...#', '.####'],
   b: ['#....', '#....', '####.', '#...#', '#...#', '#...#', '####.'],
@@ -303,7 +306,10 @@ export function createDialogue(canvas, scenes, { onOpen = () => {}, onClose = ()
     const compact = viewWidth < 220;
     const width = compact ? viewWidth - 8 : Math.min(400, viewWidth - 18);
     const x = Math.round((viewWidth - width) / 2);
-    const textX = compact || node.lines[lineIndex].portrait === 'none' ? x + 18 : x + 62;
+    const portrait = node.lines[lineIndex].portrait;
+    const textX = compact || portrait === 'none' ? x + 18
+      : portrait === 'gabriel' ? x + GABRIEL_PORTRAIT_INSET + (assets.gabriel?.width ?? 16) * GABRIEL_PORTRAIT_SCALE + GABRIEL_PORTRAIT_GAP
+        : x + 62;
     const textWidth = x + width - (compact ? 10 : 14) - textX;
     const lines = layoutLetters(tokens, Math.max(1, Math.floor(textWidth / 6)));
     const textY = 30;
@@ -329,7 +335,10 @@ export function createDialogue(canvas, scenes, { onOpen = () => {}, onClose = ()
     if (!box.compact && line.portrait !== 'none') {
       const portrait = line.portrait === 'gabriel' ? assets.gabriel : assets.signal;
       if (line.portrait === 'gabriel') {
-        ctx.drawImage(portrait, box.x + 14, box.y + 18, portrait.width * 3, portrait.height * 3);
+        const width = portrait.width * GABRIEL_PORTRAIT_SCALE;
+        const height = portrait.height * GABRIEL_PORTRAIT_SCALE;
+        ctx.drawImage(portrait, box.x + GABRIEL_PORTRAIT_INSET,
+          box.y + Math.round((box.height - height) / 2), width, height);
       } else {
         ctx.drawImage(portrait, box.x + 14, box.y + 18, portrait.width * 2, portrait.height * 2);
       }

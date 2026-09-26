@@ -3,7 +3,7 @@ import { DASH_ANIMATION_DURATION, playerPose } from './animation.js';
 import { createAudio } from './audio.js';
 import { createCameraEffects } from './cameraEffects.js';
 import { createCrt } from './crt.js';
-import { createDialogue } from './dialogue.js?v=portrait-and-lowercase';
+import { createDialogue } from './dialogue.js?v=larger-portrait';
 import { dialogueScenes } from './dialogueData.js?v=portrait-and-lowercase';
 import { createEffects } from './effects.js';
 import { drawRocketFlame } from './fireVfx.js';
