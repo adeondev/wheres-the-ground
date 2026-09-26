@@ -22,7 +22,7 @@ Há sete receitas: prédio expansível, janela completa, mureta, corrimão, aces
 
 **Verificar encaixes** aponta pontas sem concreto correspondente, janelas incompletas, partes da porta faltando e ventilação desconectada. Essa verificação ajuda na revisão; não altera a cena automaticamente. As montagens respeitam as regras. Ao editar uma peça, suas regras são mantidas no JSON.
 
-Prédio e janelas são sólidos conforme as definições do autor. Acesso, mureta, corrimão e ventilação foram interpretados como decoração ao fundo, sem colisão. Essa decisão e o destino ainda indefinido da porta estão anotados em `reviewNotes` no JSON para revisão.
+Prédio e janelas são sólidos conforme as definições do autor. A entrada apoia diretamente no telhado e é desenhada à frente da mureta (ordem 3). As peças da sua base exigem telhado imediatamente abaixo. A entrada continua sem colisão de movimento. Mureta, corrimão e ventilação ficam ao fundo, sem colisão. As decisões de colisão e o destino ainda indefinido da porta estão anotados em `reviewNotes` no JSON para revisão.
 
 O exemplo também está em `assets/sprites/tilesets/open_world_tileset.metadata.json`. O HTML inclui a mesma base para funcionar sem carregar JSON por `fetch` ao abrir por duplo clique. Para usar um arquivo JSON atualizado, importe-o no editor. O rascunho deste catálogo usa uma nova chave de armazenamento; o rascunho anterior do navegador é preservado. **Restaurar exemplo** restaura catálogo e cena completos, com suporte a Desfazer.
 

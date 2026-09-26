@@ -799,7 +799,7 @@
         "h": 16
       },
       "role": "decoration",
-      "layer": 0,
+      "layer": 3,
       "repeat": "none",
       "collision": {
         "type": "none"
@@ -838,7 +838,7 @@
         "h": 16
       },
       "role": "decoration",
-      "layer": 0,
+      "layer": 3,
       "repeat": "none",
       "collision": {
         "type": "none"
@@ -885,7 +885,7 @@
         "h": 16
       },
       "role": "decoration",
-      "layer": 0,
+      "layer": 3,
       "repeat": "none",
       "collision": {
         "type": "none"
@@ -932,7 +932,7 @@
         "h": 16
       },
       "role": "decoration",
-      "layer": 0,
+      "layer": 3,
       "repeat": "none",
       "collision": {
         "type": "none"
@@ -971,12 +971,12 @@
         "h": 16
       },
       "role": "decoration",
-      "layer": 0,
+      "layer": 3,
       "repeat": "none",
       "collision": {
         "type": "none"
       },
-      "notes": "Parte da parede ao fundo do acesso; encaixa na linha correspondente da porta. Sem colisão. O tileset atual fornece um padrão completo de 4×3 tiles.",
+      "notes": "Parte da parede da entrada, à frente da mureta; encaixa na linha correspondente da porta. A base da estrutura apoia diretamente no telhado. Sem colisão. O tileset atual fornece um padrão completo de 4×3 tiles.",
       "assembly": {
         "family": "acesso",
         "part": "1-0",
@@ -1018,12 +1018,12 @@
         "h": 16
       },
       "role": "door",
-      "layer": 0,
+      "layer": 3,
       "repeat": "none",
       "collision": {
         "type": "none"
       },
-      "notes": "Parte da porta 2×2 ao fundo. As quatro partes permanecem juntas e não bloqueiam o personagem. O destino da porta ainda deve ser definido no jogo.",
+      "notes": "Parte da entrada 2×2 apoiada diretamente no telhado, à frente da mureta. As quatro partes permanecem juntas e não bloqueiam o personagem. O destino da porta ainda deve ser definido no jogo.",
       "assembly": {
         "family": "porta",
         "part": "1-1",
@@ -1073,12 +1073,12 @@
         "h": 16
       },
       "role": "door",
-      "layer": 0,
+      "layer": 3,
       "repeat": "none",
       "collision": {
         "type": "none"
       },
-      "notes": "Parte da porta 2×2 ao fundo. As quatro partes permanecem juntas e não bloqueiam o personagem. O destino da porta ainda deve ser definido no jogo.",
+      "notes": "Parte da entrada 2×2 apoiada diretamente no telhado, à frente da mureta. As quatro partes permanecem juntas e não bloqueiam o personagem. O destino da porta ainda deve ser definido no jogo.",
       "assembly": {
         "family": "porta",
         "part": "1-2",
@@ -1128,12 +1128,12 @@
         "h": 16
       },
       "role": "decoration",
-      "layer": 0,
+      "layer": 3,
       "repeat": "none",
       "collision": {
         "type": "none"
       },
-      "notes": "Parte da parede ao fundo do acesso; encaixa na linha correspondente da porta. Sem colisão. O tileset atual fornece um padrão completo de 4×3 tiles.",
+      "notes": "Parte da parede da entrada, à frente da mureta; encaixa na linha correspondente da porta. A base da estrutura apoia diretamente no telhado. Sem colisão. O tileset atual fornece um padrão completo de 4×3 tiles.",
       "assembly": {
         "family": "acesso",
         "part": "1-3",
@@ -1175,12 +1175,12 @@
         "h": 16
       },
       "role": "decoration",
-      "layer": 0,
+      "layer": 3,
       "repeat": "none",
       "collision": {
         "type": "none"
       },
-      "notes": "Parte da parede ao fundo do acesso; encaixa na linha correspondente da porta. Sem colisão. O tileset atual fornece um padrão completo de 4×3 tiles.",
+      "notes": "Parte da parede da entrada, à frente da mureta; encaixa na linha correspondente da porta. A base da estrutura apoia diretamente no telhado. Sem colisão. O tileset atual fornece um padrão completo de 4×3 tiles.",
       "assembly": {
         "family": "acesso",
         "part": "2-0",
@@ -1200,6 +1200,18 @@
               "acesso_parede_esquerda_cima"
             ],
             "reason": "falta a parte correspondente imediatamente acima."
+          },
+          {
+            "dx": 0,
+            "dy": 16,
+            "tileIds": [
+              "piso_telhado_esquerda",
+              "piso_loop_telhado",
+              "piso_loop_telhado_variante_2",
+              "piso_loop_telhado_variante_3",
+              "piso_telhado_direita"
+            ],
+            "reason": "a base da entrada deve apoiar diretamente no telhado, à frente da mureta."
           }
         ]
       }
@@ -1214,12 +1226,12 @@
         "h": 16
       },
       "role": "door",
-      "layer": 0,
+      "layer": 3,
       "repeat": "none",
       "collision": {
         "type": "none"
       },
-      "notes": "Parte da porta 2×2 ao fundo. As quatro partes permanecem juntas e não bloqueiam o personagem. O destino da porta ainda deve ser definido no jogo.",
+      "notes": "Parte da entrada 2×2 apoiada diretamente no telhado, à frente da mureta. As quatro partes permanecem juntas e não bloqueiam o personagem. O destino da porta ainda deve ser definido no jogo.",
       "assembly": {
         "family": "porta",
         "part": "2-1",
@@ -1247,6 +1259,18 @@
               "porta_esquerda_cima"
             ],
             "reason": "falta a parte correspondente imediatamente acima."
+          },
+          {
+            "dx": 0,
+            "dy": 16,
+            "tileIds": [
+              "piso_telhado_esquerda",
+              "piso_loop_telhado",
+              "piso_loop_telhado_variante_2",
+              "piso_loop_telhado_variante_3",
+              "piso_telhado_direita"
+            ],
+            "reason": "a base da entrada deve apoiar diretamente no telhado, à frente da mureta."
           }
         ]
       }
@@ -1261,12 +1285,12 @@
         "h": 16
       },
       "role": "door",
-      "layer": 0,
+      "layer": 3,
       "repeat": "none",
       "collision": {
         "type": "none"
       },
-      "notes": "Parte da porta 2×2 ao fundo. As quatro partes permanecem juntas e não bloqueiam o personagem. O destino da porta ainda deve ser definido no jogo.",
+      "notes": "Parte da entrada 2×2 apoiada diretamente no telhado, à frente da mureta. As quatro partes permanecem juntas e não bloqueiam o personagem. O destino da porta ainda deve ser definido no jogo.",
       "assembly": {
         "family": "porta",
         "part": "2-2",
@@ -1294,6 +1318,18 @@
               "porta_direita_cima"
             ],
             "reason": "falta a parte correspondente imediatamente acima."
+          },
+          {
+            "dx": 0,
+            "dy": 16,
+            "tileIds": [
+              "piso_telhado_esquerda",
+              "piso_loop_telhado",
+              "piso_loop_telhado_variante_2",
+              "piso_loop_telhado_variante_3",
+              "piso_telhado_direita"
+            ],
+            "reason": "a base da entrada deve apoiar diretamente no telhado, à frente da mureta."
           }
         ]
       }
@@ -1308,12 +1344,12 @@
         "h": 16
       },
       "role": "decoration",
-      "layer": 0,
+      "layer": 3,
       "repeat": "none",
       "collision": {
         "type": "none"
       },
-      "notes": "Parte da parede ao fundo do acesso; encaixa na linha correspondente da porta. Sem colisão. O tileset atual fornece um padrão completo de 4×3 tiles.",
+      "notes": "Parte da parede da entrada, à frente da mureta; encaixa na linha correspondente da porta. A base da estrutura apoia diretamente no telhado. Sem colisão. O tileset atual fornece um padrão completo de 4×3 tiles.",
       "assembly": {
         "family": "acesso",
         "part": "2-3",
@@ -1333,6 +1369,18 @@
               "acesso_parede_direita_cima"
             ],
             "reason": "falta a parte correspondente imediatamente acima."
+          },
+          {
+            "dx": 0,
+            "dy": 16,
+            "tileIds": [
+              "piso_telhado_esquerda",
+              "piso_loop_telhado",
+              "piso_loop_telhado_variante_2",
+              "piso_loop_telhado_variante_3",
+              "piso_telhado_direita"
+            ],
+            "reason": "a base da entrada deve apoiar diretamente no telhado, à frente da mureta."
           }
         ]
       }
@@ -1593,7 +1641,7 @@
     },
     {
       "id": "acesso",
-      "label": "Acesso ao telhado / porta",
+      "label": "Entrada no telhado / porta",
       "type": "pattern",
       "minWidth": 4,
       "minHeight": 3,
@@ -1619,7 +1667,7 @@
           "acesso_parede_direita_baixo"
         ]
       ],
-      "notes": "Doze peças 16×16 formam a estrutura atual. A porta é 2×2. Sem miolo livre de parede neste PNG para expandir toda a estrutura sem duplicar a porta: manter este padrão."
+      "notes": "Doze peças 16×16 formam a entrada. Apoiar a base diretamente no telhado e desenhar à frente da mureta. A porta é 2×2. Sem miolo livre de parede neste PNG para expandir toda a estrutura sem duplicar a porta: manter este padrão."
     },
     {
       "id": "ventilacao",
@@ -1653,7 +1701,8 @@
   ],
   "reviewNotes": [
     "Prédio e janelas mantêm colisão sólida como nas definições fornecidas.",
-    "Acesso, mureta, corrimão e ventilação foram tratados como decoração ao fundo, sem colisão; revisar se algum deve bloquear o jogador.",
+    "A entrada apoia diretamente no telhado e aparece à frente da mureta, conforme a orientação do autor. Continua sem colisão de movimento; revisar se alguma parte deve bloquear o jogador.",
+    "Mureta, corrimão e ventilação foram tratados como decoração ao fundo, sem colisão; revisar se algum deve bloquear o jogador.",
     "O destino da porta ainda não foi especificado.",
     "Somente o personagem de referência foge do recorte 16×16. As margens transparentes de cada tile foram preservadas."
   ],
@@ -2422,84 +2471,84 @@
         "id": "p109",
         "tileId": "acesso_cobertura_esquerda",
         "x": 16,
-        "y": 16,
+        "y": 32,
         "flipX": false
       },
       {
         "id": "p110",
         "tileId": "acesso_cobertura_meio_1",
         "x": 32,
-        "y": 16,
+        "y": 32,
         "flipX": false
       },
       {
         "id": "p111",
         "tileId": "acesso_cobertura_meio_2",
         "x": 48,
-        "y": 16,
+        "y": 32,
         "flipX": false
       },
       {
         "id": "p112",
         "tileId": "acesso_cobertura_direita",
         "x": 64,
-        "y": 16,
+        "y": 32,
         "flipX": false
       },
       {
         "id": "p113",
         "tileId": "acesso_parede_esquerda_cima",
         "x": 16,
-        "y": 32,
+        "y": 48,
         "flipX": false
       },
       {
         "id": "p114",
         "tileId": "porta_esquerda_cima",
         "x": 32,
-        "y": 32,
+        "y": 48,
         "flipX": false
       },
       {
         "id": "p115",
         "tileId": "porta_direita_cima",
         "x": 48,
-        "y": 32,
+        "y": 48,
         "flipX": false
       },
       {
         "id": "p116",
         "tileId": "acesso_parede_direita_cima",
         "x": 64,
-        "y": 32,
+        "y": 48,
         "flipX": false
       },
       {
         "id": "p117",
         "tileId": "acesso_parede_esquerda_baixo",
         "x": 16,
-        "y": 48,
+        "y": 64,
         "flipX": false
       },
       {
         "id": "p118",
         "tileId": "porta_esquerda_baixo",
         "x": 32,
-        "y": 48,
+        "y": 64,
         "flipX": false
       },
       {
         "id": "p119",
         "tileId": "porta_direita_baixo",
         "x": 48,
-        "y": 48,
+        "y": 64,
         "flipX": false
       },
       {
         "id": "p120",
         "tileId": "acesso_parede_direita_baixo",
         "x": 64,
-        "y": 48,
+        "y": 64,
         "flipX": false
       },
       {

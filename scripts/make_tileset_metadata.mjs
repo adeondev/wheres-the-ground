@@ -42,10 +42,10 @@ for(let row=0;row<3;row++)for(let col=0;col<4;col++) {
   const door=row>0&&(col===1||col===2);
   const label=door?`Porta ${col===1?'esquerda':'direita'} · ${row===1?'cima':'baixo'}`:
     row===0?`Cobertura do acesso · ${['esquerda','miolo 1','miolo 2','direita'][col]}`:`Parede do acesso · ${col===0?'esquerda':'direita'} · ${row===1?'cima':'baixo'}`;
-  tile(accessRows[row][col],label,col*16,128+row*16,door?'door':'decoration',0,'none',
-    door?'Parte da porta 2×2 ao fundo. As quatro partes permanecem juntas e não bloqueiam o personagem. O destino da porta ainda deve ser definido no jogo.':
+  tile(accessRows[row][col],label,col*16,128+row*16,door?'door':'decoration',3,'none',
+    door?'Parte da entrada 2×2 apoiada diretamente no telhado, à frente da mureta. As quatro partes permanecem juntas e não bloqueiam o personagem. O destino da porta ainda deve ser definido no jogo.':
     row===0?'Cobertura do acesso. Preservar a margem transparente dentro do tile 16×16: ela alinha a cobertura às outras partes.':
-    'Parte da parede ao fundo do acesso; encaixa na linha correspondente da porta. Sem colisão. O tileset atual fornece um padrão completo de 4×3 tiles.',
+    'Parte da parede da entrada, à frente da mureta; encaixa na linha correspondente da porta. A base da estrutura apoia diretamente no telhado. Sem colisão. O tileset atual fornece um padrão completo de 4×3 tiles.',
     door?'porta':'acesso',`${row}-${col}`);
 }
 tile('mureta_esquerda','Mureta · esquerda',0,176,'decoration',0,'none','Começo da mureta ao fundo. Deve ter miolos ou a ponta direita à direita. Sem colisão.','mureta','left');
@@ -74,6 +74,7 @@ function joined(rows) {
 joined([['janela_esquerda_cima','janela_direita_cima'],['janela_esquerda_baixo','janela_direita_baixo']]);
 joined([['ventilacao_esquerda','ventilacao_direita']]);
 joined(accessRows);
+for(const id of accessRows[2])requires(id,0,16,roofIds,'a base da entrada deve apoiar diretamente no telhado, à frente da mureta.');
 requires('mureta_esquerda',16,0,['mureta_loop','mureta_direita'],'falta a continuação da mureta à direita.');
 requires('mureta_direita',-16,0,['mureta_loop','mureta_esquerda'],'falta a continuação da mureta à esquerda.');
 const assemblies=[
@@ -85,7 +86,7 @@ const assemblies=[
  {id:'janela',label:'Janela completa 2×2',type:'pattern',minWidth:2,minHeight:2,defaultWidth:2,defaultHeight:2,rows:[concreteIds[0].slice(2,4),concreteIds[1].slice(2,4)],notes:'Quatro partes sempre juntas. Posicionar imediatamente abaixo de dois miolos do telhado, dentro da fachada. Para mais janelas, repetir o conjunto completo.'},
  {id:'mureta',label:'Mureta expansível',type:'horizontal',minWidth:2,minHeight:1,defaultWidth:8,defaultHeight:1,left:'mureta_esquerda',middle:['mureta_loop'],right:'mureta_direita',notes:'Uma ponta esquerda, quantos miolos precisar e uma ponta direita. Uma linha de altura.'},
  {id:'corrimao',label:'Corrimão expansível',type:'horizontal',minWidth:2,minHeight:1,defaultWidth:5,defaultHeight:1,left:'corrimao_pilar',middle:['corrimao_loop'],right:'corrimao_pilar',flipLeft:true,notes:'Pilares nas pontas e barras repetidas entre eles. Uma linha de altura.'},
- {id:'acesso',label:'Acesso ao telhado / porta',type:'pattern',minWidth:4,minHeight:3,defaultWidth:4,defaultHeight:3,rows:accessRows,notes:'Doze peças 16×16 formam a estrutura atual. A porta é 2×2. Sem miolo livre de parede neste PNG para expandir toda a estrutura sem duplicar a porta: manter este padrão.'},
+ {id:'acesso',label:'Entrada no telhado / porta',type:'pattern',minWidth:4,minHeight:3,defaultWidth:4,defaultHeight:3,rows:accessRows,notes:'Doze peças 16×16 formam a entrada. Apoiar a base diretamente no telhado e desenhar à frente da mureta. A porta é 2×2. Sem miolo livre de parede neste PNG para expandir toda a estrutura sem duplicar a porta: manter este padrão.'},
  {id:'ventilacao',label:'Ventilação completa',type:'pattern',minWidth:2,minHeight:1,defaultWidth:2,defaultHeight:1,rows:[['ventilacao_esquerda','ventilacao_direita']],notes:'Duas partes 16×16. Hélice e grelha ficam juntas. Não há miolo independente para alongar este aparelho.'},
  {id:'cano',label:'Cano vertical',type:'vertical',minWidth:1,minHeight:1,defaultWidth:1,defaultHeight:2,middle:['cano_pendente'],notes:'Coluna de cano. Aumente a altura repetindo a peça 16×16.'}
 ];
@@ -96,11 +97,11 @@ function place(id,width,height,x,y){for(const item of build(assemblies.find(reci
 place('predio',15,6,0,80);
 place('corrimao',9,1,96,64);
 place('mureta',9,1,16,64);
-place('acesso',4,3,16,16);
+place('acesso',4,3,16,32);
 place('ventilacao',2,1,128,64);
 placements.push({id:'p'+(placements.length+1),tileId:'personagem_referencia',x:192,y:52,flipX:false});
 const metadata={version:1,catalog:'open-world-16-v2',image:{path:'assets/sprites/tilesets/open_world_tileset.png',width:488,height:244},grid:{size:16},tiles,assemblies,
-  reviewNotes:['Prédio e janelas mantêm colisão sólida como nas definições fornecidas.','Acesso, mureta, corrimão e ventilação foram tratados como decoração ao fundo, sem colisão; revisar se algum deve bloquear o jogador.','O destino da porta ainda não foi especificado.','Somente o personagem de referência foge do recorte 16×16. As margens transparentes de cada tile foram preservadas.'],
+  reviewNotes:['Prédio e janelas mantêm colisão sólida como nas definições fornecidas.','A entrada apoia diretamente no telhado e aparece à frente da mureta, conforme a orientação do autor. Continua sem colisão de movimento; revisar se alguma parte deve bloquear o jogador.','Mureta, corrimão e ventilação foram tratados como decoração ao fundo, sem colisão; revisar se algum deve bloquear o jogador.','O destino da porta ainda não foi especificado.','Somente o personagem de referência foge do recorte 16×16. As margens transparentes de cada tile foram preservadas.'],
   scene:{width:240,height:176,background:'#292738',placements}};
 const errors=check(metadata);if(errors.length)throw Error(JSON.stringify(errors));
 const json=JSON.stringify(metadata,null,2)+'\n';
