@@ -398,14 +398,16 @@ export function createDialogue(canvas, scenes, {
     ctx.restore();
   }
 
-  function drawPrompt(ctx, text, centerX, y, viewWidth) {
+  function drawPrompt(ctx, text, centerX, y, viewWidth, scale = 1) {
     if (!assets.font) return;
-    const width = Array.from(text).length * 6;
+    const width = Array.from(text).length * 6 * scale;
     const x = Math.round(Math.max(8, Math.min(viewWidth - width - 8, centerX - width / 2)));
     ctx.save();
     ctx.imageSmoothingEnabled = false;
-    plainText(ctx, text, x + 1, Math.round(y) + 1, '#05080e');
-    plainText(ctx, text, x, Math.round(y), '#ffc281');
+    ctx.translate(x, Math.round(y));
+    ctx.scale(scale, scale);
+    plainText(ctx, text, 1, 1, '#05080e');
+    plainText(ctx, text, 0, 0, '#ffc281');
     ctx.restore();
   }
 

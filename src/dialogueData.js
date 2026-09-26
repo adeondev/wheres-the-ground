@@ -1,5 +1,11 @@
 // Uma fala curta por página. Os nós podem encadear cenas e escolhas.
 export const dialogueScenes = {
+  milenio: {
+    lines: [
+      { speaker: 'Gabriel', voice: 'gabriel', portrait: 'gabriel', text: 'Boa noite, professor.' },
+      { speaker: 'Milênio', portrait: 'none', text: 'Oi Gabriel, boa noite...' },
+    ],
+  },
   despedida: {
     lines: [
       { speaker: 'Mãe', voice: 'mom', portrait: 'none', text: 'Tchau, filho. Boa aula.' },

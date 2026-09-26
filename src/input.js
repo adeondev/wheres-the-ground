@@ -6,13 +6,14 @@ export function createInput() {
   let talkQueued = false;
   let crtQueued = false;
   let introQueued = false;
+  let interactQueued = false;
 
   const bindings = {
     a: 'left', arrowleft: 'left',
     d: 'right', arrowright: 'right',
     w: 'jump', arrowup: 'jump', ' ': 'jump',
     shift: 'dash', j: 'blast', t: 'talk', c: 'crt',
-    h: 'intro',
+    h: 'intro', z: 'interact',
   };
 
   function press(control) {
@@ -25,6 +26,7 @@ export function createInput() {
     else if (control === 'talk') talkQueued = true;
     else if (control === 'crt') crtQueued = true;
     else if (control === 'intro') introQueued = true;
+    else if (control === 'interact') interactQueued = true;
     else held[control] = true;
   }
 
@@ -50,6 +52,7 @@ export function createInput() {
     talkQueued = false;
     crtQueued = false;
     introQueued = false;
+    interactQueued = false;
   }
   window.addEventListener('blur', clear);
 
@@ -74,6 +77,7 @@ export function createInput() {
     takeTalk() { const queued = talkQueued; talkQueued = false; return queued; },
     takeCrt() { const queued = crtQueued; crtQueued = false; return queued; },
     takeIntro() { const queued = introQueued; introQueued = false; return queued; },
+    takeInteract() { const queued = interactQueued; interactQueued = false; return queued; },
     clear,
   };
 }

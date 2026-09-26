@@ -3,13 +3,13 @@ import { DASH_ANIMATION_DURATION, playerPose } from './animation.js';
 import { createAudio } from './audio.js?v=mom-pop';
 import { createCameraEffects } from './cameraEffects.js';
 import { createCrt } from './crt.js';
-import { createDialogue } from './dialogue.js?v=milenio';
-import { dialogueScenes } from './dialogueData.js?v=dialogue-voices';
+import { createDialogue } from './dialogue.js?v=milenio-greeting';
+import { dialogueScenes } from './dialogueData.js?v=milenio-greeting';
 import { createEffects } from './effects.js?v=milenio';
 import { drawRocketFlame } from './fireVfx.js';
-import { createInput } from './input.js';
+import { createInput } from './input.js?v=milenio-greeting';
 import { createIntro } from './intro.js';
-import { drawNpcs, nearbyNpc } from './npcs.js?v=milenio';
+import { drawNpcs, nearbyNpc, npcJumpOffset, startNpcInteraction, updateNpcs } from './npcs.js?v=milenio-greeting';
 import { BOOST_FIRE } from './palette.js';
 import { createPlayer, fireBlast, updatePlayer } from './player.js?v=milenio';
 import { loadGabriel, loadGabrielBoost, loadGabrielDash, loadGabrielJump, loadGabrielLanding, loadGabrielRun } from './sprites.js';
@@ -29,6 +29,7 @@ const input = createInput();
 const crt = createCrt();
 const audio = createAudio();
 let openingDialogue = false;
+let interactingNpc = null;
 const dialogue = createDialogue(canvas, dialogueScenes, {
   onOpen: () => input.clear(),
   onClose: () => { input.clear(); openingDialogue = false; },
@@ -158,6 +159,7 @@ loadingRetry.addEventListener('click', loadOpeningVideo);
 
 function resize() {
   const previousGround = world?.groundY;
+  const previousNpcs = world?.npcs;
   const bounds = canvas.getBoundingClientRect();
   const pixelSize = bounds.height / GAME_HEIGHT;
   canvas.width = Math.max(1, Math.ceil(bounds.width / pixelSize));
@@ -166,6 +168,7 @@ function resize() {
   document.documentElement.style.setProperty('--touch-scale', `${Math.min(pixelSize / 3, bounds.width / 390)}`);
   ctx.imageSmoothingEnabled = false;
   world = createWorld(canvas.width, canvas.height);
+  if (previousNpcs) world.npcs = previousNpcs;
   document.body.classList.toggle('no-powers', world.allowPowers === false);
   controlsHint.textContent = world.allowPowers === false
     ? 'A/D MOVER · ESPAÇO PULAR'
@@ -200,8 +203,31 @@ function update(dt) {
     intro.update(dt);
     return;
   }
+  updateNpcs(world, dt);
+  if (interactingNpc) {
+    input.clear();
+    audio.updateBooster(false);
+    if (interactingNpc.jumpTime <= 0) {
+      interactingNpc = null;
+      dialogue.start('milenio');
+    }
+    return;
+  }
   dialogue.update(dt);
   if (dialogue.active) { cameraEffects.clear(); input.clear(); audio.updateBooster(false); return; }
+  if (input.takeInteract()) {
+    const npc = nearbyNpc(world, player);
+    if (npc) {
+      interactingNpc = npc;
+      startNpcInteraction(npc, player);
+      player.vx = 0;
+      player.facing = player.x + player.w / 2 < npc.x ? 1 : -1;
+      runAnimationTime = 0;
+      input.clear();
+      cameraEffects.clear();
+      return;
+    }
+  }
   if (input.takeTalk() && world.allowPowers !== false) {
     cameraEffects.clear();
     dialogue.start('intro');
@@ -369,7 +395,13 @@ function draw() {
   }
   drawPlayer();
   ctx.restore();
-  const npc = dialogue.active ? null : nearbyNpc(world, player);
+  for (const character of world.npcs ?? []) {
+    if (character.surpriseTime > 0) {
+      dialogue.drawPrompt(ctx, '!', (character.x - cameraX) * zoom + roomOffsetX,
+        (character.y - character.h - npcJumpOffset(character) - cameraY) * zoom - 24, canvas.width, 2);
+    }
+  }
+  const npc = dialogue.active || interactingNpc ? null : nearbyNpc(world, player);
   if (npc) {
     dialogue.drawPrompt(ctx, 'Z para Interagir', (npc.x - cameraX) * zoom + roomOffsetX,
       (npc.y - npc.h - cameraY) * zoom - 14, canvas.width);
