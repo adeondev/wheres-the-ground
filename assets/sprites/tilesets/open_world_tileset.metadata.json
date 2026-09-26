@@ -1,150 +1,1471 @@
 {
   "version": 1,
+  "catalog": "open-world-16-v2",
   "image": {
     "path": "assets/sprites/tilesets/open_world_tileset.png",
     "width": 488,
     "height": 244
   },
   "grid": {
-    "size": 1
+    "size": 16
   },
   "tiles": [
     {
-      "id": "telhado",
-      "label": "Piso do telhado · meio",
+      "id": "piso_telhado_esquerda",
+      "label": "Final do piso do telhado · esquerda",
       "source": {
-        "x": 3,
+        "x": 0,
         "y": 48,
-        "w": 74,
+        "w": 16,
         "h": 16
       },
       "role": "platform",
-      "layer": 20,
+      "layer": 2,
+      "repeat": "none",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      },
+      "notes": "Topo sólido da extremidade esquerda. Gabriel anda por cima.",
+      "assembly": {
+        "family": "predio",
+        "part": "left",
+        "requiredNeighbors": [
+          {
+            "dx": 0,
+            "dy": 16,
+            "tileIds": [
+              "concreto_esquerdo_cima"
+            ],
+            "reason": "a borda superior esquerda precisa do concreto esquerdo de cima logo abaixo."
+          }
+        ]
+      }
+    },
+    {
+      "id": "piso_loop_telhado",
+      "label": "Piso do telhado · miolo 1",
+      "source": {
+        "x": 16,
+        "y": 48,
+        "w": 16,
+        "h": 16
+      },
+      "role": "platform",
+      "layer": 2,
       "repeat": "x",
       "collision": {
         "type": "solid",
         "rect": {
           "x": 0,
           "y": 0,
-          "w": 74,
+          "w": 16,
           "h": 16
         }
       },
-      "notes": "Trecho central repetido horizontalmente, sem as bordas laterais. A superfície de cima é o chão por onde o personagem anda."
+      "notes": "Miolo sólido repetível. Preenche a largura entre as duas pontas, sem esticar a imagem.",
+      "assembly": {
+        "family": "predio",
+        "part": "middle",
+        "requiredNeighbors": []
+      }
     },
     {
-      "id": "telhado_esquerda",
-      "label": "Piso do telhado · borda esquerda",
+      "id": "piso_loop_telhado_variante_2",
+      "label": "Piso do telhado · miolo 2",
+      "source": {
+        "x": 32,
+        "y": 48,
+        "w": 16,
+        "h": 16
+      },
+      "role": "platform",
+      "layer": 2,
+      "repeat": "x",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      },
+      "notes": "Miolo sólido repetível. Preenche a largura entre as duas pontas, sem esticar a imagem.",
+      "assembly": {
+        "family": "predio",
+        "part": "middle",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "piso_loop_telhado_variante_3",
+      "label": "Piso do telhado · miolo 3",
+      "source": {
+        "x": 48,
+        "y": 48,
+        "w": 16,
+        "h": 16
+      },
+      "role": "platform",
+      "layer": 2,
+      "repeat": "x",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      },
+      "notes": "Miolo sólido repetível. Preenche a largura entre as duas pontas, sem esticar a imagem.",
+      "assembly": {
+        "family": "predio",
+        "part": "middle",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "piso_telhado_direita",
+      "label": "Final do piso do telhado · direita",
+      "source": {
+        "x": 64,
+        "y": 48,
+        "w": 16,
+        "h": 16
+      },
+      "role": "platform",
+      "layer": 2,
+      "repeat": "none",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      },
+      "notes": "Topo sólido da extremidade direita. Gabriel anda por cima.",
+      "assembly": {
+        "family": "predio",
+        "part": "right",
+        "requiredNeighbors": [
+          {
+            "dx": 0,
+            "dy": 16,
+            "tileIds": [
+              "concreto_direito_cima"
+            ],
+            "reason": "a borda superior direita precisa do concreto direito de cima logo abaixo."
+          }
+        ]
+      }
+    },
+    {
+      "id": "concreto_esquerdo_cima",
+      "label": "Concreto esquerdo · cima",
       "source": {
         "x": 0,
-        "y": 48,
-        "w": 3,
-        "h": 16
-      },
-      "role": "platform",
-      "layer": 21,
-      "repeat": "none",
-      "collision": {
-        "type": "solid",
-        "rect": {
-          "x": 0,
-          "y": 0,
-          "w": 3,
-          "h": 16
-        }
-      },
-      "notes": "Acabamento da extremidade esquerda. Usar uma vez no começo do piso."
-    },
-    {
-      "id": "telhado_direita",
-      "label": "Piso do telhado · borda direita",
-      "source": {
-        "x": 77,
-        "y": 48,
-        "w": 3,
-        "h": 16
-      },
-      "role": "platform",
-      "layer": 21,
-      "repeat": "none",
-      "collision": {
-        "type": "solid",
-        "rect": {
-          "x": 0,
-          "y": 0,
-          "w": 3,
-          "h": 16
-        }
-      },
-      "notes": "Acabamento da extremidade direita. Usar uma vez no fim do piso."
-    },
-    {
-      "id": "fachada",
-      "label": "Fachada com janelas",
-      "source": {
-        "x": 3,
         "y": 64,
-        "w": 74,
-        "h": 48
+        "w": 16,
+        "h": 16
       },
       "role": "terrain",
-      "layer": 10,
+      "layer": 1,
+      "repeat": "none",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      },
+      "notes": "Borda esquerda da fachada. Vai colada abaixo da ponta correspondente do telhado.",
+      "assembly": {
+        "family": "predio",
+        "part": "cima-esquerdo",
+        "requiredNeighbors": [
+          {
+            "dx": 0,
+            "dy": -16,
+            "tileIds": [
+              "piso_telhado_esquerda"
+            ],
+            "reason": "deve ficar colado sob a ponta esquerda do telhado."
+          }
+        ]
+      }
+    },
+    {
+      "id": "concreto_loop_cima",
+      "label": "Concreto miolo · cima",
+      "source": {
+        "x": 16,
+        "y": 64,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
       "repeat": "x",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      },
+      "notes": "Preenchimento da faixa cima. Repete horizontalmente entre as bordas.",
+      "assembly": {
+        "family": "predio",
+        "part": "cima-miolo",
+        "requiredNeighbors": [
+          {
+            "dx": 0,
+            "dy": -16,
+            "tileIds": [
+              "piso_loop_telhado",
+              "piso_loop_telhado_variante_2",
+              "piso_loop_telhado_variante_3"
+            ],
+            "reason": "a faixa de cima precisa de um miolo do telhado acima, nunca de uma ponta."
+          }
+        ]
+      }
+    },
+    {
+      "id": "janela_esquerda_cima",
+      "label": "Janela esquerda · cima",
+      "source": {
+        "x": 32,
+        "y": 64,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "none",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      },
+      "notes": "Parte sólida da fachada, pertencente à janela 2×2. Deve ficar junto de suas outras três partes, sob o miolo do telhado. Não é um vão atravessável.",
+      "assembly": {
+        "family": "janela",
+        "part": "top-left",
+        "requiredNeighbors": [
+          {
+            "dx": 0,
+            "dy": -16,
+            "tileIds": [
+              "piso_loop_telhado",
+              "piso_loop_telhado_variante_2",
+              "piso_loop_telhado_variante_3"
+            ],
+            "reason": "a faixa de cima precisa de um miolo do telhado acima, nunca de uma ponta."
+          },
+          {
+            "dx": 16,
+            "dy": 0,
+            "tileIds": [
+              "janela_direita_cima"
+            ],
+            "reason": "falta a parte correspondente imediatamente à direita."
+          },
+          {
+            "dx": 0,
+            "dy": 16,
+            "tileIds": [
+              "janela_esquerda_baixo"
+            ],
+            "reason": "falta a parte correspondente imediatamente abaixo."
+          }
+        ]
+      }
+    },
+    {
+      "id": "janela_direita_cima",
+      "label": "Janela direita · cima",
+      "source": {
+        "x": 48,
+        "y": 64,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "none",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      },
+      "notes": "Parte sólida da fachada, pertencente à janela 2×2. Deve ficar junto de suas outras três partes, sob o miolo do telhado. Não é um vão atravessável.",
+      "assembly": {
+        "family": "janela",
+        "part": "top-right",
+        "requiredNeighbors": [
+          {
+            "dx": 0,
+            "dy": -16,
+            "tileIds": [
+              "piso_loop_telhado",
+              "piso_loop_telhado_variante_2",
+              "piso_loop_telhado_variante_3"
+            ],
+            "reason": "a faixa de cima precisa de um miolo do telhado acima, nunca de uma ponta."
+          },
+          {
+            "dx": -16,
+            "dy": 0,
+            "tileIds": [
+              "janela_esquerda_cima"
+            ],
+            "reason": "falta a parte correspondente imediatamente à esquerda."
+          },
+          {
+            "dx": 0,
+            "dy": 16,
+            "tileIds": [
+              "janela_direita_baixo"
+            ],
+            "reason": "falta a parte correspondente imediatamente abaixo."
+          }
+        ]
+      }
+    },
+    {
+      "id": "concreto_direito_cima",
+      "label": "Concreto direito · cima",
+      "source": {
+        "x": 64,
+        "y": 64,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "none",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      },
+      "notes": "Borda direita da fachada. Vai colada abaixo da ponta correspondente do telhado.",
+      "assembly": {
+        "family": "predio",
+        "part": "cima-direito",
+        "requiredNeighbors": [
+          {
+            "dx": 0,
+            "dy": -16,
+            "tileIds": [
+              "piso_telhado_direita"
+            ],
+            "reason": "deve ficar colado sob a ponta direita do telhado."
+          }
+        ]
+      }
+    },
+    {
+      "id": "concreto_esquerdo_meio",
+      "label": "Concreto esquerdo · meio",
+      "source": {
+        "x": 0,
+        "y": 80,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "y",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      },
+      "notes": "Borda esquerda da fachada. Repete verticalmente entre o canto superior e o inferior.",
+      "assembly": {
+        "family": "predio",
+        "part": "meio-esquerdo",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "concreto_loop_meio",
+      "label": "Concreto miolo · meio",
+      "source": {
+        "x": 16,
+        "y": 80,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "both",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      },
+      "notes": "Preenchimento da faixa meio. Repete nos dois eixos para aumentar o prédio.",
+      "assembly": {
+        "family": "predio",
+        "part": "meio-miolo",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "janela_esquerda_baixo",
+      "label": "Janela esquerda · baixo",
+      "source": {
+        "x": 32,
+        "y": 80,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "none",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      },
+      "notes": "Parte sólida da fachada, pertencente à janela 2×2. Deve ficar junto de suas outras três partes, sob o miolo do telhado. Não é um vão atravessável.",
+      "assembly": {
+        "family": "janela",
+        "part": "bottom-left",
+        "requiredNeighbors": [
+          {
+            "dx": 16,
+            "dy": 0,
+            "tileIds": [
+              "janela_direita_baixo"
+            ],
+            "reason": "falta a parte correspondente imediatamente à direita."
+          },
+          {
+            "dx": 0,
+            "dy": -16,
+            "tileIds": [
+              "janela_esquerda_cima"
+            ],
+            "reason": "falta a parte correspondente imediatamente acima."
+          }
+        ]
+      }
+    },
+    {
+      "id": "janela_direita_baixo",
+      "label": "Janela direita · baixo",
+      "source": {
+        "x": 48,
+        "y": 80,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "none",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      },
+      "notes": "Parte sólida da fachada, pertencente à janela 2×2. Deve ficar junto de suas outras três partes, sob o miolo do telhado. Não é um vão atravessável.",
+      "assembly": {
+        "family": "janela",
+        "part": "bottom-right",
+        "requiredNeighbors": [
+          {
+            "dx": -16,
+            "dy": 0,
+            "tileIds": [
+              "janela_esquerda_baixo"
+            ],
+            "reason": "falta a parte correspondente imediatamente à esquerda."
+          },
+          {
+            "dx": 0,
+            "dy": -16,
+            "tileIds": [
+              "janela_direita_cima"
+            ],
+            "reason": "falta a parte correspondente imediatamente acima."
+          }
+        ]
+      }
+    },
+    {
+      "id": "concreto_direito_meio",
+      "label": "Concreto direito · meio",
+      "source": {
+        "x": 64,
+        "y": 80,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "y",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      },
+      "notes": "Borda direita da fachada. Repete verticalmente entre o canto superior e o inferior.",
+      "assembly": {
+        "family": "predio",
+        "part": "meio-direito",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "concreto_esquerdo_baixo",
+      "label": "Concreto esquerdo · baixo",
+      "source": {
+        "x": 0,
+        "y": 96,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "none",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      },
+      "notes": "Borda esquerda da fachada. Fecha a base do prédio; não usar como miolo.",
+      "assembly": {
+        "family": "predio",
+        "part": "baixo-esquerdo",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "concreto_loop_baixo",
+      "label": "Concreto miolo · baixo",
+      "source": {
+        "x": 16,
+        "y": 96,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "x",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      },
+      "notes": "Preenchimento da faixa baixo. Repete horizontalmente entre as bordas.",
+      "assembly": {
+        "family": "predio",
+        "part": "baixo-miolo",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "concreto_loop_baixo_variante_2",
+      "label": "Concreto miolo · baixo · variante 2",
+      "source": {
+        "x": 32,
+        "y": 96,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "x",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      },
+      "notes": "Preenchimento da faixa baixo. Repete horizontalmente entre as bordas.",
+      "assembly": {
+        "family": "predio",
+        "part": "baixo-miolo",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "concreto_loop_baixo_variante_3",
+      "label": "Concreto miolo · baixo · variante 3",
+      "source": {
+        "x": 48,
+        "y": 96,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "x",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      },
+      "notes": "Preenchimento da faixa baixo. Repete horizontalmente entre as bordas.",
+      "assembly": {
+        "family": "predio",
+        "part": "baixo-miolo",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "concreto_direito_baixo",
+      "label": "Concreto direito · baixo",
+      "source": {
+        "x": 64,
+        "y": 96,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "none",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      },
+      "notes": "Borda direita da fachada. Fecha a base do prédio; não usar como miolo.",
+      "assembly": {
+        "family": "predio",
+        "part": "baixo-direito",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "ventilacao_esquerda",
+      "label": "Ventilação · esquerda / hélice",
+      "source": {
+        "x": 0,
+        "y": 112,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 0,
+      "repeat": "none",
       "collision": {
         "type": "none"
       },
-      "notes": "Fundo do prédio abaixo do telhado. Recorte sem as margens transparentes para repetir lado a lado."
+      "notes": "Hélice do aparelho; sempre juntar à parte direita. Inicialmente decorativa e sem colisão.",
+      "assembly": {
+        "family": "ventilacao",
+        "part": "left",
+        "requiredNeighbors": [
+          {
+            "dx": 16,
+            "dy": 0,
+            "tileIds": [
+              "ventilacao_direita"
+            ],
+            "reason": "falta a parte correspondente imediatamente à direita."
+          }
+        ]
+      }
     },
     {
-      "id": "acesso_telhado",
-      "label": "Porta de acesso ao telhado",
+      "id": "ventilacao_direita",
+      "label": "Ventilação · direita / grelha",
+      "source": {
+        "x": 16,
+        "y": 112,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 0,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Grelha e acabamento direito do aparelho. Sempre juntar à hélice. Não repetir a ponta para alongar o equipamento.",
+      "assembly": {
+        "family": "ventilacao",
+        "part": "right",
+        "requiredNeighbors": [
+          {
+            "dx": -16,
+            "dy": 0,
+            "tileIds": [
+              "ventilacao_esquerda"
+            ],
+            "reason": "falta a parte correspondente imediatamente à esquerda."
+          }
+        ]
+      }
+    },
+    {
+      "id": "cano_pendente",
+      "label": "Cano pendente",
+      "source": {
+        "x": 32,
+        "y": 112,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 0,
+      "repeat": "y",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Detalhe vertical independente. Pode repetir para prolongar o cano. Sem colisão.",
+      "assembly": {
+        "family": "cano",
+        "part": "middle",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "acesso_cobertura_esquerda",
+      "label": "Cobertura do acesso · esquerda",
       "source": {
         "x": 0,
-        "y": 137,
-        "w": 64,
-        "h": 40
+        "y": 128,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 0,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Cobertura do acesso. Preservar a margem transparente dentro do tile 16×16: ela alinha a cobertura às outras partes.",
+      "assembly": {
+        "family": "acesso",
+        "part": "0-0",
+        "requiredNeighbors": [
+          {
+            "dx": 16,
+            "dy": 0,
+            "tileIds": [
+              "acesso_cobertura_meio_1"
+            ],
+            "reason": "falta a parte correspondente imediatamente à direita."
+          },
+          {
+            "dx": 0,
+            "dy": 16,
+            "tileIds": [
+              "acesso_parede_esquerda_cima"
+            ],
+            "reason": "falta a parte correspondente imediatamente abaixo."
+          }
+        ]
+      }
+    },
+    {
+      "id": "acesso_cobertura_meio_1",
+      "label": "Cobertura do acesso · miolo 1",
+      "source": {
+        "x": 16,
+        "y": 128,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 0,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Cobertura do acesso. Preservar a margem transparente dentro do tile 16×16: ela alinha a cobertura às outras partes.",
+      "assembly": {
+        "family": "acesso",
+        "part": "0-1",
+        "requiredNeighbors": [
+          {
+            "dx": -16,
+            "dy": 0,
+            "tileIds": [
+              "acesso_cobertura_esquerda"
+            ],
+            "reason": "falta a parte correspondente imediatamente à esquerda."
+          },
+          {
+            "dx": 16,
+            "dy": 0,
+            "tileIds": [
+              "acesso_cobertura_meio_2"
+            ],
+            "reason": "falta a parte correspondente imediatamente à direita."
+          },
+          {
+            "dx": 0,
+            "dy": 16,
+            "tileIds": [
+              "porta_esquerda_cima"
+            ],
+            "reason": "falta a parte correspondente imediatamente abaixo."
+          }
+        ]
+      }
+    },
+    {
+      "id": "acesso_cobertura_meio_2",
+      "label": "Cobertura do acesso · miolo 2",
+      "source": {
+        "x": 32,
+        "y": 128,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 0,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Cobertura do acesso. Preservar a margem transparente dentro do tile 16×16: ela alinha a cobertura às outras partes.",
+      "assembly": {
+        "family": "acesso",
+        "part": "0-2",
+        "requiredNeighbors": [
+          {
+            "dx": -16,
+            "dy": 0,
+            "tileIds": [
+              "acesso_cobertura_meio_1"
+            ],
+            "reason": "falta a parte correspondente imediatamente à esquerda."
+          },
+          {
+            "dx": 16,
+            "dy": 0,
+            "tileIds": [
+              "acesso_cobertura_direita"
+            ],
+            "reason": "falta a parte correspondente imediatamente à direita."
+          },
+          {
+            "dx": 0,
+            "dy": 16,
+            "tileIds": [
+              "porta_direita_cima"
+            ],
+            "reason": "falta a parte correspondente imediatamente abaixo."
+          }
+        ]
+      }
+    },
+    {
+      "id": "acesso_cobertura_direita",
+      "label": "Cobertura do acesso · direita",
+      "source": {
+        "x": 48,
+        "y": 128,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 0,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Cobertura do acesso. Preservar a margem transparente dentro do tile 16×16: ela alinha a cobertura às outras partes.",
+      "assembly": {
+        "family": "acesso",
+        "part": "0-3",
+        "requiredNeighbors": [
+          {
+            "dx": -16,
+            "dy": 0,
+            "tileIds": [
+              "acesso_cobertura_meio_2"
+            ],
+            "reason": "falta a parte correspondente imediatamente à esquerda."
+          },
+          {
+            "dx": 0,
+            "dy": 16,
+            "tileIds": [
+              "acesso_parede_direita_cima"
+            ],
+            "reason": "falta a parte correspondente imediatamente abaixo."
+          }
+        ]
+      }
+    },
+    {
+      "id": "acesso_parede_esquerda_cima",
+      "label": "Parede do acesso · esquerda · cima",
+      "source": {
+        "x": 0,
+        "y": 144,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 0,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte da parede ao fundo do acesso; encaixa na linha correspondente da porta. Sem colisão. O tileset atual fornece um padrão completo de 4×3 tiles.",
+      "assembly": {
+        "family": "acesso",
+        "part": "1-0",
+        "requiredNeighbors": [
+          {
+            "dx": 16,
+            "dy": 0,
+            "tileIds": [
+              "porta_esquerda_cima"
+            ],
+            "reason": "falta a parte correspondente imediatamente à direita."
+          },
+          {
+            "dx": 0,
+            "dy": -16,
+            "tileIds": [
+              "acesso_cobertura_esquerda"
+            ],
+            "reason": "falta a parte correspondente imediatamente acima."
+          },
+          {
+            "dx": 0,
+            "dy": 16,
+            "tileIds": [
+              "acesso_parede_esquerda_baixo"
+            ],
+            "reason": "falta a parte correspondente imediatamente abaixo."
+          }
+        ]
+      }
+    },
+    {
+      "id": "porta_esquerda_cima",
+      "label": "Porta esquerda · cima",
+      "source": {
+        "x": 16,
+        "y": 144,
+        "w": 16,
+        "h": 16
       },
       "role": "door",
-      "layer": 15,
+      "layer": 0,
       "repeat": "none",
       "collision": {
         "type": "none"
       },
-      "notes": "Estrutura ao fundo com porta. Possível ponto de entrada ou saída; por enquanto apenas visual."
+      "notes": "Parte da porta 2×2 ao fundo. As quatro partes permanecem juntas e não bloqueiam o personagem. O destino da porta ainda deve ser definido no jogo.",
+      "assembly": {
+        "family": "porta",
+        "part": "1-1",
+        "requiredNeighbors": [
+          {
+            "dx": -16,
+            "dy": 0,
+            "tileIds": [
+              "acesso_parede_esquerda_cima"
+            ],
+            "reason": "falta a parte correspondente imediatamente à esquerda."
+          },
+          {
+            "dx": 16,
+            "dy": 0,
+            "tileIds": [
+              "porta_direita_cima"
+            ],
+            "reason": "falta a parte correspondente imediatamente à direita."
+          },
+          {
+            "dx": 0,
+            "dy": -16,
+            "tileIds": [
+              "acesso_cobertura_meio_1"
+            ],
+            "reason": "falta a parte correspondente imediatamente acima."
+          },
+          {
+            "dx": 0,
+            "dy": 16,
+            "tileIds": [
+              "porta_esquerda_baixo"
+            ],
+            "reason": "falta a parte correspondente imediatamente abaixo."
+          }
+        ]
+      }
     },
     {
-      "id": "ventilacao",
-      "label": "Unidade de ventilação",
+      "id": "porta_direita_cima",
+      "label": "Porta direita · cima",
       "source": {
-        "x": 3,
-        "y": 114,
-        "w": 26,
-        "h": 14
+        "x": 32,
+        "y": 144,
+        "w": 16,
+        "h": 16
+      },
+      "role": "door",
+      "layer": 0,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte da porta 2×2 ao fundo. As quatro partes permanecem juntas e não bloqueiam o personagem. O destino da porta ainda deve ser definido no jogo.",
+      "assembly": {
+        "family": "porta",
+        "part": "1-2",
+        "requiredNeighbors": [
+          {
+            "dx": -16,
+            "dy": 0,
+            "tileIds": [
+              "porta_esquerda_cima"
+            ],
+            "reason": "falta a parte correspondente imediatamente à esquerda."
+          },
+          {
+            "dx": 16,
+            "dy": 0,
+            "tileIds": [
+              "acesso_parede_direita_cima"
+            ],
+            "reason": "falta a parte correspondente imediatamente à direita."
+          },
+          {
+            "dx": 0,
+            "dy": -16,
+            "tileIds": [
+              "acesso_cobertura_meio_2"
+            ],
+            "reason": "falta a parte correspondente imediatamente acima."
+          },
+          {
+            "dx": 0,
+            "dy": 16,
+            "tileIds": [
+              "porta_direita_baixo"
+            ],
+            "reason": "falta a parte correspondente imediatamente abaixo."
+          }
+        ]
+      }
+    },
+    {
+      "id": "acesso_parede_direita_cima",
+      "label": "Parede do acesso · direita · cima",
+      "source": {
+        "x": 48,
+        "y": 144,
+        "w": 16,
+        "h": 16
       },
       "role": "decoration",
-      "layer": 15,
+      "layer": 0,
       "repeat": "none",
       "collision": {
         "type": "none"
       },
-      "notes": "Equipamento decorativo apoiado sobre o telhado."
+      "notes": "Parte da parede ao fundo do acesso; encaixa na linha correspondente da porta. Sem colisão. O tileset atual fornece um padrão completo de 4×3 tiles.",
+      "assembly": {
+        "family": "acesso",
+        "part": "1-3",
+        "requiredNeighbors": [
+          {
+            "dx": -16,
+            "dy": 0,
+            "tileIds": [
+              "porta_direita_cima"
+            ],
+            "reason": "falta a parte correspondente imediatamente à esquerda."
+          },
+          {
+            "dx": 0,
+            "dy": -16,
+            "tileIds": [
+              "acesso_cobertura_direita"
+            ],
+            "reason": "falta a parte correspondente imediatamente acima."
+          },
+          {
+            "dx": 0,
+            "dy": 16,
+            "tileIds": [
+              "acesso_parede_direita_baixo"
+            ],
+            "reason": "falta a parte correspondente imediatamente abaixo."
+          }
+        ]
+      }
     },
     {
-      "id": "mureta",
-      "label": "Mureta ao fundo",
+      "id": "acesso_parede_esquerda_baixo",
+      "label": "Parede do acesso · esquerda · baixo",
       "source": {
         "x": 0,
-        "y": 177,
-        "w": 79,
-        "h": 15
+        "y": 160,
+        "w": 16,
+        "h": 16
       },
       "role": "decoration",
-      "layer": 12,
+      "layer": 0,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte da parede ao fundo do acesso; encaixa na linha correspondente da porta. Sem colisão. O tileset atual fornece um padrão completo de 4×3 tiles.",
+      "assembly": {
+        "family": "acesso",
+        "part": "2-0",
+        "requiredNeighbors": [
+          {
+            "dx": 16,
+            "dy": 0,
+            "tileIds": [
+              "porta_esquerda_baixo"
+            ],
+            "reason": "falta a parte correspondente imediatamente à direita."
+          },
+          {
+            "dx": 0,
+            "dy": -16,
+            "tileIds": [
+              "acesso_parede_esquerda_cima"
+            ],
+            "reason": "falta a parte correspondente imediatamente acima."
+          }
+        ]
+      }
+    },
+    {
+      "id": "porta_esquerda_baixo",
+      "label": "Porta esquerda · baixo",
+      "source": {
+        "x": 16,
+        "y": 160,
+        "w": 16,
+        "h": 16
+      },
+      "role": "door",
+      "layer": 0,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte da porta 2×2 ao fundo. As quatro partes permanecem juntas e não bloqueiam o personagem. O destino da porta ainda deve ser definido no jogo.",
+      "assembly": {
+        "family": "porta",
+        "part": "2-1",
+        "requiredNeighbors": [
+          {
+            "dx": -16,
+            "dy": 0,
+            "tileIds": [
+              "acesso_parede_esquerda_baixo"
+            ],
+            "reason": "falta a parte correspondente imediatamente à esquerda."
+          },
+          {
+            "dx": 16,
+            "dy": 0,
+            "tileIds": [
+              "porta_direita_baixo"
+            ],
+            "reason": "falta a parte correspondente imediatamente à direita."
+          },
+          {
+            "dx": 0,
+            "dy": -16,
+            "tileIds": [
+              "porta_esquerda_cima"
+            ],
+            "reason": "falta a parte correspondente imediatamente acima."
+          }
+        ]
+      }
+    },
+    {
+      "id": "porta_direita_baixo",
+      "label": "Porta direita · baixo",
+      "source": {
+        "x": 32,
+        "y": 160,
+        "w": 16,
+        "h": 16
+      },
+      "role": "door",
+      "layer": 0,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte da porta 2×2 ao fundo. As quatro partes permanecem juntas e não bloqueiam o personagem. O destino da porta ainda deve ser definido no jogo.",
+      "assembly": {
+        "family": "porta",
+        "part": "2-2",
+        "requiredNeighbors": [
+          {
+            "dx": -16,
+            "dy": 0,
+            "tileIds": [
+              "porta_esquerda_baixo"
+            ],
+            "reason": "falta a parte correspondente imediatamente à esquerda."
+          },
+          {
+            "dx": 16,
+            "dy": 0,
+            "tileIds": [
+              "acesso_parede_direita_baixo"
+            ],
+            "reason": "falta a parte correspondente imediatamente à direita."
+          },
+          {
+            "dx": 0,
+            "dy": -16,
+            "tileIds": [
+              "porta_direita_cima"
+            ],
+            "reason": "falta a parte correspondente imediatamente acima."
+          }
+        ]
+      }
+    },
+    {
+      "id": "acesso_parede_direita_baixo",
+      "label": "Parede do acesso · direita · baixo",
+      "source": {
+        "x": 48,
+        "y": 160,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 0,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte da parede ao fundo do acesso; encaixa na linha correspondente da porta. Sem colisão. O tileset atual fornece um padrão completo de 4×3 tiles.",
+      "assembly": {
+        "family": "acesso",
+        "part": "2-3",
+        "requiredNeighbors": [
+          {
+            "dx": -16,
+            "dy": 0,
+            "tileIds": [
+              "porta_direita_baixo"
+            ],
+            "reason": "falta a parte correspondente imediatamente à esquerda."
+          },
+          {
+            "dx": 0,
+            "dy": -16,
+            "tileIds": [
+              "acesso_parede_direita_cima"
+            ],
+            "reason": "falta a parte correspondente imediatamente acima."
+          }
+        ]
+      }
+    },
+    {
+      "id": "mureta_esquerda",
+      "label": "Mureta · esquerda",
+      "source": {
+        "x": 0,
+        "y": 176,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 0,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Começo da mureta ao fundo. Deve ter miolos ou a ponta direita à direita. Sem colisão.",
+      "assembly": {
+        "family": "mureta",
+        "part": "left",
+        "requiredNeighbors": [
+          {
+            "dx": 16,
+            "dy": 0,
+            "tileIds": [
+              "mureta_loop",
+              "mureta_direita"
+            ],
+            "reason": "falta a continuação da mureta à direita."
+          }
+        ]
+      }
+    },
+    {
+      "id": "mureta_loop",
+      "label": "Mureta · miolo",
+      "source": {
+        "x": 16,
+        "y": 176,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 0,
       "repeat": "x",
       "collision": {
         "type": "none"
       },
-      "notes": "Faixa baixa atrás do personagem; não bloqueia passagem."
+      "notes": "Miolo repetível da mureta. Amplia a largura sem repetir as extremidades. Sem colisão.",
+      "assembly": {
+        "family": "mureta",
+        "part": "middle",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "mureta_direita",
+      "label": "Mureta · direita",
+      "source": {
+        "x": 32,
+        "y": 176,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 0,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Final da mureta ao fundo. Deve ter miolos ou a ponta esquerda à esquerda. Sem colisão.",
+      "assembly": {
+        "family": "mureta",
+        "part": "right",
+        "requiredNeighbors": [
+          {
+            "dx": -16,
+            "dy": 0,
+            "tileIds": [
+              "mureta_loop",
+              "mureta_esquerda"
+            ],
+            "reason": "falta a continuação da mureta à esquerda."
+          }
+        ]
+      }
+    },
+    {
+      "id": "corrimao_loop",
+      "label": "Corrimão · barras horizontais",
+      "source": {
+        "x": 48,
+        "y": 176,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 0,
+      "repeat": "x",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Barras que conectam os pilares. Repetir horizontalmente entre as pontas. Não é piso e não bloqueia o personagem.",
+      "assembly": {
+        "family": "corrimao",
+        "part": "middle",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "corrimao_pilar",
+      "label": "Corrimão · pilar",
+      "source": {
+        "x": 64,
+        "y": 176,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 0,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Pilar / acabamento do corrimão. A montagem espelha a ponta esquerda e mantém a direita normal. Sem colisão.",
+      "assembly": {
+        "family": "corrimao",
+        "part": "edge",
+        "requiredNeighbors": []
+      }
     },
     {
       "id": "personagem_referencia",
@@ -161,152 +1482,1045 @@
       "collision": {
         "type": "none"
       },
-      "notes": "Referência de escala extraída do tileset. No jogo será substituído pelo Gabriel animado."
+      "notes": "Referência de escala extraída do tileset. No jogo será substituído pelo Gabriel animado. Exceção à grade 16×16: não é peça de cenário."
     }
+  ],
+  "assemblies": [
+    {
+      "id": "predio",
+      "label": "Prédio / fachada com telhado",
+      "type": "building",
+      "minWidth": 5,
+      "minHeight": 4,
+      "defaultWidth": 15,
+      "defaultHeight": 6,
+      "notes": "Largura e altura em tiles. Mantém as pontas, preenche o miolo e monta janelas 2×2 sob o telhado. As janelas não se alongam: repete-se a janela completa. Toda a fachada é sólida, conforme a metadata original.",
+      "roof": {
+        "left": "piso_telhado_esquerda",
+        "middle": [
+          "piso_loop_telhado",
+          "piso_loop_telhado_variante_2",
+          "piso_loop_telhado_variante_3"
+        ],
+        "right": "piso_telhado_direita"
+      },
+      "wall": {
+        "top": {
+          "left": "concreto_esquerdo_cima",
+          "middle": [
+            "concreto_loop_cima"
+          ],
+          "right": "concreto_direito_cima"
+        },
+        "middle": {
+          "left": "concreto_esquerdo_meio",
+          "middle": [
+            "concreto_loop_meio"
+          ],
+          "right": "concreto_direito_meio"
+        },
+        "bottom": {
+          "left": "concreto_esquerdo_baixo",
+          "middle": [
+            "concreto_loop_baixo",
+            "concreto_loop_baixo_variante_2",
+            "concreto_loop_baixo_variante_3"
+          ],
+          "right": "concreto_direito_baixo"
+        }
+      },
+      "window": [
+        [
+          "janela_esquerda_cima",
+          "janela_direita_cima"
+        ],
+        [
+          "janela_esquerda_baixo",
+          "janela_direita_baixo"
+        ]
+      ]
+    },
+    {
+      "id": "janela",
+      "label": "Janela completa 2×2",
+      "type": "pattern",
+      "minWidth": 2,
+      "minHeight": 2,
+      "defaultWidth": 2,
+      "defaultHeight": 2,
+      "rows": [
+        [
+          "janela_esquerda_cima",
+          "janela_direita_cima"
+        ],
+        [
+          "janela_esquerda_baixo",
+          "janela_direita_baixo"
+        ]
+      ],
+      "notes": "Quatro partes sempre juntas. Posicionar imediatamente abaixo de dois miolos do telhado, dentro da fachada. Para mais janelas, repetir o conjunto completo."
+    },
+    {
+      "id": "mureta",
+      "label": "Mureta expansível",
+      "type": "horizontal",
+      "minWidth": 2,
+      "minHeight": 1,
+      "defaultWidth": 8,
+      "defaultHeight": 1,
+      "left": "mureta_esquerda",
+      "middle": [
+        "mureta_loop"
+      ],
+      "right": "mureta_direita",
+      "notes": "Uma ponta esquerda, quantos miolos precisar e uma ponta direita. Uma linha de altura."
+    },
+    {
+      "id": "corrimao",
+      "label": "Corrimão expansível",
+      "type": "horizontal",
+      "minWidth": 2,
+      "minHeight": 1,
+      "defaultWidth": 5,
+      "defaultHeight": 1,
+      "left": "corrimao_pilar",
+      "middle": [
+        "corrimao_loop"
+      ],
+      "right": "corrimao_pilar",
+      "flipLeft": true,
+      "notes": "Pilares nas pontas e barras repetidas entre eles. Uma linha de altura."
+    },
+    {
+      "id": "acesso",
+      "label": "Acesso ao telhado / porta",
+      "type": "pattern",
+      "minWidth": 4,
+      "minHeight": 3,
+      "defaultWidth": 4,
+      "defaultHeight": 3,
+      "rows": [
+        [
+          "acesso_cobertura_esquerda",
+          "acesso_cobertura_meio_1",
+          "acesso_cobertura_meio_2",
+          "acesso_cobertura_direita"
+        ],
+        [
+          "acesso_parede_esquerda_cima",
+          "porta_esquerda_cima",
+          "porta_direita_cima",
+          "acesso_parede_direita_cima"
+        ],
+        [
+          "acesso_parede_esquerda_baixo",
+          "porta_esquerda_baixo",
+          "porta_direita_baixo",
+          "acesso_parede_direita_baixo"
+        ]
+      ],
+      "notes": "Doze peças 16×16 formam a estrutura atual. A porta é 2×2. Sem miolo livre de parede neste PNG para expandir toda a estrutura sem duplicar a porta: manter este padrão."
+    },
+    {
+      "id": "ventilacao",
+      "label": "Ventilação completa",
+      "type": "pattern",
+      "minWidth": 2,
+      "minHeight": 1,
+      "defaultWidth": 2,
+      "defaultHeight": 1,
+      "rows": [
+        [
+          "ventilacao_esquerda",
+          "ventilacao_direita"
+        ]
+      ],
+      "notes": "Duas partes 16×16. Hélice e grelha ficam juntas. Não há miolo independente para alongar este aparelho."
+    },
+    {
+      "id": "cano",
+      "label": "Cano vertical",
+      "type": "vertical",
+      "minWidth": 1,
+      "minHeight": 1,
+      "defaultWidth": 1,
+      "defaultHeight": 2,
+      "middle": [
+        "cano_pendente"
+      ],
+      "notes": "Coluna de cano. Aumente a altura repetindo a peça 16×16."
+    }
+  ],
+  "reviewNotes": [
+    "Prédio e janelas mantêm colisão sólida como nas definições fornecidas.",
+    "Acesso, mureta, corrimão e ventilação foram tratados como decoração ao fundo, sem colisão; revisar se algum deve bloquear o jogador.",
+    "O destino da porta ainda não foi especificado.",
+    "Somente o personagem de referência foge do recorte 16×16. As margens transparentes de cada tile foram preservadas."
   ],
   "scene": {
     "width": 240,
-    "height": 168,
+    "height": 176,
     "background": "#292738",
     "placements": [
       {
         "id": "p1",
-        "tileId": "fachada",
+        "tileId": "piso_telhado_esquerda",
         "x": 0,
-        "y": 100,
+        "y": 80,
         "flipX": false
       },
       {
         "id": "p2",
-        "tileId": "fachada",
-        "x": 74,
-        "y": 100,
+        "tileId": "piso_loop_telhado",
+        "x": 16,
+        "y": 80,
         "flipX": false
       },
       {
         "id": "p3",
-        "tileId": "fachada",
-        "x": 148,
-        "y": 100,
+        "tileId": "piso_loop_telhado_variante_2",
+        "x": 32,
+        "y": 80,
         "flipX": false
       },
       {
         "id": "p4",
-        "tileId": "fachada",
-        "x": 222,
-        "y": 100,
+        "tileId": "piso_loop_telhado_variante_3",
+        "x": 48,
+        "y": 80,
         "flipX": false
       },
       {
         "id": "p5",
-        "tileId": "fachada",
-        "x": 0,
-        "y": 148,
+        "tileId": "piso_loop_telhado",
+        "x": 64,
+        "y": 80,
         "flipX": false
       },
       {
         "id": "p6",
-        "tileId": "fachada",
-        "x": 74,
-        "y": 148,
+        "tileId": "piso_loop_telhado_variante_2",
+        "x": 80,
+        "y": 80,
         "flipX": false
       },
       {
         "id": "p7",
-        "tileId": "fachada",
-        "x": 148,
-        "y": 148,
+        "tileId": "piso_loop_telhado_variante_3",
+        "x": 96,
+        "y": 80,
         "flipX": false
       },
       {
         "id": "p8",
-        "tileId": "fachada",
-        "x": 222,
-        "y": 148,
+        "tileId": "piso_loop_telhado",
+        "x": 112,
+        "y": 80,
         "flipX": false
       },
       {
         "id": "p9",
-        "tileId": "mureta",
-        "x": 32,
-        "y": 69,
+        "tileId": "piso_loop_telhado_variante_2",
+        "x": 128,
+        "y": 80,
         "flipX": false
       },
       {
         "id": "p10",
-        "tileId": "mureta",
-        "x": 111,
-        "y": 69,
+        "tileId": "piso_loop_telhado_variante_3",
+        "x": 144,
+        "y": 80,
         "flipX": false
       },
       {
         "id": "p11",
-        "tileId": "mureta",
-        "x": 190,
-        "y": 69,
+        "tileId": "piso_loop_telhado",
+        "x": 160,
+        "y": 80,
         "flipX": false
       },
       {
         "id": "p12",
-        "tileId": "acesso_telhado",
-        "x": 24,
-        "y": 44,
+        "tileId": "piso_loop_telhado_variante_2",
+        "x": 176,
+        "y": 80,
         "flipX": false
       },
       {
         "id": "p13",
-        "tileId": "ventilacao",
-        "x": 126,
-        "y": 70,
+        "tileId": "piso_loop_telhado_variante_3",
+        "x": 192,
+        "y": 80,
         "flipX": false
       },
       {
         "id": "p14",
-        "tileId": "telhado_esquerda",
-        "x": 0,
-        "y": 84,
+        "tileId": "piso_loop_telhado",
+        "x": 208,
+        "y": 80,
         "flipX": false
       },
       {
         "id": "p15",
-        "tileId": "telhado",
-        "x": 3,
-        "y": 84,
+        "tileId": "piso_telhado_direita",
+        "x": 224,
+        "y": 80,
         "flipX": false
       },
       {
         "id": "p16",
-        "tileId": "telhado",
-        "x": 77,
-        "y": 84,
-        "flipX": false
-      },
-      {
-        "id": "p18",
-        "tileId": "telhado",
-        "x": 151,
-        "y": 84,
-        "flipX": false
-      },
-      {
-        "id": "p19",
-        "tileId": "telhado",
-        "x": 225,
-        "y": 84,
-        "flipX": false
-      },
-      {
-        "id": "p20",
-        "tileId": "telhado_direita",
-        "x": 237,
-        "y": 84,
+        "tileId": "concreto_esquerdo_cima",
+        "x": 0,
+        "y": 96,
         "flipX": false
       },
       {
         "id": "p17",
+        "tileId": "concreto_loop_cima",
+        "x": 16,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "id": "p18",
+        "tileId": "janela_esquerda_cima",
+        "x": 32,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "id": "p19",
+        "tileId": "janela_direita_cima",
+        "x": 48,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "id": "p20",
+        "tileId": "concreto_loop_cima",
+        "x": 64,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "id": "p21",
+        "tileId": "concreto_loop_cima",
+        "x": 80,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "id": "p22",
+        "tileId": "janela_esquerda_cima",
+        "x": 96,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "id": "p23",
+        "tileId": "janela_direita_cima",
+        "x": 112,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "id": "p24",
+        "tileId": "concreto_loop_cima",
+        "x": 128,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "id": "p25",
+        "tileId": "concreto_loop_cima",
+        "x": 144,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "id": "p26",
+        "tileId": "janela_esquerda_cima",
+        "x": 160,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "id": "p27",
+        "tileId": "janela_direita_cima",
+        "x": 176,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "id": "p28",
+        "tileId": "concreto_loop_cima",
+        "x": 192,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "id": "p29",
+        "tileId": "concreto_loop_cima",
+        "x": 208,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "id": "p30",
+        "tileId": "concreto_direito_cima",
+        "x": 224,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "id": "p31",
+        "tileId": "concreto_esquerdo_meio",
+        "x": 0,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p32",
+        "tileId": "concreto_loop_meio",
+        "x": 16,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p33",
+        "tileId": "janela_esquerda_baixo",
+        "x": 32,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p34",
+        "tileId": "janela_direita_baixo",
+        "x": 48,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p35",
+        "tileId": "concreto_loop_meio",
+        "x": 64,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p36",
+        "tileId": "concreto_loop_meio",
+        "x": 80,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p37",
+        "tileId": "janela_esquerda_baixo",
+        "x": 96,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p38",
+        "tileId": "janela_direita_baixo",
+        "x": 112,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p39",
+        "tileId": "concreto_loop_meio",
+        "x": 128,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p40",
+        "tileId": "concreto_loop_meio",
+        "x": 144,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p41",
+        "tileId": "janela_esquerda_baixo",
+        "x": 160,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p42",
+        "tileId": "janela_direita_baixo",
+        "x": 176,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p43",
+        "tileId": "concreto_loop_meio",
+        "x": 192,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p44",
+        "tileId": "concreto_loop_meio",
+        "x": 208,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p45",
+        "tileId": "concreto_direito_meio",
+        "x": 224,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p46",
+        "tileId": "concreto_esquerdo_meio",
+        "x": 0,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "id": "p47",
+        "tileId": "concreto_loop_meio",
+        "x": 16,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "id": "p48",
+        "tileId": "concreto_loop_meio",
+        "x": 32,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "id": "p49",
+        "tileId": "concreto_loop_meio",
+        "x": 48,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "id": "p50",
+        "tileId": "concreto_loop_meio",
+        "x": 64,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "id": "p51",
+        "tileId": "concreto_loop_meio",
+        "x": 80,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "id": "p52",
+        "tileId": "concreto_loop_meio",
+        "x": 96,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "id": "p53",
+        "tileId": "concreto_loop_meio",
+        "x": 112,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "id": "p54",
+        "tileId": "concreto_loop_meio",
+        "x": 128,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "id": "p55",
+        "tileId": "concreto_loop_meio",
+        "x": 144,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "id": "p56",
+        "tileId": "concreto_loop_meio",
+        "x": 160,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "id": "p57",
+        "tileId": "concreto_loop_meio",
+        "x": 176,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "id": "p58",
+        "tileId": "concreto_loop_meio",
+        "x": 192,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "id": "p59",
+        "tileId": "concreto_loop_meio",
+        "x": 208,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "id": "p60",
+        "tileId": "concreto_direito_meio",
+        "x": 224,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "id": "p61",
+        "tileId": "concreto_esquerdo_meio",
+        "x": 0,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "id": "p62",
+        "tileId": "concreto_loop_meio",
+        "x": 16,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "id": "p63",
+        "tileId": "concreto_loop_meio",
+        "x": 32,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "id": "p64",
+        "tileId": "concreto_loop_meio",
+        "x": 48,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "id": "p65",
+        "tileId": "concreto_loop_meio",
+        "x": 64,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "id": "p66",
+        "tileId": "concreto_loop_meio",
+        "x": 80,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "id": "p67",
+        "tileId": "concreto_loop_meio",
+        "x": 96,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "id": "p68",
+        "tileId": "concreto_loop_meio",
+        "x": 112,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "id": "p69",
+        "tileId": "concreto_loop_meio",
+        "x": 128,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "id": "p70",
+        "tileId": "concreto_loop_meio",
+        "x": 144,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "id": "p71",
+        "tileId": "concreto_loop_meio",
+        "x": 160,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "id": "p72",
+        "tileId": "concreto_loop_meio",
+        "x": 176,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "id": "p73",
+        "tileId": "concreto_loop_meio",
+        "x": 192,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "id": "p74",
+        "tileId": "concreto_loop_meio",
+        "x": 208,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "id": "p75",
+        "tileId": "concreto_direito_meio",
+        "x": 224,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "id": "p76",
+        "tileId": "concreto_esquerdo_baixo",
+        "x": 0,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "id": "p77",
+        "tileId": "concreto_loop_baixo",
+        "x": 16,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "id": "p78",
+        "tileId": "concreto_loop_baixo_variante_2",
+        "x": 32,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "id": "p79",
+        "tileId": "concreto_loop_baixo_variante_3",
+        "x": 48,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "id": "p80",
+        "tileId": "concreto_loop_baixo",
+        "x": 64,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "id": "p81",
+        "tileId": "concreto_loop_baixo_variante_2",
+        "x": 80,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "id": "p82",
+        "tileId": "concreto_loop_baixo_variante_3",
+        "x": 96,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "id": "p83",
+        "tileId": "concreto_loop_baixo",
+        "x": 112,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "id": "p84",
+        "tileId": "concreto_loop_baixo_variante_2",
+        "x": 128,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "id": "p85",
+        "tileId": "concreto_loop_baixo_variante_3",
+        "x": 144,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "id": "p86",
+        "tileId": "concreto_loop_baixo",
+        "x": 160,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "id": "p87",
+        "tileId": "concreto_loop_baixo_variante_2",
+        "x": 176,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "id": "p88",
+        "tileId": "concreto_loop_baixo_variante_3",
+        "x": 192,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "id": "p89",
+        "tileId": "concreto_loop_baixo",
+        "x": 208,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "id": "p90",
+        "tileId": "concreto_direito_baixo",
+        "x": 224,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "id": "p91",
+        "tileId": "corrimao_pilar",
+        "x": 96,
+        "y": 64,
+        "flipX": true
+      },
+      {
+        "id": "p92",
+        "tileId": "corrimao_loop",
+        "x": 112,
+        "y": 64,
+        "flipX": false
+      },
+      {
+        "id": "p93",
+        "tileId": "corrimao_loop",
+        "x": 128,
+        "y": 64,
+        "flipX": false
+      },
+      {
+        "id": "p94",
+        "tileId": "corrimao_loop",
+        "x": 144,
+        "y": 64,
+        "flipX": false
+      },
+      {
+        "id": "p95",
+        "tileId": "corrimao_loop",
+        "x": 160,
+        "y": 64,
+        "flipX": false
+      },
+      {
+        "id": "p96",
+        "tileId": "corrimao_loop",
+        "x": 176,
+        "y": 64,
+        "flipX": false
+      },
+      {
+        "id": "p97",
+        "tileId": "corrimao_loop",
+        "x": 192,
+        "y": 64,
+        "flipX": false
+      },
+      {
+        "id": "p98",
+        "tileId": "corrimao_loop",
+        "x": 208,
+        "y": 64,
+        "flipX": false
+      },
+      {
+        "id": "p99",
+        "tileId": "corrimao_pilar",
+        "x": 224,
+        "y": 64,
+        "flipX": false
+      },
+      {
+        "id": "p100",
+        "tileId": "mureta_esquerda",
+        "x": 16,
+        "y": 64,
+        "flipX": false
+      },
+      {
+        "id": "p101",
+        "tileId": "mureta_loop",
+        "x": 32,
+        "y": 64,
+        "flipX": false
+      },
+      {
+        "id": "p102",
+        "tileId": "mureta_loop",
+        "x": 48,
+        "y": 64,
+        "flipX": false
+      },
+      {
+        "id": "p103",
+        "tileId": "mureta_loop",
+        "x": 64,
+        "y": 64,
+        "flipX": false
+      },
+      {
+        "id": "p104",
+        "tileId": "mureta_loop",
+        "x": 80,
+        "y": 64,
+        "flipX": false
+      },
+      {
+        "id": "p105",
+        "tileId": "mureta_loop",
+        "x": 96,
+        "y": 64,
+        "flipX": false
+      },
+      {
+        "id": "p106",
+        "tileId": "mureta_loop",
+        "x": 112,
+        "y": 64,
+        "flipX": false
+      },
+      {
+        "id": "p107",
+        "tileId": "mureta_loop",
+        "x": 128,
+        "y": 64,
+        "flipX": false
+      },
+      {
+        "id": "p108",
+        "tileId": "mureta_direita",
+        "x": 144,
+        "y": 64,
+        "flipX": false
+      },
+      {
+        "id": "p109",
+        "tileId": "acesso_cobertura_esquerda",
+        "x": 16,
+        "y": 16,
+        "flipX": false
+      },
+      {
+        "id": "p110",
+        "tileId": "acesso_cobertura_meio_1",
+        "x": 32,
+        "y": 16,
+        "flipX": false
+      },
+      {
+        "id": "p111",
+        "tileId": "acesso_cobertura_meio_2",
+        "x": 48,
+        "y": 16,
+        "flipX": false
+      },
+      {
+        "id": "p112",
+        "tileId": "acesso_cobertura_direita",
+        "x": 64,
+        "y": 16,
+        "flipX": false
+      },
+      {
+        "id": "p113",
+        "tileId": "acesso_parede_esquerda_cima",
+        "x": 16,
+        "y": 32,
+        "flipX": false
+      },
+      {
+        "id": "p114",
+        "tileId": "porta_esquerda_cima",
+        "x": 32,
+        "y": 32,
+        "flipX": false
+      },
+      {
+        "id": "p115",
+        "tileId": "porta_direita_cima",
+        "x": 48,
+        "y": 32,
+        "flipX": false
+      },
+      {
+        "id": "p116",
+        "tileId": "acesso_parede_direita_cima",
+        "x": 64,
+        "y": 32,
+        "flipX": false
+      },
+      {
+        "id": "p117",
+        "tileId": "acesso_parede_esquerda_baixo",
+        "x": 16,
+        "y": 48,
+        "flipX": false
+      },
+      {
+        "id": "p118",
+        "tileId": "porta_esquerda_baixo",
+        "x": 32,
+        "y": 48,
+        "flipX": false
+      },
+      {
+        "id": "p119",
+        "tileId": "porta_direita_baixo",
+        "x": 48,
+        "y": 48,
+        "flipX": false
+      },
+      {
+        "id": "p120",
+        "tileId": "acesso_parede_direita_baixo",
+        "x": 64,
+        "y": 48,
+        "flipX": false
+      },
+      {
+        "id": "p121",
+        "tileId": "ventilacao_esquerda",
+        "x": 128,
+        "y": 64,
+        "flipX": false
+      },
+      {
+        "id": "p122",
+        "tileId": "ventilacao_direita",
+        "x": 144,
+        "y": 64,
+        "flipX": false
+      },
+      {
+        "id": "p123",
         "tileId": "personagem_referencia",
-        "x": 201,
-        "y": 56,
+        "x": 192,
+        "y": 52,
         "flipX": false
       }
     ]

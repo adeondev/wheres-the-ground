@@ -3,14 +3,15 @@
   const $ = id => document.getElementById(id);
   const clone = value => JSON.parse(JSON.stringify(value));
   const base = JSON.parse($('default-metadata').textContent);
-  const storageKey = 'wtg-tileset-lab-v1';
+  const storageKey = 'wtg-tileset-lab-16-v2';
   let metadata = clone(base);
   try { const saved = localStorage.getItem(storageKey); if (saved) metadata = validate(JSON.parse(saved)); } catch { /* JSON continua sendo a cópia principal. */ }
   const image = new Image();
   const atlas = $('atlas'), scene = $('scene');
   const a = atlas.getContext('2d'), s = scene.getContext('2d');
   const tileForm = $('tile-form'), instanceForm = $('instance-form');
-  let selectedTile = null, selectedInstance = null, selection = { x: 0, y: 48, w: 80, h: 16 };
+  let selectedTile = null, selectedInstance = null, selection = { x: 0, y: 48, w: 16, h: 16 };
+  let previousAssembly = null;
   let atlasDrag = null, sceneDrag = null, imageUrl = null;
   const history = [];
   const field = (form, name) => form.elements.namedItem(name);
@@ -23,7 +24,7 @@
   const sortedPlacements = () => [...metadata.scene.placements].sort((a, b) => tileFor(a).layer - tileFor(b).layer);
   function persist() { try { localStorage.setItem(storageKey, JSON.stringify(metadata)); } catch { status('Não foi possível salvar o rascunho no navegador. Exporte o JSON.'); } }
   function checkpoint() { history.push(clone(metadata)); if (history.length > 50) history.shift(); $('undo').disabled = false; }
-  function changed(message) { persist(); draw(); renderList(); refreshInstance(); if (message) status(message); }
+  function changed(message) { persist(); draw(); renderList(); refreshInstance(); renderAssemblies(); $('rule-status').textContent=''; if (message) status(message); }
   function bounds(rect) { return Number.isInteger(rect.x) && Number.isInteger(rect.y) && Number.isInteger(rect.w) && Number.isInteger(rect.h) && rect.x >= 0 && rect.y >= 0 && rect.w > 0 && rect.h > 0; }
   function validate(data) {
     if (data.version !== 1 || !data.image || typeof data.image.path !== 'string' || !Array.isArray(data.tiles) || !data.scene || !Array.isArray(data.scene.placements)) throw Error('Formato de metadata inválido. Use um JSON exportado por este editor.');
@@ -37,6 +38,18 @@
       const r = tile.collision.rect;
       if (tile.collision.type !== 'none' && (!r || !bounds(r) || r.x + r.w > tile.source.w || r.y + r.h > tile.source.h)) throw Error('Área de colisão fora do recorte.');
       ids.add(tile.id);
+    }
+    for(const tile of data.tiles){
+      if(data.catalog==='open-world-16-v2'&&tile.role!=='character'&&(tile.source.w!==16||tile.source.h!==16||tile.source.x%16||tile.source.y%16))throw Error('Neste catálogo, cada peça de cenário precisa ser um tile 16×16 alinhado à grade. Monte objetos maiores juntando as peças.');
+      for(const rule of tile.assembly?.requiredNeighbors??[])if(!Number.isInteger(rule.dx)||!Number.isInteger(rule.dy)||!Array.isArray(rule.tileIds)||!rule.tileIds.length||rule.tileIds.some(id=>!ids.has(id)))throw Error('Regra de encaixe aponta para uma peça inexistente.');
+    }
+    if(data.assemblies&&!Array.isArray(data.assemblies))throw Error('Lista de montagens inválida.');
+    const recipeIds=new Set();
+    for(const recipe of data.assemblies??[]){
+      if(typeof recipe.id!=='string'||recipeIds.has(recipe.id)||!Number.isInteger(recipe.minWidth)||!Number.isInteger(recipe.minHeight))throw Error('Montagem inválida ou repetida.');
+      const parts=window.TilesetAssemblies.build(recipe,recipe.minWidth,recipe.minHeight);
+      if(parts.some(item=>!ids.has(item.tileId)))throw Error('Montagem aponta para uma peça inexistente.');
+      recipeIds.add(recipe.id);
     }
     const instances = new Set();
     for (const item of data.scene.placements) {
@@ -93,11 +106,14 @@
     selectedTile=id;const tile=currentTile();if(!tile)return;selection={...tile.source};fillSelection();
     for(const name of ['id','label','role','layer','repeat','notes'])field(tileForm,name).value=tile[name]??'';
     field(tileForm,'collision').value=tile.collision.type;
+    const rules=tile.assembly?.requiredNeighbors??[];$('tile-rules').replaceChildren();
+    for(const rule of rules){const line=document.createElement('p');line.textContent=rule.reason+' Peças: '+rule.tileIds.map(id=>metadata.tiles.find(other=>other.id===id)?.label??id).join(' / ');$('tile-rules').append(line);}
+    if(!rules.length)$('tile-rules').textContent='Sem encaixes obrigatórios cadastrados.';
     const r=tile.collision.rect??{x:0,y:0,w:tile.source.w,h:tile.source.h};for(const [key,name] of [['x','cx'],['y','cy'],['w','cw'],['h','ch']])field(tileForm,name).value=r[key];
     $('selection-label').textContent='Editando peça';$('save-tile').textContent='Atualizar peça';renderList();drawAtlas();
     const zoom=Number($('atlas-zoom').value),scroll=$('atlas-scroll');scroll.scrollLeft=Math.max(0,(tile.source.x+tile.source.w/2)*zoom-scroll.clientWidth/2);scroll.scrollTop=Math.max(0,(tile.source.y+tile.source.h/2)*zoom-scroll.clientHeight/2);
   }
-  function newTile(){selectedTile=null;tileForm.reset();fillSelection();field(tileForm,'cx').value=0;field(tileForm,'cy').value=0;field(tileForm,'cw').value=selection.w;field(tileForm,'ch').value=selection.h;$('selection-label').textContent='Novo recorte';$('save-tile').textContent='Salvar peça';renderList();drawAtlas();}
+  function newTile(){selectedTile=null;tileForm.reset();fillSelection();field(tileForm,'cx').value=0;field(tileForm,'cy').value=0;field(tileForm,'cw').value=selection.w;field(tileForm,'ch').value=selection.h;$('selection-label').textContent='Novo recorte';$('save-tile').textContent='Salvar peça';$('tile-rules').textContent='Sem encaixes obrigatórios cadastrados.';renderList();drawAtlas();}
   function refreshInstance(){
     const item=currentInstance();instanceForm.querySelectorAll('input,button').forEach(element=>element.disabled=!item);
     $('instance-title').textContent=item?`${tileFor(item).label} · ${item.id}`:'Selecione uma peça na prévia para ajustar sua posição.';
@@ -107,24 +123,33 @@
   function point(event,canvas){const r=canvas.getBoundingClientRect();const divisor=canvas===atlas?Number($('atlas-zoom').value):1;return{x:Math.floor((event.clientX-r.left)*canvas.width/r.width/divisor),y:Math.floor((event.clientY-r.top)*canvas.height/r.height/divisor)};}
   function aligned(n){return Math.round(n/snap())*snap();}
   function atlasPoint(event){const p=point(event,atlas);return{x:Math.min(image.width-1,Math.max(0,p.x)),y:Math.min(image.height-1,Math.max(0,p.y))};}
-  atlas.onpointerdown=event=>{if(!image.naturalWidth||event.button!==0)return;const p=atlasPoint(event);atlasDrag={x:Math.floor(p.x/snap())*snap(),y:Math.floor(p.y/snap())*snap()};atlas.setPointerCapture(event.pointerId);selection={...atlasDrag,w:1,h:1};newTile();};
+  atlas.onpointerdown=event=>{if(!image.naturalWidth||event.button!==0)return;const p=atlasPoint(event);atlasDrag={x:Math.floor(p.x/snap())*snap(),y:Math.floor(p.y/snap())*snap()};atlas.setPointerCapture(event.pointerId);selection={...atlasDrag,w:Math.min(snap(),image.width-atlasDrag.x),h:Math.min(snap(),image.height-atlasDrag.y)};newTile();};
   atlas.onpointermove=event=>{if(!atlasDrag)return;const p=atlasPoint(event);const left=Math.min(atlasDrag.x,Math.floor(p.x/snap())*snap()),top=Math.min(atlasDrag.y,Math.floor(p.y/snap())*snap());selection={x:left,y:top,w:Math.min(image.width,Math.ceil((Math.max(atlasDrag.x,p.x)+1)/snap())*snap())-left,h:Math.min(image.height,Math.ceil((Math.max(atlasDrag.y,p.y)+1)/snap())*snap())-top};fillSelection();field(tileForm,'cw').value=selection.w;field(tileForm,'ch').value=selection.h;drawAtlas();};
   atlas.onpointerup=atlas.onpointercancel=()=>{atlasDrag=null;};
   for(const name of ['x','y','w','h'])field(tileForm,name).oninput=()=>{const r=Object.fromEntries(['x','y','w','h'].map(key=>[key,number(tileForm,key)]));if(bounds(r)){selection=r;drawAtlas();}};
   tileForm.onsubmit=event=>{
     event.preventDefault();const id=field(tileForm,'id').value.trim();const source=Object.fromEntries(['x','y','w','h'].map(key=>[key,number(tileForm,key)]));
     const type=field(tileForm,'collision').value;const collision={type};if(type!=='none')collision.rect={x:number(tileForm,'cx'),y:number(tileForm,'cy'),w:number(tileForm,'cw'),h:number(tileForm,'ch')};
-    const tile={id,label:field(tileForm,'label').value.trim(),source,role:field(tileForm,'role').value,layer:number(tileForm,'layer'),repeat:field(tileForm,'repeat').value,collision,notes:field(tileForm,'notes').value.trim()};
+    const tile={...clone(currentTile()??{}),id,label:field(tileForm,'label').value.trim(),source,role:field(tileForm,'role').value,layer:number(tileForm,'layer'),repeat:field(tileForm,'repeat').value,collision,notes:field(tileForm,'notes').value.trim()};
     const next=clone(metadata),index=next.tiles.findIndex(tile=>tile.id===selectedTile);
     if(index>=0){next.tiles[index]=tile;for(const item of next.scene.placements)if(item.tileId===selectedTile)item.tileId=id;}else next.tiles.push(tile);
+    if(index>=0&&selectedTile!==id){
+      const replace=value=>typeof value==='string'?(value===selectedTile?id:value):Array.isArray(value)?value.map(replace):value&&typeof value==='object'?Object.fromEntries(Object.entries(value).map(([key,item])=>[key,replace(item)])):value;
+      next.assemblies=replace(next.assemblies??[]);for(const part of next.tiles)if(part.assembly)part.assembly=replace(part.assembly);
+    }
     try{validate(next);}catch(error){status(error.message);return;}checkpoint();metadata=next;selectedTile=id;selectTile(id);changed('Peça salva. Use “Colocar peça” para testar na cena.');
   };
   $('new-tile').onclick=newTile;
-  $('delete-tile').onclick=()=>{if(!currentTile())return;checkpoint();metadata.tiles=metadata.tiles.filter(tile=>tile.id!==selectedTile);metadata.scene.placements=metadata.scene.placements.filter(item=>item.tileId!==selectedTile);selectedInstance=null;newTile();changed('Peça e suas instâncias removidas. Desfazer recupera tudo.');};
+  $('delete-tile').onclick=()=>{if(!currentTile())return;checkpoint();metadata.tiles=metadata.tiles.filter(tile=>tile.id!==selectedTile);metadata.scene.placements=metadata.scene.placements.filter(item=>item.tileId!==selectedTile);metadata.assemblies=(metadata.assemblies??[]).filter(recipe=>!JSON.stringify(recipe).includes('"'+selectedTile+'"'));for(const tile of metadata.tiles)if(tile.assembly)tile.assembly.requiredNeighbors=tile.assembly.requiredNeighbors.map(rule=>({...rule,tileIds:rule.tileIds.filter(id=>id!==selectedTile)})).filter(rule=>rule.tileIds.length);selectedInstance=null;newTile();changed('Peça, instâncias e montagens dependentes removidas. Desfazer recupera tudo.');};
   function hit(p){return sortedPlacements().reverse().find(item=>{const r=tileFor(item).source;return p.x>=item.x&&p.x<item.x+r.w&&p.y>=item.y&&p.y<item.y+r.h;});}
   function placementId(){let i=1;while(metadata.scene.placements.some(item=>item.id===`p${i}`))i++;return `p${i}`;}
   scene.onpointerdown=event=>{
     if(!image.naturalWidth||event.button!==0)return;const p=point(event,scene),mode=$('mode').value;
+    if(mode==='assembly'){
+      const recipe=(metadata.assemblies??[]).find(item=>item.id===$('assembly').value);if(!recipe){status('Selecione uma montagem.');return;}
+      let parts;try{parts=window.TilesetAssemblies.build(recipe,Number($('assembly-width').value),Number($('assembly-height').value),Math.round(p.x/16)*16,Math.round(p.y/16)*16);}catch(error){status(error.message);return;}
+      checkpoint();for(const part of parts)metadata.scene.placements.push({id:placementId(),...part});selectedInstance=null;changed(`${recipe.label}: ${parts.length} tiles colocados, sem esticar sprites.`);return;
+    }
     if(mode==='paint'){
       if(!currentTile()){status('Salve ou selecione uma peça antes de colocá-la.');return;}checkpoint();const item={id:placementId(),tileId:selectedTile,x:aligned(p.x),y:aligned(p.y),flipX:false};metadata.scene.placements.push(item);selectedInstance=item.id;changed('Peça colocada.');return;
     }
@@ -138,7 +163,7 @@
   $('delete-instance').onclick=()=>{if(!currentInstance())return;checkpoint();metadata.scene.placements=metadata.scene.placements.filter(item=>item.id!==selectedInstance);selectedInstance=null;changed('Peça removida da cena.');};
   $('scene-form').onsubmit=event=>{event.preventDefault();const next=clone(metadata);for(const key of ['width','height'])next.scene[key]=number($('scene-form'),key);next.scene.background=field($('scene-form'),'background').value;try{validate(next);}catch(error){status(error.message);return;}checkpoint();metadata=next;changed('Tamanho da cena atualizado.');};
   $('undo').onclick=()=>{if(!history.length)return;metadata=history.pop();$('undo').disabled=!history.length;selectedInstance=null;selectedTile=null;newTile();changed('Última alteração desfeita.');};
-  $('example').onclick=()=>{checkpoint();metadata.scene=clone(base.scene);for(const tile of base.tiles)if(!metadata.tiles.some(other=>other.id===tile.id))metadata.tiles.push(clone(tile));selectedInstance=null;changed('Cena de exemplo restaurada.');};
+  $('example').onclick=()=>{checkpoint();metadata=clone(base);selectedInstance=null;selectedTile=null;$('snap').value=16;selectTile(metadata.tiles[0].id);loadImage('../'+metadata.image.path);changed('Catálogo modular e cena de exemplo restaurados. Desfazer recupera sua edição.');};
   $('clear-scene').onclick=()=>{checkpoint();metadata.scene.placements=[];selectedInstance=null;changed('Cena limpa. Use Desfazer para recuperar.');};
   function download(blob,filename){const url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=filename;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
   $('export').onclick=()=>{try{validate(metadata);}catch(error){status(error.message);return;}$('json-output').value=JSON.stringify(metadata,null,2)+'\n';$('export-status').textContent='';$('export-dialog').showModal();status('Metadata pronta para baixar ou copiar.');};
@@ -153,5 +178,13 @@
   $('scene-tile').onchange=()=>selectTile($('scene-tile').value);
   $('snap').onchange=()=>{checkpoint();metadata.grid.size=snap();persist();draw();};
   for(const id of ['checker','collisions','scene-grid','mode'])$(id).onchange=drawScene;
-  $('snap').value=metadata.grid.size;$('undo').disabled=true;selectTile(metadata.tiles[0]?.id);refreshInstance();loadImage('../'+metadata.image.path);
+  function renderAssemblies(){const value=$('assembly').value;$('assembly').replaceChildren();for(const recipe of metadata.assemblies??[]){const option=document.createElement('option');option.value=recipe.id;option.textContent=recipe.label;option.selected=recipe.id===value;$('assembly').append(option);}updateAssembly();}
+  function updateAssembly(){const recipe=(metadata.assemblies??[]).find(item=>item.id===$('assembly').value);for(const id of ['assembly-width','assembly-height','assembly-mode'])$(id).disabled=!recipe;if(!recipe){$('assembly-description').textContent='Este JSON não tem receitas de montagem.';previousAssembly=null;return;}
+    const w=$('assembly-width'),h=$('assembly-height');w.min=recipe.minWidth;h.min=recipe.minHeight;w.disabled=recipe.type==='pattern'||recipe.type==='vertical';h.disabled=recipe.type==='pattern'||recipe.type==='horizontal';
+    if(previousAssembly!==recipe.id){w.value=recipe.defaultWidth??recipe.minWidth;h.value=recipe.defaultHeight??recipe.minHeight;previousAssembly=recipe.id;}
+    $('assembly-description').textContent=recipe.notes+' Clique em “Montar objeto” e depois na cena para posicionar.';
+  }
+  $('assembly').onchange=()=>{updateAssembly();};$('assembly-mode').onclick=()=>{$('mode').value='assembly';drawScene();status('Clique na cena para montar o objeto na grade 16×16.');};
+  $('check-rules').onclick=()=>{const errors=window.TilesetAssemblies.check(metadata);$('rule-status').textContent=errors.length?`${errors.length} encaixes precisam de atenção. `+errors.slice(0,3).map(error=>error.instanceId+': '+error.message).join(' '):'Encaixes OK: pontas, janelas, porta e ventilação estão com suas peças correspondentes.';};
+  $('snap').value=metadata.grid.size;$('undo').disabled=true;selectTile(metadata.tiles[0]?.id);refreshInstance();renderAssemblies();loadImage('../'+metadata.image.path);
 })();
