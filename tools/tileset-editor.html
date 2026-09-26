@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Tileset Lab · Where's the Ground?</title>
+  <link rel="stylesheet" href="tileset-editor.css">
+  <script defer src="tileset-editor.js"></script>
+</head>
+<body>
+  <header>
+    <div><span class="eyebrow">WHERE'S THE GROUND? / FERRAMENTAS</span><h1>Tileset Lab <span>01</span></h1><p>Recorte as peças, diga como funcionam e monte a cena.</p></div>
+    <nav aria-label="Arquivos">
+      <label class="button">Abrir PNG<input id="image-file" type="file" accept="image/png,image/webp"></label>
+      <label class="button">Importar JSON<input id="json-file" type="file" accept="application/json,.json"></label>
+      <button id="export" class="primary">Exportar metadata ↓</button>
+    </nav>
+  </header>
+  <main>
+    <section class="panel atlas-panel">
+      <div class="panel-heading"><h2><span>01</span> Peças do tileset</h2><span id="image-size" class="badge"></span></div>
+      <div class="toolbar">
+        <label>Zoom <select id="atlas-zoom"><option value="2">2×</option><option value="4" selected>4×</option><option value="6">6×</option><option value="8">8×</option></select></label>
+        <label>Grade / encaixe <select id="snap"><option value="1">1 px · livre</option><option value="8">8 px</option><option value="16">16 px</option><option value="32">32 px</option></select></label>
+        <label class="check"><input id="atlas-grid" type="checkbox">Grade</label>
+      </div>
+      <div id="atlas-scroll" class="canvas-scroll checker"><canvas id="atlas" aria-label="Arraste para selecionar um recorte do tileset"></canvas></div>
+      <p class="hint">Arraste no PNG para recortar. Clique numa peça da lista para editar.</p>
+      <form id="tile-form">
+        <div class="form-title"><strong id="selection-label">Novo recorte</strong><button id="new-tile" type="button" class="quiet">Novo</button></div>
+        <div class="fields four">
+          <label>X<input name="x" type="number" min="0" required></label><label>Y<input name="y" type="number" min="0" required></label>
+          <label>Largura<input name="w" type="number" min="1" required></label><label>Altura<input name="h" type="number" min="1" required></label>
+        </div>
+        <label>Identificador<input name="id" placeholder="ex.: piso_telhado" pattern="[a-zA-Z0-9_-]+" required></label>
+        <label>Nome<input name="label" placeholder="ex.: Piso do telhado" required></label>
+        <div class="fields two">
+          <label>Função<select name="role"><option value="platform">Piso / plataforma</option><option value="terrain">Parede / fachada</option><option value="decoration">Decoração</option><option value="door">Porta / saída</option><option value="character">Personagem / referência</option></select></label>
+          <label>Colisão<select name="collision"><option value="none">Sem colisão</option><option value="solid">Sólido</option><option value="one-way">Plataforma: atravessa por baixo</option></select></label>
+        </div>
+        <div class="fields two"><label>Ordem de desenho<input name="layer" type="number" value="10" required></label><label>Repetição<select name="repeat"><option value="none">Não repete</option><option value="x">Horizontal</option><option value="y">Vertical</option><option value="both">Horizontal e vertical</option></select></label></div>
+        <details><summary>Área de colisão dentro do recorte</summary><p class="hint">Pixels relativos ao canto do recorte. Sem colisão, estes valores são ignorados.</p>
+          <div class="fields four"><label>X<input name="cx" type="number" min="0"></label><label>Y<input name="cy" type="number" min="0"></label><label>Largura<input name="cw" type="number" min="1"></label><label>Altura<input name="ch" type="number" min="1"></label></div>
+        </details>
+        <label>O que essa peça faz?<textarea name="notes" rows="2" placeholder="Ex.: topo sólido; Gabriel pode andar em cima."></textarea></label>
+        <div class="actions"><button type="submit" class="primary" id="save-tile">Salvar peça</button><button type="button" id="delete-tile" class="danger">Excluir peça</button></div>
+      </form>
+      <div class="list-heading"><h3>Peças cadastradas</h3><span id="tile-count" class="badge"></span></div>
+      <div id="tile-list" class="tile-list"></div>
+    </section>
+    <section class="panel scene-panel">
+      <div class="panel-heading"><h2><span>02</span> Cena de exemplo</h2><span class="badge">PIXELS INTEIROS</span></div>
+      <div class="toolbar">
+        <label>Ferramenta<select id="mode"><option value="move">Selecionar / mover</option><option value="paint">Colocar peça</option><option value="erase">Apagar</option></select></label>
+        <label>Peça<select id="scene-tile"></select></label>
+        <label class="check"><input id="collisions" type="checkbox">Colisões</label>
+        <label class="check"><input id="scene-grid" type="checkbox">Grade</label>
+        <label class="check"><input id="checker" type="checkbox" checked>Transparência</label>
+      </div>
+      <div class="scene-wrap checker"><canvas id="scene" aria-label="Prévia do cenário; clique para colocar ou mover peças"></canvas></div>
+      <div class="scene-caption"><span id="scene-status"></span><span id="placement-count"></span></div>
+      <div class="toolbar scene-actions"><button id="undo">↶ Desfazer</button><button id="example">Restaurar exemplo</button><button id="clear-scene">Limpar cena</button><button id="png-export">Exportar cena PNG</button></div>
+      <div class="inspector">
+        <h3>Peça na cena</h3><p id="instance-title" class="hint">Selecione uma peça na prévia para ajustar sua posição.</p>
+        <form id="instance-form" class="fields instance-fields">
+          <label>X<input name="x" type="number" required></label><label>Y<input name="y" type="number" required></label>
+          <label class="check"><input name="flipX" type="checkbox">Espelhar</label><button type="submit">Aplicar</button><button id="delete-instance" type="button" class="danger">Remover</button>
+        </form>
+      </div>
+      <div class="inspector scene-settings"><h3>Tamanho da cena</h3><form id="scene-form" class="fields instance-fields"><label>Largura<input name="width" type="number" min="16" max="2048" required></label><label>Altura<input name="height" type="number" min="16" max="2048" required></label><label>Fundo<input name="background" type="color"></label><button type="submit">Aplicar</button></form></div>
+      <aside class="guide"><span class="eyebrow">COMO ME PASSAR ESSE CENÁRIO</span><h3>O JSON conta a história de cada peça.</h3><ol><li>Selecione um recorte e preencha nome, função e colisão.</li><li>Use <b>Colocar peça</b> para montar o cenário. <b>Selecionar / mover</b> permite arrastar.</li><li>Exporte a metadata e coloque o JSON junto do tileset. Me mande o arquivo ou o caminho.</li></ol><p>O exemplo é uma interpretação inicial da sua referência. As colisões são editáveis. O personagem no PNG serve como referência de tamanho.</p><p class="hint">Rascunho salvo neste navegador. O JSON é o arquivo para guardar e compartilhar.</p></aside>
+    </section>
+  </main>
+  <footer><span id="status" role="status" aria-live="polite">Carregando tileset…</span><span>SEM INSTALAÇÃO · ABRE COM DUPLO CLIQUE</span></footer>
+  <dialog id="export-dialog"><div class="panel-heading"><h2>Metadata pronta</h2><form method="dialog"><button aria-label="Fechar exportação">×</button></form></div><p class="hint">Baixe o JSON ou copie o conteúdo. Guarde como <b>open_world_tileset.metadata.json</b> junto do PNG.</p><textarea id="json-output" rows="16" readonly aria-label="JSON da metadata"></textarea><div class="actions"><button id="download-json" class="primary">Baixar JSON</button><button id="copy-json">Copiar JSON</button></div><p id="export-status" class="hint" role="status"></p></dialog>
+  <script id="default-metadata" type="application/json">
+{"version":1,"image":{"path":"assets/sprites/tilesets/open_world_tileset.png","width":488,"height":244},"grid":{"size":1},"tiles":[
+{"id":"telhado","label":"Piso do telhado · meio","source":{"x":3,"y":48,"w":74,"h":16},"role":"platform","layer":20,"repeat":"x","collision":{"type":"solid","rect":{"x":0,"y":0,"w":74,"h":16}},"notes":"Trecho central repetido horizontalmente, sem as bordas laterais. A superfície de cima é o chão por onde o personagem anda."},
+{"id":"telhado_esquerda","label":"Piso do telhado · borda esquerda","source":{"x":0,"y":48,"w":3,"h":16},"role":"platform","layer":21,"repeat":"none","collision":{"type":"solid","rect":{"x":0,"y":0,"w":3,"h":16}},"notes":"Acabamento da extremidade esquerda. Usar uma vez no começo do piso."},
+{"id":"telhado_direita","label":"Piso do telhado · borda direita","source":{"x":77,"y":48,"w":3,"h":16},"role":"platform","layer":21,"repeat":"none","collision":{"type":"solid","rect":{"x":0,"y":0,"w":3,"h":16}},"notes":"Acabamento da extremidade direita. Usar uma vez no fim do piso."},
+{"id":"fachada","label":"Fachada com janelas","source":{"x":3,"y":64,"w":74,"h":48},"role":"terrain","layer":10,"repeat":"x","collision":{"type":"none"},"notes":"Fundo do prédio abaixo do telhado. Recorte sem as margens transparentes para repetir lado a lado."},
+{"id":"acesso_telhado","label":"Porta de acesso ao telhado","source":{"x":0,"y":137,"w":64,"h":40},"role":"door","layer":15,"repeat":"none","collision":{"type":"none"},"notes":"Estrutura ao fundo com porta. Possível ponto de entrada ou saída; por enquanto apenas visual."},
+{"id":"ventilacao","label":"Unidade de ventilação","source":{"x":3,"y":114,"w":26,"h":14},"role":"decoration","layer":15,"repeat":"none","collision":{"type":"none"},"notes":"Equipamento decorativo apoiado sobre o telhado."},
+{"id":"mureta","label":"Mureta ao fundo","source":{"x":0,"y":177,"w":79,"h":15},"role":"decoration","layer":12,"repeat":"x","collision":{"type":"none"},"notes":"Faixa baixa atrás do personagem; não bloqueia passagem."},
+{"id":"personagem_referencia","label":"Personagem de referência","source":{"x":7,"y":4,"w":16,"h":28},"role":"character","layer":30,"repeat":"none","collision":{"type":"none"},"notes":"Referência de escala extraída do tileset. No jogo será substituído pelo Gabriel animado."}
+],"scene":{"width":240,"height":168,"background":"#292738","placements":[
+{"id":"p1","tileId":"fachada","x":0,"y":100,"flipX":false},{"id":"p2","tileId":"fachada","x":74,"y":100,"flipX":false},{"id":"p3","tileId":"fachada","x":148,"y":100,"flipX":false},{"id":"p4","tileId":"fachada","x":222,"y":100,"flipX":false},
+{"id":"p5","tileId":"fachada","x":0,"y":148,"flipX":false},{"id":"p6","tileId":"fachada","x":74,"y":148,"flipX":false},{"id":"p7","tileId":"fachada","x":148,"y":148,"flipX":false},{"id":"p8","tileId":"fachada","x":222,"y":148,"flipX":false},
+{"id":"p9","tileId":"mureta","x":32,"y":69,"flipX":false},{"id":"p10","tileId":"mureta","x":111,"y":69,"flipX":false},{"id":"p11","tileId":"mureta","x":190,"y":69,"flipX":false},
+{"id":"p12","tileId":"acesso_telhado","x":24,"y":44,"flipX":false},{"id":"p13","tileId":"ventilacao","x":126,"y":70,"flipX":false},
+{"id":"p14","tileId":"telhado_esquerda","x":0,"y":84,"flipX":false},{"id":"p15","tileId":"telhado","x":3,"y":84,"flipX":false},{"id":"p16","tileId":"telhado","x":77,"y":84,"flipX":false},{"id":"p18","tileId":"telhado","x":151,"y":84,"flipX":false},{"id":"p19","tileId":"telhado","x":225,"y":84,"flipX":false},{"id":"p20","tileId":"telhado_direita","x":237,"y":84,"flipX":false},
+{"id":"p17","tileId":"personagem_referencia","x":201,"y":56,"flipX":false}
+]}}
+  </script>
+</body>
+</html>

@@ -1,0 +1,314 @@
+{
+  "version": 1,
+  "image": {
+    "path": "assets/sprites/tilesets/open_world_tileset.png",
+    "width": 488,
+    "height": 244
+  },
+  "grid": {
+    "size": 1
+  },
+  "tiles": [
+    {
+      "id": "telhado",
+      "label": "Piso do telhado · meio",
+      "source": {
+        "x": 3,
+        "y": 48,
+        "w": 74,
+        "h": 16
+      },
+      "role": "platform",
+      "layer": 20,
+      "repeat": "x",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 74,
+          "h": 16
+        }
+      },
+      "notes": "Trecho central repetido horizontalmente, sem as bordas laterais. A superfície de cima é o chão por onde o personagem anda."
+    },
+    {
+      "id": "telhado_esquerda",
+      "label": "Piso do telhado · borda esquerda",
+      "source": {
+        "x": 0,
+        "y": 48,
+        "w": 3,
+        "h": 16
+      },
+      "role": "platform",
+      "layer": 21,
+      "repeat": "none",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 3,
+          "h": 16
+        }
+      },
+      "notes": "Acabamento da extremidade esquerda. Usar uma vez no começo do piso."
+    },
+    {
+      "id": "telhado_direita",
+      "label": "Piso do telhado · borda direita",
+      "source": {
+        "x": 77,
+        "y": 48,
+        "w": 3,
+        "h": 16
+      },
+      "role": "platform",
+      "layer": 21,
+      "repeat": "none",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 3,
+          "h": 16
+        }
+      },
+      "notes": "Acabamento da extremidade direita. Usar uma vez no fim do piso."
+    },
+    {
+      "id": "fachada",
+      "label": "Fachada com janelas",
+      "source": {
+        "x": 3,
+        "y": 64,
+        "w": 74,
+        "h": 48
+      },
+      "role": "terrain",
+      "layer": 10,
+      "repeat": "x",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Fundo do prédio abaixo do telhado. Recorte sem as margens transparentes para repetir lado a lado."
+    },
+    {
+      "id": "acesso_telhado",
+      "label": "Porta de acesso ao telhado",
+      "source": {
+        "x": 0,
+        "y": 137,
+        "w": 64,
+        "h": 40
+      },
+      "role": "door",
+      "layer": 15,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Estrutura ao fundo com porta. Possível ponto de entrada ou saída; por enquanto apenas visual."
+    },
+    {
+      "id": "ventilacao",
+      "label": "Unidade de ventilação",
+      "source": {
+        "x": 3,
+        "y": 114,
+        "w": 26,
+        "h": 14
+      },
+      "role": "decoration",
+      "layer": 15,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Equipamento decorativo apoiado sobre o telhado."
+    },
+    {
+      "id": "mureta",
+      "label": "Mureta ao fundo",
+      "source": {
+        "x": 0,
+        "y": 177,
+        "w": 79,
+        "h": 15
+      },
+      "role": "decoration",
+      "layer": 12,
+      "repeat": "x",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Faixa baixa atrás do personagem; não bloqueia passagem."
+    },
+    {
+      "id": "personagem_referencia",
+      "label": "Personagem de referência",
+      "source": {
+        "x": 7,
+        "y": 4,
+        "w": 16,
+        "h": 28
+      },
+      "role": "character",
+      "layer": 30,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Referência de escala extraída do tileset. No jogo será substituído pelo Gabriel animado."
+    }
+  ],
+  "scene": {
+    "width": 240,
+    "height": 168,
+    "background": "#292738",
+    "placements": [
+      {
+        "id": "p1",
+        "tileId": "fachada",
+        "x": 0,
+        "y": 100,
+        "flipX": false
+      },
+      {
+        "id": "p2",
+        "tileId": "fachada",
+        "x": 74,
+        "y": 100,
+        "flipX": false
+      },
+      {
+        "id": "p3",
+        "tileId": "fachada",
+        "x": 148,
+        "y": 100,
+        "flipX": false
+      },
+      {
+        "id": "p4",
+        "tileId": "fachada",
+        "x": 222,
+        "y": 100,
+        "flipX": false
+      },
+      {
+        "id": "p5",
+        "tileId": "fachada",
+        "x": 0,
+        "y": 148,
+        "flipX": false
+      },
+      {
+        "id": "p6",
+        "tileId": "fachada",
+        "x": 74,
+        "y": 148,
+        "flipX": false
+      },
+      {
+        "id": "p7",
+        "tileId": "fachada",
+        "x": 148,
+        "y": 148,
+        "flipX": false
+      },
+      {
+        "id": "p8",
+        "tileId": "fachada",
+        "x": 222,
+        "y": 148,
+        "flipX": false
+      },
+      {
+        "id": "p9",
+        "tileId": "mureta",
+        "x": 32,
+        "y": 69,
+        "flipX": false
+      },
+      {
+        "id": "p10",
+        "tileId": "mureta",
+        "x": 111,
+        "y": 69,
+        "flipX": false
+      },
+      {
+        "id": "p11",
+        "tileId": "mureta",
+        "x": 190,
+        "y": 69,
+        "flipX": false
+      },
+      {
+        "id": "p12",
+        "tileId": "acesso_telhado",
+        "x": 24,
+        "y": 44,
+        "flipX": false
+      },
+      {
+        "id": "p13",
+        "tileId": "ventilacao",
+        "x": 126,
+        "y": 70,
+        "flipX": false
+      },
+      {
+        "id": "p14",
+        "tileId": "telhado_esquerda",
+        "x": 0,
+        "y": 84,
+        "flipX": false
+      },
+      {
+        "id": "p15",
+        "tileId": "telhado",
+        "x": 3,
+        "y": 84,
+        "flipX": false
+      },
+      {
+        "id": "p16",
+        "tileId": "telhado",
+        "x": 77,
+        "y": 84,
+        "flipX": false
+      },
+      {
+        "id": "p18",
+        "tileId": "telhado",
+        "x": 151,
+        "y": 84,
+        "flipX": false
+      },
+      {
+        "id": "p19",
+        "tileId": "telhado",
+        "x": 225,
+        "y": 84,
+        "flipX": false
+      },
+      {
+        "id": "p20",
+        "tileId": "telhado_direita",
+        "x": 237,
+        "y": 84,
+        "flipX": false
+      },
+      {
+        "id": "p17",
+        "tileId": "personagem_referencia",
+        "x": 201,
+        "y": 56,
+        "flipX": false
+      }
+    ]
+  }
+}
