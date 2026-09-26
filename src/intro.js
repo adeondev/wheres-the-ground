@@ -53,7 +53,7 @@ const ROCKETS = [
   },
 ];
 
-export function createIntro(audio) {
+export function createIntro(audio, { onFinish = () => {} } = {}) {
   let active = false;
   // Fases: idle, seg1_typing, seg1_wait, seg1_fade, seg1_pause,
   // seg2_typing, seg2_wait, seg2_fade, seg3_music,
@@ -199,11 +199,12 @@ export function createIntro(audio) {
     rocketTimer = 0;
   }
 
-  function finish() {
+  function finish(fadeDuration = 1.0) {
     audio.stopDialogBlip();
-    audio.stopIntroMusic(1.0);
+    audio.stopIntroMusic(fadeDuration);
     active = false;
     phase = 'idle';
+    onFinish();
   }
 
   function updateTypewriter(dt, onDone) {
@@ -252,11 +253,13 @@ export function createIntro(audio) {
   function update(dt) {
     if (!active) return;
 
-    // O relógio do áudio é a referência para manter os efeitos no beat de 134 BPM.
+    // Usa o relógio do áudio quando ele toca; segue visualmente se o autoplay for bloqueado.
     if (phase === 'seg3_music' || phase.startsWith('seg4_logo') || phase === 'seg5_logo_slide' || phase === 'seg6_showcase' || phase === 'seg7_start_fade') {
       const realTime = audio.getIntroMusicTime();
-      if (realTime > 0) {
+      if (audio.isIntroMusicPlaying() && realTime >= 84) {
         smoothMusicTime = realTime;
+      } else if (smoothMusicTime >= 84) {
+        smoothMusicTime += dt;
       }
     }
 
@@ -318,6 +321,7 @@ export function createIntro(audio) {
         if (phaseTimer <= 0) {
           alpha = 0;
           phase = 'seg3_music';
+          smoothMusicTime = 84.0;
           audio.startIntroMusic({ startTime: 84.0, fadeInDuration: 3.0, targetVolume: 0.8 });
         }
         break;
@@ -726,32 +730,27 @@ export function createIntro(audio) {
   window.addEventListener('keydown', event => {
     if (!active) return;
 
+    if (event.key === ' ' || event.key === 'Enter') {
+      event.preventDefault();
+      if (!event.repeat) finish(0);
+      return;
+    }
+
     // Se estiver no showcase de foguetes: QUALQUER tecla inicia o jogo!
     if (phase === 'seg6_showcase') {
       startGameFromShowcase();
       return;
     }
 
-    // Durante a fase da música, Espaço/Enter avança para perto da logo
-    if (phase === 'seg3_music') {
-      if (event.key === ' ' || event.key.toLowerCase() === 'l' || event.key === 'Enter') {
-        skipToLogoTime();
-        return;
-      }
-    }
-
-    // Durante a exibição centralizada de 10s da logo, Espaço/Enter já inicia o deslizamento
-    if (phase === 'seg4_logo_hold') {
-      if (event.key === ' ' || event.key.toLowerCase() === 'l' || event.key === 'Enter') {
-        phase = 'seg5_logo_slide';
-        phaseTimer = 1.1;
-        return;
-      }
+    // L avança a música até perto da logo sem encerrar a introdução.
+    if (phase === 'seg3_music' && event.key.toLowerCase() === 'l') {
+      skipToLogoTime();
+      return;
     }
 
     // Esc encerra imediatamente e vai pro jogo
     if (event.key === 'Escape') {
-      finish();
+      finish(0);
     }
   });
 

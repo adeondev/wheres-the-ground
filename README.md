@@ -8,7 +8,7 @@ Na pasta do projeto, execute `python -m http.server 8000` e abra `http://localho
 
 ## Publicar para testes
 
-O jogo é estático e pode rodar no GitHub Pages. Envie `index.html`, `style.css`, `src/`, `assets/` e `.github/workflows/pages.yml` para um repositório GitHub na branch `main`. Em **Settings → Pages → Build and deployment**, selecione **GitHub Actions**. O workflow publica os arquivos do jogo a cada push na `main`; o link para compartilhar aparece em **Settings → Pages** depois da primeira publicação. Não compartilhe o link da página do arquivo `index.html` dentro do GitHub: ele só mostra o código.
+O jogo é estático e pode rodar no GitHub Pages quando esse recurso estiver habilitado para o repositório. Como o projeto agora é privado e o Pages foi despublicado, o workflow está disponível apenas para execução manual depois de reativar o Pages. Não compartilhe o link da página do arquivo `index.html` dentro do GitHub: ele só mostra o código.
 
 ## Controles
 
@@ -18,7 +18,8 @@ O jogo é estático e pode rodar no GitHub Pages. Envie `index.html`, `style.css
 - **J**: rajada para onde Gabriel olha
 - **T**: abrir o diálogo de exemplo
 - **C**: ligar/desligar o modo CRT (a preferência fica salva no navegador)
-- **H**: iniciar a introdução cinematográfica do jogo
+- A introdução começa ao abrir o jogo; **Espaço** ou **Enter** pulam direto para o jogo
+- **H**: rever a introdução cinematográfica durante o jogo
 - No diálogo: **Enter/Espaço** revela ou avança, **W/S** ou **setas** mudam a escolha, **1–9** escolhem direto e **Esc** fecha
 - Em telas de toque, use os botões na tela
 

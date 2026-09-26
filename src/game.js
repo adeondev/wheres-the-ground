@@ -24,7 +24,7 @@ const dialogue = createDialogue(canvas, dialogueScenes, { onOpen: () => input.cl
 const effects = createEffects();
 const cameraEffects = createCameraEffects();
 const audio = createAudio();
-const intro = createIntro(audio);
+const intro = createIntro(audio, { onFinish: () => input.clear() });
 const projectiles = [];
 const STEP = 1 / 60;
 
@@ -220,6 +220,7 @@ function frame(time) {
 
 resize();
 player = createPlayer(world.groundY);
+intro.start();
 window.addEventListener('resize', resize);
 loadGabriel().then(result => { sprite = result; dialogue.setSprite(result); }).catch(error => console.error(error));
 loadGabrielRun().then(result => { runSprite = result; }).catch(error => console.error(error));

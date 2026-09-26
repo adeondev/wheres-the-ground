@@ -311,7 +311,7 @@ export function createAudio() {
       introMusic.play().then(() => {
         setTime();
       }).catch(err => {
-        console.warn('Erro ao reproduzir música de introdução:', err);
+        if (err.name !== 'NotAllowedError') console.warn('Erro ao reproduzir música de introdução:', err);
       });
 
       if (fadeInDuration > 0) {
@@ -337,6 +337,10 @@ export function createAudio() {
 
   function getIntroMusicTime() {
     return introMusic ? introMusic.currentTime : 0;
+  }
+
+  function isIntroMusicPlaying() {
+    return Boolean(introMusic && !introMusic.paused && !introMusic.ended);
   }
 
   function setIntroMusicTime(seconds) {
@@ -389,6 +393,7 @@ export function createAudio() {
     stopDialogBlip,
     startIntroMusic,
     getIntroMusicTime,
+    isIntroMusicPlaying,
     setIntroMusicTime,
     stopIntroMusic,
   };
