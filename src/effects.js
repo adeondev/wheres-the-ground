@@ -1,5 +1,5 @@
 // Efeitos visuais pequenos; não alteram a física.
-import { playerPose } from './animation.js';
+import { playerPose, recoverPose } from './animation.js?v=route-obstacles';
 import { BOOST_FIRE } from './palette.js';
 import { CLASSROOM_SCALE } from './world.js?v=milenio';
 
@@ -10,6 +10,7 @@ export function createEffects() {
   const landingParticles = [];
   const ghosts = [];
   const explosions = [];
+  const landingImpacts = [];
   let trailTimer = 0;
 
   function addParticle(x, y, vx, vy, life, color, size = 2) {
@@ -18,13 +19,14 @@ export function createEffects() {
   }
 
   function burst(player, horizontal) {
-    const count = horizontal ? 30 : 14;
+    const count = horizontal ? (player.megaStarted ? 48 : 30) : player.reserveBoosting ? 4 : player.reserveBoosting ? 4 : 14;
     if (horizontal) {
       explosions.push({
         x: player.x + player.w / 2 - player.dashDirection * 13,
         y: player.y + player.h / 2,
         direction: player.dashDirection,
-        life: 0.22, maxLife: 0.22,
+        life: player.megaStarted ? 0.32 : 0.22,
+        maxLife: player.megaStarted ? 0.32 : 0.22,
       });
     }
     for (let i = 0; i < count; i++) {
@@ -70,7 +72,42 @@ export function createEffects() {
     if (landingParticles.length > 120) landingParticles.splice(0, landingParticles.length - 120);
   }
 
-  function update(dt, player, animationTime, sprite, dashSprite, dashAnimationTime) {
+  function landingImpact(player, strength = 1) {
+    const x = player.x + player.w / 2;
+    const y = player.y + player.h;
+    landingImpacts.push({ x, y, strength, life: 0.48, maxLife: 0.48 });
+    const dustColors = ['#e4c6a3', '#b59f95', '#88768b', '#d8b88e'];
+    for (let i = 0; i < 36; i++) {
+      const side = i % 2 ? 1 : -1;
+      landingParticles.push({
+        kind: 'smoke', x: x + (Math.random() - 0.5) * 22, y: y - 3,
+        vx: side * (65 + Math.random() * 130) * strength,
+        vy: -22 - Math.random() * 65, life: 0.4 + Math.random() * 0.32,
+        color: dustColors[i % dustColors.length], size: 3 + i % 4,
+      });
+    }
+    for (let i = 0; i < 24; i++) {
+      landingParticles.push({
+        kind: 'grass', x: x + (Math.random() - 0.5) * 24, y: y - 2,
+        vx: (i % 2 ? 1 : -1) * (50 + Math.random() * 140) * strength,
+        vy: -70 - Math.random() * 140, life: 0.45 + Math.random() * 0.3,
+        groundY: y, color: dustColors[i % dustColors.length], size: 2 + i % 2,
+      });
+    }
+    for (let i = 0; i < 12; i++) {
+      addParticle(x + (Math.random() - 0.5) * 16, y - 4,
+        (i % 2 ? 1 : -1) * (90 + Math.random() * 130) * strength,
+        -20 - Math.random() * 75, 0.15 + Math.random() * 0.16,
+        i % 3 ? '#8beaff' : '#fff1cb', 2);
+    }
+    if (landingParticles.length > 120) landingParticles.splice(0, landingParticles.length - 120);
+  }
+
+  function update(dt, player, animationTime, sprite, dashSprite, dashAnimationTime, recoverSprite) {
+    for (let i = landingImpacts.length - 1; i >= 0; i--) {
+      landingImpacts[i].life -= dt;
+      if (landingImpacts[i].life <= 0) landingImpacts.splice(i, 1);
+    }
     for (let i = landingParticles.length - 1; i >= 0; i--) {
       const p = landingParticles[i];
       p.x += p.vx * dt;
@@ -98,9 +135,18 @@ export function createEffects() {
       if (explosions[i].life <= 0) explosions.splice(i, 1);
     }
 
+    if (player.megaCharging) {
+      const angle = Math.random() * Math.PI * 2;
+      const cx = player.x + player.w / 2;
+      const cy = player.y + player.h / 2;
+      const radius = 20 + Math.random() * 18;
+      addParticle(cx + Math.cos(angle) * radius, cy + Math.sin(angle) * radius,
+        -Math.cos(angle) * 90, -Math.sin(angle) * 90, radius / 90,
+        boostColors[Math.floor(Math.random() * boostColors.length)], 2);
+    }
     if (player.dashStarted) burst(player, true);
     if (player.boostStarted) burst(player, false);
-    if (player.landedHard) landingBurst(player);
+    if (player.landedHard && !landingImpacts.some(impact => impact.life > impact.maxLife - 0.04)) landingBurst(player);
     if (player.sliding && Math.random() < 0.7) {
       const direction = Math.sign(player.vx);
       addParticle(player.x + player.w / 2 - direction * 5, player.y + player.h - 1,
@@ -118,9 +164,10 @@ export function createEffects() {
       trailTimer -= dt;
       if (trailTimer <= 0) {
         if (ghosts.length >= 12) ghosts.shift();
-        const scale = playerPose(player);
-        const ghostSprite = dashSprite ?? sprite;
-        const ghostFrame = dashSprite
+        const recover = player.recovering && recoverSprite ? recoverPose(player) : null;
+        const scale = recover ? { x: 1, y: 1, facing: recover.facing } : playerPose(player);
+        const ghostSprite = recover ? recoverSprite : dashSprite ?? sprite;
+        const ghostFrame = recover ? recover.frame : dashSprite
           ? Math.min(dashSprite.count - 1, Math.floor(dashAnimationTime * dashSprite.fps))
           : sprite ? Math.floor(animationTime * sprite.fps) % sprite.count : 0;
         ghosts.push({
@@ -129,13 +176,13 @@ export function createEffects() {
           scaleX: scale.x, scaleY: scale.y,
           life: 0.26, maxLife: 0.26,
         });
-        trailTimer = 0.025;
+        trailTimer = player.megaBoosting ? 0.016 : 0.025;
       }
     } else {
       trailTimer = 0;
     }
 
-    if (player.boosting && Math.random() < 0.75) {
+    if (player.boosting && Math.random() < (player.reserveBoosting ? 0.2 : 0.75)) {
       addParticle(player.x + 4 + Math.random() * 6, player.y + player.h,
         (Math.random() - 0.5) * 35, 90 + Math.random() * 80, 0.12,
         boostColors[Math.floor(Math.random() * boostColors.length)]);
@@ -144,6 +191,23 @@ export function createEffects() {
 
   function draw(ctx, cameraX, sprite) {
     ctx.save();
+    for (const impact of landingImpacts) {
+      const progress = 1 - impact.life / impact.maxLife;
+      const x = Math.round(impact.x - cameraX);
+      const y = Math.round(impact.y - 2);
+      const radius = (10 + progress * 92) * impact.strength;
+      ctx.globalAlpha = (1 - progress) * 0.8;
+      for (let i = 0; i < 64; i++) {
+        const angle = i * Math.PI / 32;
+        ctx.fillStyle = i % 3 ? '#dcbfb4' : '#8beaff';
+        ctx.fillRect(Math.round(x + Math.cos(angle) * radius),
+          Math.round(y + Math.sin(angle) * radius * 0.11), 3, 2);
+      }
+      ctx.globalAlpha = Math.max(0, 1 - progress / 0.24) * 0.85;
+      ctx.fillStyle = '#fff1cb';
+      ctx.fillRect(x - 30, y - 2, 60, 4);
+      ctx.fillRect(x - 12, y - 6, 24, 3);
+    }
     for (const explosion of explosions) {
       const progress = 1 - explosion.life / explosion.maxLife;
       const x = Math.round(explosion.x - cameraX - explosion.direction * progress * 5);
@@ -211,5 +275,10 @@ export function createEffects() {
     ctx.restore();
   }
 
-  return { update, draw };
+  function clear() {
+    particles.length = landingParticles.length = ghosts.length = explosions.length = 0;
+    landingImpacts.length = 0;
+    trailTimer = 0;
+  }
+  return { update, draw, clear, landingImpact };
 }

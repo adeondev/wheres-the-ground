@@ -1,8 +1,14 @@
 const EFFECTS = new Set(['shake', 'rgb', 'fall', 'wave']);
 const UI_PATH = 'assets/ui/dialogue/';
-const GABRIEL_PORTRAIT_SCALE = 5;
-const GABRIEL_PORTRAIT_INSET = 10;
-const GABRIEL_PORTRAIT_GAP = 8;
+const CHARACTER_PORTRAIT_SCALE = 3;
+const CHARACTER_PORTRAIT_FRAME_SIZE = 32;
+const GABRIEL_EXPRESSIONS = { normal: 0, excited: 2, suspicious: 4, angry: 6 };
+const CHARACTER_PORTRAITS = {
+  gabriel: { expressions: GABRIEL_EXPRESSIONS },
+  milenio: { expressions: { normal: 0 } },
+};
+const CHARACTER_PORTRAIT_INSET = 10;
+const CHARACTER_PORTRAIT_GAP = 8;
 const LOWERCASE_BITMAP = {
   a: ['.....', '.....', '.###.', '....#', '.####', '#...#', '.####'],
   b: ['#....', '#....', '####.', '#...#', '#...#', '#...#', '####.'],
@@ -159,17 +165,27 @@ export function createDialogue(canvas, scenes, {
   let choices = [];
   let selected = 0;
   let hitboxes = [];
+  let portraitSpeaking = false;
+  let portraitLineStart = 0;
 
   Promise.all([
     loadImage('dialogue_box.png', 'assets/sprites/ui/dialog/'), loadImage('font.png'), loadImage('heart.png'),
     loadImage('arrow.png'), loadImage('signal.png'),
-    loadImage('gabriel.png', 'assets/sprites/ui/dialog/characters/'),
+    loadImage('gabriel.png?v=expressions-8', 'assets/sprites/ui/dialog/characters/'),
+    loadImage('milenio.png', 'assets/sprites/ui/dialog/characters/'),
+    loadImage('keycap_press.png', 'assets/sprites/ui/'),
     fetch(`${UI_PATH}font.json`).then(response => {
       if (!response.ok) throw new Error('Metadata da fonte não carregou');
       return response.json();
     }),
-  ]).then(([frame, font, heart, arrow, signal, gabriel, meta]) => {
-    Object.assign(assets, { frame, font, heart, arrow, signal, gabriel, meta });
+    fetch('assets/sprites/ui/keycap_press.json')
+      .then(response => response.ok ? response.json() : null)
+      .catch(() => null),
+  ]).then(([frame, font, heart, arrow, signal, gabriel, milenio, keycap, meta, keycapMeta]) => {
+    Object.assign(assets, {
+      frame, font, heart, arrow, signal, gabriel, milenio, keycap, meta,
+      keycapMeta: keycapMeta || { frame_w: 16, frame_h: 16, frame_count: 2, columns: 2, fps: 2 },
+    });
   }).catch(console.error);
 
   function tintedFont(color) {
@@ -220,8 +236,9 @@ export function createDialogue(canvas, scenes, {
       return;
     }
     const index = Math.max(0, chars.indexOf(char));
+    const drawW = Math.max(1, cellW - 1);
     ctx.drawImage(tintedFont(color), index % cols * cellW, Math.floor(index / cols) * cellH,
-      cellW, cellH, Math.round(x), Math.round(y), cellW, cellH);
+      drawW, cellH, Math.round(x), Math.round(y), drawW, cellH);
   }
 
   function plainText(ctx, text, x, y, color = '#ffffff') {
@@ -231,16 +248,24 @@ export function createDialogue(canvas, scenes, {
     }
   }
 
+  let autoAdvanceTimer = null;
+  let nextCharDelay = 0;
+
   function setLine() {
     onSilence();
+    portraitSpeaking = false;
+    portraitLineStart = elapsed;
     const line = node.lines[lineIndex];
     tokens = tokenizeDialogue(typeof line.text === 'function' ? line.text(state) : line.text);
     cursor = 0;
     timer = 0;
+    nextCharDelay = 0;
     ready = false;
+    autoAdvanceTimer = typeof line.autoAdvance === 'number' ? line.autoAdvance : null;
     choices = [];
     hitboxes = [];
     canvas.setAttribute('aria-label', `${line.speaker}: ${tokens.filter(token => token.type === 'char').map(token => token.char).join('')}`);
+    line.onStart?.(state);
   }
 
   function showNode(id) {
@@ -263,7 +288,10 @@ export function createDialogue(canvas, scenes, {
   function close() {
     if (!active) return;
     onSilence();
+    portraitSpeaking = false;
     active = false;
+    autoAdvanceTimer = null;
+    nextCharDelay = 0;
     document.body.classList.remove('dialogue-open');
     canvas.setAttribute('aria-label', 'Jogo de plataforma');
     hitboxes = [];
@@ -285,15 +313,19 @@ export function createDialogue(canvas, scenes, {
 
   function revealAll() {
     onSilence();
+    portraitSpeaking = false;
     while (cursor < tokens.length) {
       if (tokens[cursor].type === 'char') tokens[cursor].revealedAt = elapsed;
       cursor++;
     }
+    nextCharDelay = 0;
     ready = true;
   }
 
   function advance() {
     if (!active) return;
+    autoAdvanceTimer = null;
+    nextCharDelay = 0;
     if (choices.length) { choose(selected); return; }
     if (!ready) { revealAll(); return; }
     if (lineIndex < node.lines.length - 1) { lineIndex++; setLine(); return; }
@@ -308,25 +340,58 @@ export function createDialogue(canvas, scenes, {
     else close();
   }
 
+  function characterPostDelay(token, index) {
+    if (token.type === 'pause') return token.duration;
+    if (token.speed != null) return token.speed;
+    const char = token.char;
+    if (char === ' ') return 0.015;
+    if (char === '.') {
+      const isEllipsis = (tokens[index - 1]?.char === '.') || (tokens[index + 1]?.char === '.');
+      return isEllipsis ? 0.20 : 0.35;
+    }
+    if (char === '!' || char === '?') return 0.35;
+    if (char === ',' || char === ';') return 0.20;
+    if (char === ':' || char === '-') return 0.18;
+    return 0.030;
+  }
+
   function update(dt) {
     if (!active) return;
     elapsed += dt;
-    if (ready) return;
+    if (ready) {
+      if (autoAdvanceTimer !== null) {
+        autoAdvanceTimer -= dt;
+        if (autoAdvanceTimer <= 0) {
+          autoAdvanceTimer = null;
+          advance();
+        }
+      }
+      return;
+    }
     timer += Math.min(dt, 0.05);
     while (cursor < tokens.length) {
+      if (timer < nextCharDelay) break;
+      timer -= nextCharDelay;
       const token = tokens[cursor];
-      const delay = token.type === 'pause' ? token.duration
-        : token.speed ?? (/[.!?]/.test(token.char) ? 0.1 : token.char === ' ' ? 0.01 : 0.028);
-      if (timer < delay) break;
-      timer -= delay;
       cursor++;
       if (token.type === 'char') {
         token.revealedAt = elapsed;
-        if (/\p{L}/u.test(token.char)) onCharacter(node.lines[lineIndex].voice);
+        if (/\S/u.test(token.char)) onCharacter(node.lines[lineIndex].voice);
+        if (/[\p{L}\p{N}]/u.test(token.char)) {
+          if (!portraitSpeaking) portraitLineStart = elapsed;
+          portraitSpeaking = true;
+        } else if (/[.!?]/u.test(token.char)) portraitSpeaking = false;
+      } else if (token.type === 'pause') {
+        portraitSpeaking = false;
       }
+      nextCharDelay = characterPostDelay(token, cursor - 1);
     }
     if (cursor >= tokens.length) {
-      ready = true;
+      portraitSpeaking = false;
+      if (timer >= nextCharDelay) {
+        ready = true;
+        onSilence();
+      }
     }
   }
 
@@ -336,7 +401,7 @@ export function createDialogue(canvas, scenes, {
     const x = Math.round((viewWidth - width) / 2);
     const portrait = node.lines[lineIndex].portrait;
     const textX = compact || portrait === 'none' ? x + 18
-      : portrait === 'gabriel' ? x + GABRIEL_PORTRAIT_INSET + (assets.gabriel?.width ?? 16) * GABRIEL_PORTRAIT_SCALE + GABRIEL_PORTRAIT_GAP
+      : CHARACTER_PORTRAITS[portrait] ? x + CHARACTER_PORTRAIT_INSET + CHARACTER_PORTRAIT_FRAME_SIZE * CHARACTER_PORTRAIT_SCALE + CHARACTER_PORTRAIT_GAP
         : x + 62;
     const textWidth = x + width - (compact ? 10 : 14) - textX;
     const lines = layoutLetters(tokens, Math.max(1, Math.floor(textWidth / 6)));
@@ -346,7 +411,7 @@ export function createDialogue(canvas, scenes, {
     const choiceRows = Math.ceil(choiceCount / (compact ? 1 : 2));
     const height = Math.max(compact ? 98 : 96,
       choiceRows ? optionY + choiceRows * 13 + 16 : textY + lines * 11 + 18);
-    const y = compact ? 6 : 12;
+    const y = node.position === 'bottom' ? Math.max(6, viewHeight - height - 8) : compact ? 6 : 12;
     return { x, y, width, height, textX, textWidth, textY, optionY, compact };
   }
 
@@ -359,11 +424,20 @@ export function createDialogue(canvas, scenes, {
 
     const line = node.lines[lineIndex];
     if (!box.compact && line.portrait !== 'none') {
-      const portrait = line.portrait === 'gabriel' ? assets.gabriel : assets.signal;
-      if (line.portrait === 'gabriel') {
-        const width = portrait.width * GABRIEL_PORTRAIT_SCALE;
-        const height = portrait.height * GABRIEL_PORTRAIT_SCALE;
-        ctx.drawImage(portrait, box.x + GABRIEL_PORTRAIT_INSET,
+      const characterPortrait = CHARACTER_PORTRAITS[line.portrait];
+      const portrait = characterPortrait ? assets[line.portrait] : assets.signal;
+      if (characterPortrait) {
+        const size = CHARACTER_PORTRAIT_FRAME_SIZE;
+        const baseFrame = characterPortrait.expressions[String(line.expression ?? 'normal').toLowerCase()] ?? 0;
+        // A boca fica aberta por mais tempo e continua animando entre letras.
+        const speaking = !ready && portraitSpeaking;
+        const mouthOpen = speaking && (elapsed - portraitLineStart) % 0.20 < 0.14;
+        const frame = baseFrame + (mouthOpen ? 1 : 0);
+        const columns = Math.floor(portrait.width / size);
+        const width = size * CHARACTER_PORTRAIT_SCALE;
+        const height = size * CHARACTER_PORTRAIT_SCALE;
+        ctx.drawImage(portrait, frame % columns * size, Math.floor(frame / columns) * size, size, size,
+          box.x + CHARACTER_PORTRAIT_INSET,
           box.y + Math.round((box.height - height) / 2), width, height);
       } else {
         ctx.drawImage(portrait, box.x + 14, box.y + 18, portrait.width * 2, portrait.height * 2);
@@ -377,8 +451,13 @@ export function createDialogue(canvas, scenes, {
       let x = box.textX + token.position.x;
       let y = box.y + box.textY + token.position.y;
       if (token.effects.includes('shake')) {
-        x += Math.round(Math.sin(elapsed * 78 + i * 13));
-        y += Math.round(Math.cos(elapsed * 64 + i * 9));
+        if (node.shakeStyle === 'subtle') {
+          // A brief shared tremble keeps letter spacing stable while the professor is nervous.
+          if (elapsed % 2.6 < .18) x += Math.round(Math.sin(elapsed * 28));
+        } else {
+          x += Math.round(Math.sin(elapsed * 78 + i * 13));
+          y += Math.round(Math.cos(elapsed * 64 + i * 9));
+        }
       }
       if (token.effects.includes('wave')) y += Math.round(Math.sin(elapsed * 10 + i * 0.7) * 2);
       if (token.effects.includes('fall')) {
@@ -429,6 +508,124 @@ export function createDialogue(canvas, scenes, {
     ctx.restore();
   }
 
+  function drawKeycapPrompt(ctx, template, viewWidth, viewHeight, time = 0, pressedKeys = {}, {
+    centerX = null,
+    y = null,
+    hasPill = true,
+  } = {}) {
+    if (!assets.font || !assets.meta) return;
+
+    const regex = /\{keycap\s+([^}]+)\}/g;
+    const parts = [];
+    let lastIndex = 0;
+    let match;
+    while ((match = regex.exec(template)) !== null) {
+      if (match.index > lastIndex) {
+        parts.push({ type: 'text', text: template.slice(lastIndex, match.index) });
+      }
+      parts.push({ type: 'keycap', key: match[1].trim() });
+      lastIndex = match.index + match[0].length;
+    }
+    if (lastIndex < template.length) {
+      parts.push({ type: 'text', text: template.slice(lastIndex) });
+    }
+
+    const hasA = parts.some(part => part.type === 'keycap' && part.key.toLowerCase() === 'a');
+    const hasD = parts.some(part => part.type === 'keycap' && part.key.toLowerCase() === 'd');
+    const isWalkPrompt = hasA && hasD;
+
+    const walkCycle = time % 1.6;
+    const aCyclePressed = walkCycle >= 0.05 && walkCycle < 0.45;
+    const dCyclePressed = walkCycle >= 0.85 && walkCycle < 1.25;
+
+    const singleCycle = time % 1.2;
+    const singleCyclePressed = singleCycle >= 0.1 && singleCycle < 0.45;
+
+    const keycapW = assets.keycapMeta?.frame_w || 16;
+    const keycapH = assets.keycapMeta?.frame_h || 16;
+
+    let contentWidth = 0;
+    for (const part of parts) {
+      if (part.type === 'keycap') {
+        part.width = keycapW;
+      } else {
+        part.width = Array.from(part.text).length * 6;
+      }
+      contentWidth += part.width;
+    }
+
+    const padX = hasPill ? 7 : 0;
+    const padY = hasPill ? 3 : 0;
+    const boxW = contentWidth + padX * 2;
+    const boxH = keycapH + padY * 2;
+
+    let boxX;
+    let boxY;
+
+    if (centerX !== null && y !== null) {
+      boxX = Math.round(Math.max(8, Math.min(viewWidth - boxW - 8, centerX - boxW / 2)));
+      boxY = Math.round(Math.max(8, y - boxH));
+    } else {
+      boxX = Math.round(viewWidth - boxW - 10);
+      boxY = Math.round(viewHeight - boxH - 9);
+    }
+
+    ctx.save();
+    ctx.imageSmoothingEnabled = false;
+
+    if (hasPill) {
+      // Beveled background pill
+      ctx.fillStyle = 'rgba(10, 14, 20, 0.82)';
+      ctx.fillRect(boxX + 1, boxY, boxW - 2, boxH);
+      ctx.fillRect(boxX, boxY + 1, boxW, boxH - 2);
+
+      // Subtle 1px border
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.16)';
+      ctx.fillRect(boxX + 1, boxY, boxW - 2, 1);
+      ctx.fillRect(boxX + 1, boxY + boxH - 1, boxW - 2, 1);
+      ctx.fillRect(boxX, boxY + 1, 1, boxH - 2);
+      ctx.fillRect(boxX + boxW - 1, boxY + 1, 1, boxH - 2);
+    }
+
+    let curX = boxX + padX;
+    const keyY = boxY + padY;
+    const textY = boxY + padY + 3;
+
+    for (const part of parts) {
+      if (part.type === 'keycap') {
+        const k = part.key.toLowerCase();
+        let isPressed = Boolean(pressedKeys[k]);
+        if (!isPressed) {
+          if (isWalkPrompt) {
+            if (k === 'a') isPressed = aCyclePressed;
+            else if (k === 'd') isPressed = dCyclePressed;
+          } else {
+            isPressed = singleCyclePressed;
+          }
+        }
+
+        const frameIdx = isPressed ? 1 : 0;
+        if (assets.keycap) {
+          ctx.drawImage(
+            assets.keycap,
+            frameIdx * keycapW, 0, keycapW, keycapH,
+            curX, keyY, keycapW, keycapH
+          );
+        }
+
+        const char = part.key.toUpperCase();
+        glyph(ctx, char, curX + 5, keyY + (isPressed ? 3 : 2), '#ffffff');
+        curX += keycapW;
+      } else {
+        plainText(ctx, part.text, curX + 1, textY + 1, '#05080e');
+        plainText(ctx, part.text, curX, textY, hasPill ? '#e4e8dc' : '#ffc281');
+        curX += part.width;
+      }
+    }
+
+    ctx.restore();
+  }
+
   window.addEventListener('keydown', event => {
     if (!active) return;
     const key = event.key.toLowerCase();
@@ -459,9 +656,50 @@ export function createDialogue(canvas, scenes, {
     } else advance();
   });
 
+  function drawTutorialHint(ctx, hint, anchorX, anchorY, characterHeight, width, height) {
+    if (!assets.font || !assets.meta) return;
+    const maxChars = Math.max(6, Math.min(30, Math.floor((width - 28) / 6)));
+    const lines = [];
+    let line = '';
+    for (const word of hint.text.split(' ')) {
+      if (line && line.length + word.length + 1 > maxChars) { lines.push(line); line = ''; }
+      line += (line ? ' ' : '') + word;
+    }
+    if (line) lines.push(line);
+    const badgeWidths = hint.keys.map(key => key.length * 6 + 12);
+    const badgesWidth = badgeWidths.reduce((a,b) => a+b, 0) + Math.max(0,badgeWidths.length-1)*14;
+    const stacked = badgesWidth > width-28;
+    const badgesBlockWidth = stacked ? Math.max(0,...badgeWidths) : badgesWidth;
+    const boxWidth = Math.max(badgesBlockWidth, ...lines.map(text => text.length * 6)) + 16;
+    const boxHeight = lines.length * 13 + 12 + (hint.keys.length ? stacked ? hint.keys.length*28-5 : 23 : 0);
+    const x = Math.round(Math.max(6, Math.min(width-boxWidth-6, anchorX-boxWidth/2)));
+    let y = anchorY-boxHeight-12;
+    if (y < 6) y = anchorY+characterHeight+10;
+    y = Math.round(Math.max(6,Math.min(height-boxHeight-6,y)));
+    ctx.save(); ctx.globalAlpha = hint.alpha;
+    ctx.fillStyle='#110e1c'; ctx.fillRect(x+2,y,boxWidth-4,boxHeight); ctx.fillRect(x,y+2,boxWidth,boxHeight-4);
+    ctx.fillStyle='#7b5b77'; ctx.fillRect(x+3,y,boxWidth-6,1); ctx.fillRect(x+3,y+boxHeight-1,boxWidth-6,1);
+    lines.forEach((text,i) => plainText(ctx,text,x+Math.round((boxWidth-text.length*6)/2),y+6+i*13,'#f4e8d8'));
+    let badgeX=x+Math.round((boxWidth-badgesBlockWidth)/2),badgeY=y+6+lines.length*13;
+    hint.keys.forEach((key,i) => {
+      if(stacked)badgeX=x+Math.round((boxWidth-badgeWidths[i])/2);
+      ctx.fillStyle=hint.pressed?'#ffc281':'#443047';ctx.fillRect(badgeX,badgeY,badgeWidths[i],17);
+      ctx.fillStyle='#c9936a';ctx.fillRect(badgeX,badgeY+16,badgeWidths[i],2);
+      plainText(ctx,key,badgeX+6,badgeY+4,hint.pressed?'#16101f':'#ffe2a8');
+      if(stacked){
+        if(i<hint.keys.length-1)plainText(ctx,'+',x+Math.round(boxWidth/2)-3,badgeY+19,'#e9c8a3');
+        badgeY+=28;
+      }else{
+        badgeX+=badgeWidths[i]+14;
+        if(i<hint.keys.length-1)plainText(ctx,'+',badgeX-10,badgeY+4,'#e9c8a3');
+      }
+    });
+    ctx.restore();
+  }
+
   return {
     get active() { return active; },
     get state() { return state; },
-    start, close, update, draw, drawPrompt,
+    start, close, update, draw, drawPrompt, drawKeycapPrompt, drawTutorialHint,
   };
 }

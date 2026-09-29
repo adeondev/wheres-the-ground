@@ -1,0 +1,12 @@
+{
+  "type": "animation",
+  "name": "keycap_press",
+  "width": 32,
+  "height": 16,
+  "frame_w": 16,
+  "frame_h": 16,
+  "frame_count": 2,
+  "columns": 2,
+  "fps": 2,
+  "spritesheet": "keycap_press.png"
+}

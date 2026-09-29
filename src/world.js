@@ -1,9 +1,17 @@
+import { drawRooftops } from './rooftops.js?v=route-obstacles';
+import { NORMAL_MOVEMENT } from './config.js';
+
 export const CLASSROOM_SCALE = 2;
+export const STATION_SCALE = CLASSROOM_SCALE;
 
 const ROOM_PATH = 'assets/rooms/classroom/';
+const STATION_PATH = 'assets/rooms/cops_area/';
 const ROOM_WIDTH = 244 * CLASSROOM_SCALE;
 const FLOOR_Y = 112 * CLASSROOM_SCALE;
 const FLOOR_HEIGHT = 8 * CLASSROOM_SCALE;
+const STATION_WIDTH = 122 * STATION_SCALE;
+const STATION_HEIGHT = 61 * STATION_SCALE;
+const STATION_FLOOR_Y = 55 * STATION_SCALE;
 const DESKS = [32, 66, 100, 134];
 
 const images = {};
@@ -18,19 +26,43 @@ for (const [name, file] of Object.entries({
   image.src = ROOM_PATH + file;
   images[name] = image;
 }
+for (const [name, file] of Object.entries({
+  stationBackground: 'cops_area.png',
+  stationForeground: 'cops_area_up.png',
+})) {
+  const image = new Image();
+  image.src = STATION_PATH + file;
+  images[name] = image;
+}
 
 export function createWorld() {
   return {
+    id: 'classroom',
     width: ROOM_WIDTH,
     height: FLOOR_Y + FLOOR_HEIGHT,
     groundY: FLOOR_Y,
-    moveSpeed: 105,
-    animationRate: 0.65,
-    stepSound: 'concrete',
+    ...NORMAL_MOVEMENT,
     allowPowers: false,
     npcs: [{ id: 'milenio', name: 'Milênio', x: 224 * CLASSROOM_SCALE,
       y: FLOOR_Y, w: 29 * CLASSROOM_SCALE, h: 37 * CLASSROOM_SCALE }],
     blocks: [{ x: 0, y: FLOOR_Y, w: ROOM_WIDTH, h: FLOOR_HEIGHT }],
+  };
+}
+
+export function createStationWorld() {
+  return {
+    id: 'station',
+    width: STATION_WIDTH,
+    height: STATION_HEIGHT,
+    groundY: STATION_FLOOR_Y,
+    ...NORMAL_MOVEMENT,
+    moveSpeed: NORMAL_MOVEMENT.moveSpeed / 2,
+    allowPowers: false,
+    allowTools: false,
+    // O policial fica mais baixo atrás do balcão; a parte inferior do sprite é ocultada.
+    npcs: [{ id: 'policial', name: 'Policial', facing: 1, x: 70 * STATION_SCALE,
+      y: STATION_FLOOR_Y + 7 * STATION_SCALE, w: 40 * STATION_SCALE, h: 48 * STATION_SCALE }],
+    blocks: [{ x: 0, y: STATION_FLOOR_Y, w: STATION_WIDTH, h: STATION_HEIGHT - STATION_FLOOR_Y }],
   };
 }
 
@@ -58,6 +90,19 @@ function drawSprite(ctx, image, x, y, cameraX) {
 
 export function drawWorld(ctx, world, cameraX, viewWidth, viewHeight, overscan = 0) {
   ctx.imageSmoothingEnabled = false;
+  if (world.id === 'rooftops') {
+    ctx.clearRect(0, 0, viewWidth, viewHeight);
+    drawRooftops(ctx, world, cameraX, viewWidth);
+    return;
+  }
+  if (world.id === 'station') {
+    ctx.fillStyle = '#c4c5cb';
+    ctx.fillRect(-overscan, -overscan, viewWidth + overscan * 2, viewHeight + overscan * 2);
+    if (images.stationBackground.complete && images.stationBackground.naturalWidth) {
+      ctx.drawImage(images.stationBackground, -Math.round(cameraX), 0, STATION_WIDTH, STATION_HEIGHT);
+    }
+    return;
+  }
   ctx.fillStyle = '#101417';
   ctx.fillRect(-overscan, -overscan, viewWidth + overscan * 2, viewHeight + overscan * 2);
 
@@ -71,4 +116,11 @@ export function drawWorld(ctx, world, cameraX, viewWidth, viewHeight, overscan =
   drawSprite(ctx, images.teacherDesk, 176, 80, cameraX);
   drawSprite(ctx, images.sideDesk, 208, 64, cameraX);
   ctx.restore();
+}
+
+export function drawStationForeground(ctx, screenX, screenY, zoom) {
+  const image = images.stationForeground;
+  if (image.complete && image.naturalWidth) {
+    ctx.drawImage(image, screenX, screenY, STATION_WIDTH * zoom, STATION_HEIGHT * zoom);
+  }
 }

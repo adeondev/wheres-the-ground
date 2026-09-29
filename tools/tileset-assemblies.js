@@ -1,7 +1,7 @@
 // Receitas montam objetos usando exclusivamente suas peças originais, sem esticar sprites.
 (() => {
   'use strict';
-  function build(recipe, width, height, x = 0, y = 0, size = 16) {
+  function build(recipe, width, height, x = 0, y = 0, size = 16, flipX = false) {
     if (!Number.isInteger(width) || !Number.isInteger(height) || width < recipe.minWidth || height < recipe.minHeight || width > 128 || height > 128) {
       throw Error(`Esta montagem precisa de pelo menos ${recipe.minWidth} × ${recipe.minHeight} tiles.`);
     }
@@ -27,11 +27,22 @@
     } else if (recipe.type === 'pattern') {
       if (width !== recipe.minWidth || height !== recipe.minHeight) throw Error('Este objeto preserva o tamanho do padrão: cada parte continua sendo um tile separado.');
       recipe.rows.forEach((row, y) => row.forEach((tileId, x) => { if (tileId) put(x, y, tileId); }));
+    } else if (recipe.type === 'stack') {
+      if (width !== recipe.minWidth) throw Error('Esta montagem mantém a largura e repete o corpo na vertical.');
+      for (let row = 0; row < height; row++) {
+        const band = row === 0 ? recipe.top : row === height - 1 ? recipe.bottom : recipe.middle;
+        band.forEach((tileId, col) => { if (tileId) put(col, row, tileId); });
+      }
     } else if (recipe.type === 'vertical') {
       if (width !== 1) throw Error('Este detalhe tem uma coluna de largura.');
       for (let row = 0; row < height; row++) put(0, row, variant(recipe.middle, row));
     } else throw Error('Tipo de montagem desconhecido.');
-    return [...cells.values()];
+    const parts = [...cells.values()];
+    if (flipX) for (const part of parts) {
+      part.x = x + width * size - (part.x - x) - size;
+      part.flipX = !part.flipX;
+    }
+    return parts;
   }
 
   function check(metadata) {

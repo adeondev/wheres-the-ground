@@ -1,5 +1,12 @@
 export const GAME_HEIGHT = 240;
 
+export const NORMAL_MOVEMENT = {
+  moveSpeed: 105,
+  animationRate: 0.65,
+  runAnimationRate: 1,
+  stepSound: 'concrete',
+};
+
 export const PLAYER = {
   speed: 170,
   jump: 320,

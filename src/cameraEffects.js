@@ -8,6 +8,14 @@ export function createCameraEffects() {
   let x = 0;
   let y = 0;
   let zoom = 1;
+  let chargeShake = 0;
+  let chargeTime = 0;
+  let roofShake = 0;
+
+  function setChargeShake(progress) {
+    const buildup = Math.max(0, Math.min(1, (progress - 0.5) / 0.5));
+    chargeShake = buildup * buildup * 4;
+  }
 
   function kick(horizontal, vertical, duration) {
     impulses.push({ horizontal, vertical, duration, remaining: duration });
@@ -18,8 +26,9 @@ export function createCameraEffects() {
   }
 
   function update(dt) {
-    let nextX = 0;
-    let nextY = 0;
+    chargeTime += dt;
+    let nextX = Math.sin(chargeTime * 73) * chargeShake + Math.sin(chargeTime * 61) * roofShake;
+    let nextY = Math.sin(chargeTime * 91 + 0.8) * chargeShake * 0.65 + Math.sin(chargeTime * 79) * roofShake * .7;
     for (let i = impulses.length - 1; i >= 0; i--) {
       const impulse = impulses[i];
       impulse.remaining -= dt;
@@ -52,8 +61,10 @@ export function createCameraEffects() {
     x = 0;
     y = 0;
     zoom = 1;
+    chargeShake = 0;
+    roofShake = 0;
   }
 
-  return { kick, pulseZoom, update, clear,
+  return { kick, pulseZoom, setChargeShake, setRoofShake: strength => { roofShake = Math.min(1, strength) * 1.5; }, update, clear,
     get x() { return x; }, get y() { return y; }, get zoom() { return zoom; } };
 }

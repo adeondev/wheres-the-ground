@@ -3,7 +3,7 @@
   const $ = id => document.getElementById(id);
   const clone = value => JSON.parse(JSON.stringify(value));
   const base = JSON.parse($('default-metadata').textContent);
-  const storageKey = 'wtg-tileset-lab-16-v2';
+  const storageKey = base.reviewStatus === 'pending' ? 'wtg-tileset-lab-review-16-v4' : 'wtg-tileset-lab-16-v2';
   let metadata = clone(base);
   try { const saved = localStorage.getItem(storageKey); if (saved) metadata = validate(JSON.parse(saved)); } catch { /* JSON continua sendo a cópia principal. */ }
   const image = new Image();
@@ -34,13 +34,14 @@
     const ids = new Set();
     for (const tile of data.tiles) {
       if (typeof tile.id !== 'string' || !/^[\w-]+$/.test(tile.id) || ids.has(tile.id) || typeof tile.label !== 'string' || !bounds(tile.source) || tile.source.x + tile.source.w > data.image.width || tile.source.y + tile.source.h > data.image.height || !Number.isInteger(tile.layer)) throw Error('Peça inválida ou identificador duplicado.');
-      if (!['platform','terrain','decoration','door','character'].includes(tile.role) || !['none','x','y','both'].includes(tile.repeat) || !tile.collision || !['none','solid','one-way'].includes(tile.collision.type)) throw Error('Função ou colisão inválida.');
+      if (!['platform','terrain','decoration','door','character'].includes(tile.role) || !['none','x','y','both'].includes(tile.repeat) || !tile.collision || !['none','solid','one-way','slope'].includes(tile.collision.type)) throw Error('Função ou colisão inválida.');
       const r = tile.collision.rect;
       if (tile.collision.type !== 'none' && (!r || !bounds(r) || r.x + r.w > tile.source.w || r.y + r.h > tile.source.h)) throw Error('Área de colisão fora do recorte.');
+      if (tile.collision.type === 'slope' && (!Array.isArray(tile.collision.heights) || tile.collision.heights.length !== tile.source.w || tile.collision.heights.some(y => !Number.isInteger(y) || y < 0 || y > tile.source.h))) throw Error('Perfil da rampa inválido.');
       ids.add(tile.id);
     }
     for(const tile of data.tiles){
-      if(data.catalog==='open-world-16-v2'&&tile.role!=='character'&&(tile.source.w!==16||tile.source.h!==16||tile.source.x%16||tile.source.y%16))throw Error('Neste catálogo, cada peça de cenário precisa ser um tile 16×16 alinhado à grade. Monte objetos maiores juntando as peças.');
+      if(data.catalog?.startsWith('open-world-16')&&tile.role!=='character'&&(tile.source.w!==16||tile.source.h!==16||tile.source.x%16||tile.source.y%16))throw Error('Neste catálogo, cada peça de cenário precisa ser um tile 16×16 alinhado à grade. Monte objetos maiores juntando as peças.');
       for(const rule of tile.assembly?.requiredNeighbors??[])if(!Number.isInteger(rule.dx)||!Number.isInteger(rule.dy)||!Array.isArray(rule.tileIds)||!rule.tileIds.length||rule.tileIds.some(id=>!ids.has(id)))throw Error('Regra de encaixe aponta para uma peça inexistente.');
     }
     if(data.assemblies&&!Array.isArray(data.assemblies))throw Error('Lista de montagens inválida.');
@@ -81,6 +82,11 @@
     if(overlays && $('scene-grid').checked)drawGrid(s,scene.width,scene.height,Math.max(8,snap()));
     if(overlays && $('collisions').checked)for(const item of sortedPlacements()){
       const tile=tileFor(item);if(tile.collision.type==='none')continue;const r=tile.collision.rect;
+      if(tile.collision.type==='slope'){
+        s.fillStyle='#ffc28170';
+        tile.collision.heights.forEach((top,col)=>s.fillRect(item.x+(item.flipX?tile.source.w-1-col:col),item.y+top,1,tile.source.h-top));
+        continue;
+      }
       const x=item.x+(item.flipX?tile.source.w-r.x-r.w:r.x);s.fillStyle=tile.collision.type==='one-way'?'#ffc28140':'#83ffaf35';s.strokeStyle=tile.collision.type==='one-way'?'#ffc281':'#83ffaf';s.lineWidth=.5;s.fillRect(x,item.y+r.y,r.w,r.h);s.strokeRect(x,item.y+r.y,r.w,r.h);
     }
     const item=currentInstance();if(overlays&&item){const r=tileFor(item).source;s.strokeStyle='#ffc281';s.lineWidth=.5;s.strokeRect(item.x,item.y,r.w,r.h);}
@@ -130,6 +136,11 @@
   tileForm.onsubmit=event=>{
     event.preventDefault();const id=field(tileForm,'id').value.trim();const source=Object.fromEntries(['x','y','w','h'].map(key=>[key,number(tileForm,key)]));
     const type=field(tileForm,'collision').value;const collision={type};if(type!=='none')collision.rect={x:number(tileForm,'cx'),y:number(tileForm,'cy'),w:number(tileForm,'cw'),h:number(tileForm,'ch')};
+    if(type==='slope'){
+      const existing=currentTile();
+      if(!existing?.collision.heights || ['x','y','w','h'].some(key=>existing.source[key]!==source[key])){status('O perfil de rampa pertence ao recorte mapeado. Preserve esse recorte para editar a peça.');return;}
+      collision.heights=clone(existing.collision.heights);
+    }
     const tile={...clone(currentTile()??{}),id,label:field(tileForm,'label').value.trim(),source,role:field(tileForm,'role').value,layer:number(tileForm,'layer'),repeat:field(tileForm,'repeat').value,collision,notes:field(tileForm,'notes').value.trim()};
     const next=clone(metadata),index=next.tiles.findIndex(tile=>tile.id===selectedTile);
     if(index>=0){next.tiles[index]=tile;for(const item of next.scene.placements)if(item.tileId===selectedTile)item.tileId=id;}else next.tiles.push(tile);
@@ -147,7 +158,7 @@
     if(!image.naturalWidth||event.button!==0)return;const p=point(event,scene),mode=$('mode').value;
     if(mode==='assembly'){
       const recipe=(metadata.assemblies??[]).find(item=>item.id===$('assembly').value);if(!recipe){status('Selecione uma montagem.');return;}
-      let parts;try{parts=window.TilesetAssemblies.build(recipe,Number($('assembly-width').value),Number($('assembly-height').value),Math.round(p.x/16)*16,Math.round(p.y/16)*16);}catch(error){status(error.message);return;}
+      let parts;try{parts=window.TilesetAssemblies.build(recipe,Number($('assembly-width').value),Number($('assembly-height').value),Math.round(p.x/16)*16,Math.round(p.y/16)*16,16,$('assembly-flip').checked);}catch(error){status(error.message);return;}
       checkpoint();for(const part of parts)metadata.scene.placements.push({id:placementId(),...part});selectedInstance=null;changed(`${recipe.label}: ${parts.length} tiles colocados, sem esticar sprites.`);return;
     }
     if(mode==='paint'){
@@ -167,7 +178,7 @@
   $('clear-scene').onclick=()=>{checkpoint();metadata.scene.placements=[];selectedInstance=null;changed('Cena limpa. Use Desfazer para recuperar.');};
   function download(blob,filename){const url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=filename;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
   $('export').onclick=()=>{try{validate(metadata);}catch(error){status(error.message);return;}$('json-output').value=JSON.stringify(metadata,null,2)+'\n';$('export-status').textContent='';$('export-dialog').showModal();status('Metadata pronta para baixar ou copiar.');};
-  $('download-json').onclick=()=>{download(new Blob([$('json-output').value],{type:'application/json'}),'open_world_tileset.metadata.json');$('export-status').textContent='Download solicitado. Se o navegador não baixar, use Copiar JSON.';};
+  $('download-json').onclick=()=>{download(new Blob([$('json-output').value],{type:'application/json'}),metadata.reviewStatus==='pending'?'open_world_tileset.review.metadata.json':'open_world_tileset.metadata.json');$('export-status').textContent='Download solicitado. Se o navegador não baixar, use Copiar JSON.';};
   $('copy-json').onclick=async()=>{try{if(navigator.clipboard&&window.isSecureContext)await navigator.clipboard.writeText($('json-output').value);else{$('json-output').select();if(!document.execCommand('copy'))throw Error('Copie manualmente');}$('export-status').textContent='JSON copiado.';}catch{$('json-output').select();$('export-status').textContent='Texto selecionado. Pressione Ctrl+C para copiar.';}};
   $('png-export').onclick=()=>{drawScene(false);try{scene.toBlob(blob=>{if(blob)download(blob,'open_world_scene.png');drawScene();});}catch{drawScene();status('Para exportar PNG abrindo por duplo clique, selecione o arquivo em “Abrir PNG” primeiro.');}};
   function useMetadata(data){checkpoint();metadata=data;selectedTile=null;selectedInstance=null;$('snap').value=metadata.grid.size;newTile();loadImage('../'+metadata.image.path);changed('Metadata importada.');}
@@ -179,8 +190,8 @@
   $('snap').onchange=()=>{checkpoint();metadata.grid.size=snap();persist();draw();};
   for(const id of ['checker','collisions','scene-grid','mode'])$(id).onchange=drawScene;
   function renderAssemblies(){const value=$('assembly').value;$('assembly').replaceChildren();for(const recipe of metadata.assemblies??[]){const option=document.createElement('option');option.value=recipe.id;option.textContent=recipe.label;option.selected=recipe.id===value;$('assembly').append(option);}updateAssembly();}
-  function updateAssembly(){const recipe=(metadata.assemblies??[]).find(item=>item.id===$('assembly').value);for(const id of ['assembly-width','assembly-height','assembly-mode'])$(id).disabled=!recipe;if(!recipe){$('assembly-description').textContent='Este JSON não tem receitas de montagem.';previousAssembly=null;return;}
-    const w=$('assembly-width'),h=$('assembly-height');w.min=recipe.minWidth;h.min=recipe.minHeight;w.disabled=recipe.type==='pattern'||recipe.type==='vertical';h.disabled=recipe.type==='pattern'||recipe.type==='horizontal';
+  function updateAssembly(){const recipe=(metadata.assemblies??[]).find(item=>item.id===$('assembly').value);for(const id of ['assembly-width','assembly-height','assembly-mode'])$(id).disabled=!recipe;$('assembly-flip').disabled=recipe?.surface?.flip!=='horizontal';if($('assembly-flip').disabled)$('assembly-flip').checked=false;if(!recipe){$('assembly-description').textContent='Este JSON não tem receitas de montagem.';previousAssembly=null;return;}
+    const w=$('assembly-width'),h=$('assembly-height');w.min=recipe.minWidth;h.min=recipe.minHeight;w.disabled=['pattern','vertical','stack'].includes(recipe.type);h.disabled=recipe.type==='pattern'||recipe.type==='horizontal';
     if(previousAssembly!==recipe.id){w.value=recipe.defaultWidth??recipe.minWidth;h.value=recipe.defaultHeight??recipe.minHeight;previousAssembly=recipe.id;}
     $('assembly-description').textContent=recipe.notes+' Clique em “Montar objeto” e depois na cena para posicionar.';
   }

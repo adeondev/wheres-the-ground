@@ -17,6 +17,7 @@ async function loadSprite(folder, metadataFile = 'metadata.json') {
     count: metadata.frame_count,
     columns,
     fps: metadata.fps,
+    boostEmitters: metadata.boost_emitters ?? null,
   };
 }
 
@@ -33,7 +34,7 @@ export function loadGabrielJump() {
 }
 
 export function loadGabrielBoost() {
-  return loadSprite('./assets/sprites/player/spr_gabriel/', 'metadata_boost.json');
+  return loadSprite('./assets/sprites/player/spr_gabriel/', 'metadata_boost.json?v=foot-emitters');
 }
 
 export function loadGabrielDash() {
@@ -42,4 +43,12 @@ export function loadGabrielDash() {
 
 export function loadGabrielLanding() {
   return loadSprite('./assets/sprites/player/spr_gabriel/', 'metadata_landing.json');
+}
+
+export function loadGabrielRecover() {
+  return loadSprite('./assets/sprites/player/spr_gabriel/', 'metadata_recover.json');
+}
+
+export function loadGabrielFlashbang() {
+  return loadSprite('./assets/sprites/player/spr_gabriel/', 'metadata_flashbang.json');
 }

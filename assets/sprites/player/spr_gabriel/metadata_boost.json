@@ -5,5 +5,9 @@
   "frame_count": 2,
   "columns": 2,
   "fps": 12,
-  "spritesheet": "spritesheet_boost.png"
+  "spritesheet": "spritesheet_boost.png",
+  "boost_emitters": [
+    [{ "x": 13.5, "y": 31 }, { "x": 20.5, "y": 31 }],
+    [{ "x": 13.5, "y": 30 }, { "x": 20.5, "y": 30 }]
+  ]
 }

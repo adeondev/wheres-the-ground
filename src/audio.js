@@ -12,10 +12,12 @@ export function createAudio() {
     dialogA: 'assets/sounds/players/dialog/a.mp3',
     dialogO: 'assets/sounds/players/dialog/o.mp3',
     momDialogPop: 'assets/sounds/npc/pop/sfx.mp3',
+    powersMusic: 'assets/music/powers.mp3',
     ...Object.fromEntries([1, 2, 3, 4, 5, 7, 8, 9].map(number =>
       [`transitionClick${number}`, `assets/sounds/transition/keyClick${number}.ogg`])),
   };
   const htmlAudioFallback = {};
+  let powersReady = Promise.resolve();
 
   let boosterSource = null;
   let boosterGain = null;
@@ -45,7 +47,7 @@ export function createAudio() {
       // Ignora ambientes sem suporte a HTMLAudioElement
     }
 
-    fetch(path)
+    const loading = fetch(path)
       .then(res => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.arrayBuffer();
@@ -65,6 +67,117 @@ export function createAudio() {
       .catch(err => {
         console.warn(`Não foi possível pré-carregar o áudio ${name}:`, err);
       });
+    if (name === 'powersMusic') powersReady = loading;
+  }
+
+  const POWERS_PEAK = 114.95;
+  const POWERS_CHARGE_DURATION = 3;
+  const POWERS_START = POWERS_PEAK - POWERS_CHARGE_DURATION;
+  const POWERS_VOLUME = 0.32;
+  const POWERS_FADE_IN = POWERS_CHARGE_DURATION * 0.8;
+  let powersPosition = POWERS_START;
+  let powersStartedAt = 0;
+  let powersSource = null;
+  let powersGain = null;
+  let powersReleased = false;
+  let powersFallback = null;
+  let powersFades = [];
+
+  function fadePowersFallback(audio, to, duration, onFinish = () => {}) {
+    powersFades = powersFades.filter(fade => fade.audio !== audio);
+    powersFades.push({ audio, from: audio.volume, to, duration, elapsed: 0, onFinish });
+  }
+
+  function updatePowersFades(dt) {
+    for (let i = powersFades.length - 1; i >= 0; i--) {
+      const fade = powersFades[i];
+      fade.elapsed += dt;
+      const progress = Math.min(1, fade.elapsed / fade.duration);
+      fade.audio.volume = fade.from + (fade.to - fade.from) * progress;
+      if (progress === 1) { powersFades.splice(i, 1); fade.onFinish(); }
+    }
+  }
+
+  function getPowersMusicTime() {
+    if (powersSource && ctx) return powersPosition + ctx.currentTime - powersStartedAt;
+    const fallback = powersFallback;
+    return fallback && !fallback.paused ? fallback.currentTime : powersPosition;
+  }
+
+  function playPowersMusic() {
+    const c = getAudioContext();
+    const buffer = buffers.get('powersMusic');
+    if (powersSource) return;
+    if (c && buffer) {
+      const source = c.createBufferSource();
+      source.buffer = buffer;
+      source.loop = true;
+      powersGain = c.createGain();
+      powersGain.gain.setValueAtTime(0, c.currentTime);
+      powersGain.gain.linearRampToValueAtTime(POWERS_VOLUME, c.currentTime + POWERS_FADE_IN);
+      source.connect(powersGain);
+      powersGain.connect(c.destination);
+      powersStartedAt = c.currentTime;
+      source.start(powersStartedAt, powersPosition % buffer.duration);
+      powersSource = source;
+    } else {
+      if (powersFallback && !powersFallback.paused) return;
+      const fallback = htmlAudioFallback.powersMusic?.cloneNode();
+      if (!fallback) return;
+      powersFallback = fallback;
+      fallback.currentTime = powersPosition;
+      fallback.volume = 0;
+      fallback.loop = true;
+      fallback.play().catch(error => console.warn('Erro ao tocar powers:', error));
+      fadePowersFallback(fallback, POWERS_VOLUME, POWERS_FADE_IN);
+    }
+  }
+
+  function setPowersCharging(active) {
+    if (powersReleased) return;
+    if (active) {
+      setClassroomMusic(false, 0.3);
+      playPowersMusic();
+    } else {
+      powersPosition = POWERS_START;
+      if (powersSource) {
+        const source = powersSource;
+        const gain = powersGain;
+        const now = ctx.currentTime;
+        if (gain.gain.cancelAndHoldAtTime) gain.gain.cancelAndHoldAtTime(now);
+        else {
+          gain.gain.cancelScheduledValues(now);
+          gain.gain.setValueAtTime(gain.gain.value, now);
+        }
+        gain.gain.linearRampToValueAtTime(0, now + 0.22);
+        source.onended = () => { source.disconnect(); gain.disconnect(); };
+        source.stop(now + 0.22);
+        powersSource = powersGain = null;
+      }
+      if (powersFallback) {
+        const fallback = powersFallback;
+        powersFallback = null;
+        fadePowersFallback(fallback, 0, 0.22, () => fallback.pause());
+      }
+    }
+  }
+
+  function getPowersChargeProgress() {
+    // A barra segue o relógio do áudio, para o disparo coincidir com 1:54.95.
+    const position = getPowersMusicTime();
+    if (position >= POWERS_PEAK - 0.000001) return 1;
+    return Math.max(0, Math.min(1, (position - POWERS_START) / POWERS_CHARGE_DURATION));
+  }
+
+  function releasePowersMusic() {
+    powersReleased = true;
+    playPowersMusic(); // Continua do mesmo instante como música de fundo.
+  }
+
+  function resetPowersMusic() {
+    powersReleased = false;
+    setPowersCharging(false);
+    powersPosition = POWERS_START;
   }
 
   function play(name, { volume = 1, playbackRate = 1, duration = 0 } = {}) {
@@ -117,14 +230,13 @@ export function createAudio() {
   }
 
   function playLanding(hard = false) {
-    const volume = hard ? 0.95 : 0.65;
-    const pitch = hard ? 0.95 : 1.05;
-    play('landing', { volume, playbackRate: pitch });
+    if (!hard) return;
+    play('landing', { volume: 0.45, playbackRate: 1.05, duration: 0.28 });
   }
 
-  function playDash() {
-    const pitch = 1.32 + Math.random() * 0.06;
-    play('dash', { volume: 0.45, playbackRate: pitch });
+  function playDash(mega = false) {
+    const pitch = (mega ? 0.95 : 1.32) + Math.random() * 0.06;
+    play('dash', { volume: mega ? 0.7 : 0.45, playbackRate: pitch });
   }
 
   function playStep(surface) {
@@ -234,6 +346,7 @@ export function createAudio() {
     gabriel: { sounds: ['dialogA', 'dialogO'], pitch: 0.92, variation: 0.24 },
     mom: { sounds: ['momDialogPop'], pitch: 1.04, variation: 0.24 },
     milenio: { sounds: ['momDialogPop'], pitch: 0.9, variation: 0.16 },
+    policial: { sounds: ['momDialogPop'], pitch: 0.78, variation: 0.1 },
   };
 
   function stopDialogBlip() {
@@ -343,6 +456,7 @@ export function createAudio() {
   }
 
   function updateClassroomMusic(dt) {
+    updatePowersFades(dt);
     if (!classroomFade) return;
     const fade = classroomFade;
     fade.elapsed += dt;
@@ -466,7 +580,21 @@ export function createAudio() {
   window.addEventListener('keydown', unlockAudio, { passive: true });
   window.addEventListener('pointerdown', unlockAudio, { passive: true });
 
+  function playPhoneRing() {
+    const ctx = getAudioContext(); if (!ctx) return;
+    for (const offset of [0, .13, .4, .53]) {
+      const gain = ctx.createGain(); gain.connect(ctx.destination);
+      const start = ctx.currentTime + offset;
+      gain.gain.setValueAtTime(0, start); gain.gain.linearRampToValueAtTime(.022, start + .008);
+      gain.gain.exponentialRampToValueAtTime(.001, start + .1);
+      for (const frequency of [660, 880]) {
+        const tone = ctx.createOscillator(); tone.type = 'sine'; tone.frequency.value = frequency;
+        tone.connect(gain); tone.start(start); tone.stop(start + .11);
+      }
+    }
+  }
   return {
+    playPhoneRing,
     playJump,
     playLanding,
     playDash,
@@ -483,5 +611,11 @@ export function createAudio() {
     resumeIntroMusicAt,
     setIntroMusicTime,
     stopIntroMusic,
+    powersReady,
+    setPowersCharging,
+    getPowersChargeProgress,
+    getPowersMusicTime,
+    releasePowersMusic,
+    resetPowersMusic,
   };
 }

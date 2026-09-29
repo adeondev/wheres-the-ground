@@ -4,24 +4,30 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Where's the Ground?</title>
-    <link rel="stylesheet" href="style.css?v=rocket-transition" />
-    <script type="module" src="src/game.js?v=classroom-volume"></script>
+    <link rel="stylesheet" href="style.css?v=minimal-loading" />
+    <script type="module" src="src/game.js?v=minimal-loading"></script>
   </head>
   <body class="loading">
     <div id="loading-screen" role="status" aria-live="polite">
-      <div class="loading-title">WHERE'S THE GROUND?</div>
-      <div id="loading-label">CARREGANDO VÍDEO... 0%</div>
-      <div class="loading-track"><div id="loading-fill"></div></div>
-      <button id="loading-retry" type="button" hidden>TENTAR NOVAMENTE</button>
+      <div id="loading-label">Carregando vídeo</div>
+      <div class="loading-track" role="progressbar" aria-label="Carregamento do vídeo" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="loading-fill"></div></div>
     </div>
     <video id="opening-video" playsinline preload="none" aria-label="Vídeo de abertura"></video>
     <canvas id="game" aria-label="Jogo de plataforma"></canvas>
+    <section id="command-console" role="dialog" aria-label="Console de comandos" hidden>
+      <form>
+        <label for="command-input">COMANDO / F7</label>
+        <input id="command-input" type="text" placeholder="delegacia" autocomplete="off" spellcheck="false" />
+        <div role="status">delegacia → interior</div>
+      </form>
+    </section>
 
     <div class="hud" aria-live="polite">
       <div class="fuel-track" aria-label="Combustível"><div id="fuel-fill"></div></div>
       <span id="fuel-label">100%</span>
+      <span id="reserve-label" hidden>RESERVA: PRONTA</span>
     </div>
-    <div class="controls-hint">A/D MOVER · ESPAÇO PULAR / BOOST ↑ · SHIFT DASH → · J RAJADA · T DIÁLOGO · C CRT · H INTRO</div>
+    <div class="controls-hint">A/D MOVER · ESPAÇO PULAR / BOOST ↑ · SHIFT DASH → · SHIFT + ESPAÇO MEGA-BOOST · J RAJADA · T DIÁLOGO · C CRT · H INTRO</div>
 
     <div id="crt-overlay" aria-hidden="true"></div>
 

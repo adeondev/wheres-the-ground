@@ -25,19 +25,17 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 18px;
+  gap: 12px;
   padding: 24px;
-  background: #05080e;
-  color: #f4f0df;
-  font: 16px monospace;
+  background: #080a0d;
+  color: #e9e9e9;
+  font: 14px monospace;
   text-align: center;
 }
 body.loading #loading-screen { display: flex; }
-.loading-title { color: #f4ba79; font-size: clamp(18px, 4vw, 32px); }
-.loading-track { width: min(320px, 80vw); height: 12px; border: 2px solid #85ba9c; background: #172536; }
-#loading-fill { width: 0; height: 100%; background: #f4ba79; transition: width 120ms linear; }
-#loading-retry { padding: 10px 16px; border: 2px solid #85ba9c; background: #172536; color: #f4f0df; font: inherit; cursor: pointer; }
-#loading-retry[hidden] { display: none; }
+.loading-track { width: min(280px, 80vw); height: 4px; background: #30343a; overflow: hidden; }
+#loading-fill { width: 0; height: 100%; background: #e9e9e9; transition: width 120ms linear; }
+#loading-screen.load-error { cursor: pointer; }
 
 #opening-video {
   /* Decodifica o vídeo e toca seu áudio; os quadros são exibidos no canvas. */
@@ -116,6 +114,9 @@ body.crt-on .controls-hint { text-shadow: -1px 0 #ff8f8f80, 1px 0 #71dbe880, 1px
 
 #fuel-fill { width: 100%; height: 100%; background: #f4ba79; }
 
+#reserve-label { color: #f4ba79; }
+#reserve-label.spent { color: #87938c; }
+
 .controls-hint {
   position: fixed;
   top: calc(20px * var(--ui-scale, 1));
@@ -130,6 +131,35 @@ body.crt-on .controls-hint { text-shadow: -1px 0 #ff8f8f80, 1px 0 #71dbe880, 1px
 }
 
 .touch-controls { display: none; }
+#command-console {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(480px, calc(100vw - 32px));
+  padding: 16px;
+  box-sizing: border-box;
+  z-index: 100;
+  border: 3px solid #9a6a9d;
+  outline: 2px solid #18121f;
+  box-shadow: inset 0 2px #e8b977, 4px 4px #080813;
+  background: #1b1029f5;
+  color: #ffc281;
+  font: 14px monospace;
+}
+#command-console[hidden] { display: none; }
+#command-console label { display: block; margin-bottom: 8px; }
+#command-console input {
+  width: 100%;
+  box-sizing: border-box;
+  border: 2px solid #6e445f;
+  outline-color: #ffc281;
+  padding: 9px;
+  background: #080813;
+  color: #f4ecff;
+  font: 18px monospace;
+}
+#command-console [role="status"] { margin-top: 8px; font-size: 12px; }
 .intro-open { background: #000000 !important; }
 .intro-open #game { background: #000000; }
 .dialogue-open .hud,
@@ -144,15 +174,32 @@ body.crt-on .controls-hint { text-shadow: -1px 0 #ff8f8f80, 1px 0 #71dbe880, 1px
 .loading .controls-hint { display: none; }
 .dialogue-open .touch-controls,
 .transition-open .touch-controls,
+.station-cutscene .touch-controls,
 .intro-open .touch-controls,
 .video-open .touch-controls,
 .loading .touch-controls { display: none !important; }
+.station-cutscene .controls-hint { display: none; }
 
 .no-powers .hud,
 .no-powers .touch-controls [data-key="dash"],
 .no-powers .touch-controls [data-key="blast"],
 .no-powers .touch-controls [data-key="talk"],
 .no-powers .touch-controls [data-key="crt"] { display: none !important; }
+
+.no-powers.tutorial-dash .touch-controls [data-key="dash"] { display: block !important; }
+.learned-powers .touch-controls [data-key="blast"],
+.learned-powers .touch-controls [data-key="talk"],
+.learned-powers .touch-controls [data-key="crt"] { display: none !important; }
+.tutorial-locked .touch-controls [data-key="left"],
+.tutorial-locked .touch-controls [data-key="right"] { display: none !important; }
+.tutorial-locked:not(.tutorial-space) .touch-controls [data-key="jump"] { display: none !important; }
+.tutorial-flight .touch-controls [data-key="dash"] { display: none !important; }
+.tutorial-walking .touch-controls [data-key="jump"],
+.tutorial-walking .touch-controls [data-key="dash"] { display: none !important; }
+.tutorial-no-dash .touch-controls [data-key="dash"] { display: none !important; }
+.tutorial-locked.tutorial-space:not(.tutorial-combo) .touch-controls [data-key="dash"] { display: none !important; }
+.tutorial-reserve #reserve-label { color: #8deaff; animation: reserve-cue .7s steps(2,end) infinite; }
+@keyframes reserve-cue { 50% { color: #ffe0a3; } }
 
 @media (max-width: 680px) {
   .controls-hint { display: none; }
@@ -191,3 +238,10 @@ body.crt-on .controls-hint { text-shadow: -1px 0 #ff8f8f80, 1px 0 #71dbe880, 1px
   .touch-controls button { width: calc(36px * var(--touch-scale, 1)); height: calc(48px * var(--touch-scale, 1)); font-size: calc(18px * var(--touch-scale, 1)); }
   .touch-controls > div { gap: calc(4px * var(--touch-scale, 1)); }
 }
+
+/* Rooftop meters are drawn in the sprite HUD beside the minimap. */
+.sprite-hud .hud { display: none; }
+
+.phone-open .touch-controls { opacity: .25; pointer-events: none; }
+
+.phone-open .controls-hint { display: none; }

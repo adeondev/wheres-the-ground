@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Tileset Lab · Where's the Ground?</title>
   <link rel="stylesheet" href="tileset-editor.css">
-  <script defer src="tileset-assemblies.js?v=modular-16"></script>
-  <script defer src="tileset-editor.js?v=modular-16"></script>
+  <script defer src="tileset-assemblies.js?v=review-ramps"></script>
+  <script defer src="tileset-editor.js?v=review-v4"></script>
 </head>
 <body>
   <header>
@@ -14,7 +14,7 @@
     <nav aria-label="Arquivos">
       <label class="button">Abrir PNG<input id="image-file" type="file" accept="image/png,image/webp"></label>
       <label class="button">Importar JSON<input id="json-file" type="file" accept="application/json,.json"></label>
-      <button id="export" class="primary">Exportar metadata ↓</button>
+      <a class="button" href="tileset-review.html">Ver revisão montada</a><button id="export" class="primary">Exportar metadata ↓</button>
     </nav>
   </header>
   <main>
@@ -37,7 +37,7 @@
         <label>Nome<input name="label" placeholder="ex.: Piso do telhado" required></label>
         <div class="fields two">
           <label>Função<select name="role"><option value="platform">Piso / plataforma</option><option value="terrain">Parede / fachada</option><option value="decoration">Decoração</option><option value="door">Porta / saída</option><option value="character">Personagem / referência</option></select></label>
-          <label>Colisão<select name="collision"><option value="none">Sem colisão</option><option value="solid">Sólido</option><option value="one-way">Plataforma: atravessa por baixo</option></select></label>
+          <label>Colisão<select name="collision"><option value="none">Sem colisão</option><option value="solid">Sólido</option><option value="slope">Rampa: perfil pixel a pixel</option><option value="one-way">Plataforma: atravessa por baixo</option></select></label>
         </div>
         <div class="fields two"><label>Ordem de desenho<input name="layer" type="number" value="10" required></label><label>Repetição<select name="repeat"><option value="none">Não repete</option><option value="x">Horizontal</option><option value="y">Vertical</option><option value="both">Horizontal e vertical</option></select></label></div>
         <details><summary>Área de colisão dentro do recorte</summary><p class="hint">Pixels relativos ao canto do recorte. Sem colisão, estes valores são ignorados.</p>
@@ -59,7 +59,7 @@
         <label class="check"><input id="scene-grid" type="checkbox">Grade</label>
         <label class="check"><input id="checker" type="checkbox" checked>Transparência</label>
       </div>
-      <div class="assembly-tools"><label>Montagem<select id="assembly"></select></label><label>Largura em tiles<input id="assembly-width" type="number" min="1" max="128" value="15"></label><label>Altura em tiles<input id="assembly-height" type="number" min="1" max="128" value="6"></label><button id="assembly-mode">Montar objeto</button></div>
+      <div class="assembly-tools"><label>Montagem<select id="assembly"></select></label><label>Largura em tiles<input id="assembly-width" type="number" min="1" max="128" value="15"></label><label>Altura em tiles<input id="assembly-height" type="number" min="1" max="128" value="6"></label><label><input id="assembly-flip" type="checkbox">Espelhar rampa</label><button id="assembly-mode">Montar objeto</button></div>
       <p id="assembly-description" class="hint"></p>
       <div class="scene-wrap checker"><canvas id="scene" aria-label="Prévia do cenário; clique para colocar ou mover peças"></canvas></div>
       <div class="scene-caption"><span id="scene-status"></span><span id="placement-count"></span></div>
@@ -77,13 +77,13 @@
     </section>
   </main>
   <footer><span id="status" role="status" aria-live="polite">Carregando tileset…</span><span>SEM INSTALAÇÃO · ABRE COM DUPLO CLIQUE</span></footer>
-  <dialog id="export-dialog"><div class="panel-heading"><h2>Metadata pronta</h2><form method="dialog"><button aria-label="Fechar exportação">×</button></form></div><p class="hint">Baixe o JSON ou copie o conteúdo. Guarde como <b>open_world_tileset.metadata.json</b> junto do PNG.</p><textarea id="json-output" rows="16" readonly aria-label="JSON da metadata"></textarea><div class="actions"><button id="download-json" class="primary">Baixar JSON</button><button id="copy-json">Copiar JSON</button></div><p id="export-status" class="hint" role="status"></p></dialog>
+  <dialog id="export-dialog"><div class="panel-heading"><h2>Metadata pronta</h2><form method="dialog"><button aria-label="Fechar exportação">×</button></form></div><p class="hint">Baixe o JSON ou copie o conteúdo. Esta revisão baixa como <b>open_world_tileset.review.metadata.json</b>, junto do PNG de revisão.</p><textarea id="json-output" rows="16" readonly aria-label="JSON da metadata"></textarea><div class="actions"><button id="download-json" class="primary">Baixar JSON</button><button id="copy-json">Copiar JSON</button></div><p id="export-status" class="hint" role="status"></p></dialog>
   <script id="default-metadata" type="application/json">
 {
   "version": 1,
-  "catalog": "open-world-16-v2",
+  "catalog": "open-world-16-review-v4",
   "image": {
-    "path": "assets/sprites/tilesets/open_world_tileset.png",
+    "path": "assets/sprites/tilesets/open_world_tileset.review.png",
     "width": 488,
     "height": 244
   },
@@ -700,7 +700,8 @@
         "family": "predio",
         "part": "baixo-miolo",
         "requiredNeighbors": []
-      }
+      },
+      "reviewChange": "updated"
     },
     {
       "id": "concreto_loop_baixo_variante_2",
@@ -728,7 +729,8 @@
         "family": "predio",
         "part": "baixo-miolo",
         "requiredNeighbors": []
-      }
+      },
+      "reviewChange": "updated"
     },
     {
       "id": "concreto_loop_baixo_variante_3",
@@ -756,7 +758,8 @@
         "family": "predio",
         "part": "baixo-miolo",
         "requiredNeighbors": []
-      }
+      },
+      "reviewChange": "updated"
     },
     {
       "id": "concreto_direito_baixo",
@@ -1611,7 +1614,1862 @@
       "collision": {
         "type": "none"
       },
-      "notes": "Referência de escala extraída do tileset. No jogo será substituído pelo Gabriel animado. Exceção à grade 16×16: não é peça de cenário."
+      "notes": "Referência de escala extraída do tileset. No jogo será substituído pelo Gabriel animado. Exceção à grade 16×16: não é peça de cenário.",
+      "reviewChange": "updated"
+    },
+    {
+      "id": "rampa_c1_f1",
+      "label": "Trecho inclinado · coluna 1, faixa 1",
+      "source": {
+        "x": 80,
+        "y": 0,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "none",
+      "collision": {
+        "type": "slope",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        },
+        "heights": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "notes": "Parte 16×16 de uma rampa transitável. Encaixa no miolo do telhado/concreto. Espelhar a montagem inteira para inverter o sentido, preservando a ordem dos tiles.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "rampa",
+        "part": "rampa_c1_f1",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "rampa_c2_f1",
+      "label": "Trecho inclinado · coluna 2, faixa 1",
+      "source": {
+        "x": 96,
+        "y": 0,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "none",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      },
+      "notes": "Parte 16×16 de uma rampa transitável. Encaixa no miolo do telhado/concreto. Espelhar a montagem inteira para inverter o sentido, preservando a ordem dos tiles.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "rampa",
+        "part": "rampa_c2_f1",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "rampa_c3_f1",
+      "label": "Trecho inclinado · coluna 3, faixa 1",
+      "source": {
+        "x": 112,
+        "y": 0,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "none",
+      "collision": {
+        "type": "slope",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        },
+        "heights": [
+          0,
+          0,
+          1,
+          1,
+          2,
+          2,
+          3,
+          3,
+          4,
+          4,
+          5,
+          5,
+          6,
+          6,
+          7,
+          7
+        ]
+      },
+      "notes": "Parte 16×16 de uma rampa transitável. Encaixa no miolo do telhado/concreto. Espelhar a montagem inteira para inverter o sentido, preservando a ordem dos tiles.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "rampa",
+        "part": "rampa_c3_f1",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "rampa_c4_f1",
+      "label": "Trecho inclinado · coluna 4, faixa 1",
+      "source": {
+        "x": 128,
+        "y": 0,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "none",
+      "collision": {
+        "type": "slope",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        },
+        "heights": [
+          7,
+          8,
+          8,
+          9,
+          9,
+          10,
+          10,
+          11,
+          11,
+          12,
+          12,
+          13,
+          13,
+          14,
+          14,
+          15
+        ]
+      },
+      "notes": "Parte 16×16 de uma rampa transitável. Encaixa no miolo do telhado/concreto. Espelhar a montagem inteira para inverter o sentido, preservando a ordem dos tiles.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "rampa",
+        "part": "rampa_c4_f1",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "rampa_c1_f2",
+      "label": "Trecho inclinado · coluna 1, faixa 2",
+      "source": {
+        "x": 80,
+        "y": 16,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "none",
+      "collision": {
+        "type": "slope",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        },
+        "heights": [
+          16,
+          16,
+          16,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "notes": "Parte 16×16 de uma rampa transitável. Encaixa no miolo do telhado/concreto. Espelhar a montagem inteira para inverter o sentido, preservando a ordem dos tiles.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "rampa",
+        "part": "rampa_c1_f2",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "rampa_c2_f2",
+      "label": "Trecho inclinado · coluna 2, faixa 2",
+      "source": {
+        "x": 96,
+        "y": 16,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "none",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      },
+      "notes": "Parte 16×16 de uma rampa transitável. Encaixa no miolo do telhado/concreto. Espelhar a montagem inteira para inverter o sentido, preservando a ordem dos tiles.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "rampa",
+        "part": "rampa_c2_f2",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "rampa_c3_f2",
+      "label": "Trecho inclinado · coluna 3, faixa 2",
+      "source": {
+        "x": 112,
+        "y": 16,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "none",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      },
+      "notes": "Parte 16×16 de uma rampa transitável. Encaixa no miolo do telhado/concreto. Espelhar a montagem inteira para inverter o sentido, preservando a ordem dos tiles.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "rampa",
+        "part": "rampa_c3_f2",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "rampa_c4_f2",
+      "label": "Trecho inclinado · coluna 4, faixa 2",
+      "source": {
+        "x": 128,
+        "y": 16,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "none",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      },
+      "notes": "Parte 16×16 de uma rampa transitável. Encaixa no miolo do telhado/concreto. Espelhar a montagem inteira para inverter o sentido, preservando a ordem dos tiles.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "rampa",
+        "part": "rampa_c4_f2",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "rampa_c5_f2",
+      "label": "Trecho inclinado · coluna 5, faixa 2",
+      "source": {
+        "x": 144,
+        "y": 16,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "none",
+      "collision": {
+        "type": "slope",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        },
+        "heights": [
+          0,
+          0,
+          1,
+          1,
+          2,
+          2,
+          3,
+          3,
+          4,
+          4,
+          5,
+          5,
+          6,
+          6,
+          7,
+          7
+        ]
+      },
+      "notes": "Parte 16×16 de uma rampa transitável. Encaixa no miolo do telhado/concreto. Espelhar a montagem inteira para inverter o sentido, preservando a ordem dos tiles.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "rampa",
+        "part": "rampa_c5_f2",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "rampa_c6_f2",
+      "label": "Trecho inclinado · coluna 6, faixa 2",
+      "source": {
+        "x": 160,
+        "y": 16,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "none",
+      "collision": {
+        "type": "slope",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        },
+        "heights": [
+          7,
+          8,
+          8,
+          9,
+          9,
+          10,
+          10,
+          11,
+          11,
+          12,
+          12,
+          13,
+          13,
+          14,
+          14,
+          15
+        ]
+      },
+      "notes": "Parte 16×16 de uma rampa transitável. Encaixa no miolo do telhado/concreto. Espelhar a montagem inteira para inverter o sentido, preservando a ordem dos tiles.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "rampa",
+        "part": "rampa_c6_f2",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "rampa_c1_f3",
+      "label": "Trecho inclinado · coluna 1, faixa 3",
+      "source": {
+        "x": 80,
+        "y": 32,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "none",
+      "collision": {
+        "type": "slope",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        },
+        "heights": [
+          16,
+          16,
+          16,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "notes": "Parte 16×16 de uma rampa transitável. Encaixa no miolo do telhado/concreto. Espelhar a montagem inteira para inverter o sentido, preservando a ordem dos tiles.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "rampa",
+        "part": "rampa_c1_f3",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "rampa_c2_f3",
+      "label": "Trecho inclinado · coluna 2, faixa 3",
+      "source": {
+        "x": 96,
+        "y": 32,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "none",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      },
+      "notes": "Parte 16×16 de uma rampa transitável. Encaixa no miolo do telhado/concreto. Espelhar a montagem inteira para inverter o sentido, preservando a ordem dos tiles.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "rampa",
+        "part": "rampa_c2_f3",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "rampa_c3_f3",
+      "label": "Trecho inclinado · coluna 3, faixa 3",
+      "source": {
+        "x": 112,
+        "y": 32,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "none",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      },
+      "notes": "Parte 16×16 de uma rampa transitável. Encaixa no miolo do telhado/concreto. Espelhar a montagem inteira para inverter o sentido, preservando a ordem dos tiles.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "rampa",
+        "part": "rampa_c3_f3",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "rampa_c4_f3",
+      "label": "Trecho inclinado · coluna 4, faixa 3",
+      "source": {
+        "x": 128,
+        "y": 32,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "none",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      },
+      "notes": "Parte 16×16 de uma rampa transitável. Encaixa no miolo do telhado/concreto. Espelhar a montagem inteira para inverter o sentido, preservando a ordem dos tiles.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "rampa",
+        "part": "rampa_c4_f3",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "rampa_c5_f3",
+      "label": "Trecho inclinado · coluna 5, faixa 3",
+      "source": {
+        "x": 144,
+        "y": 32,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "none",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      },
+      "notes": "Parte 16×16 de uma rampa transitável. Encaixa no miolo do telhado/concreto. Espelhar a montagem inteira para inverter o sentido, preservando a ordem dos tiles.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "rampa",
+        "part": "rampa_c5_f3",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "rampa_c6_f3",
+      "label": "Trecho inclinado · coluna 6, faixa 3",
+      "source": {
+        "x": 160,
+        "y": 32,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "none",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      },
+      "notes": "Parte 16×16 de uma rampa transitável. Encaixa no miolo do telhado/concreto. Espelhar a montagem inteira para inverter o sentido, preservando a ordem dos tiles.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "rampa",
+        "part": "rampa_c6_f3",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "rampa_c7_f3",
+      "label": "Trecho inclinado · coluna 7, faixa 3",
+      "source": {
+        "x": 176,
+        "y": 32,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "none",
+      "collision": {
+        "type": "slope",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        },
+        "heights": [
+          0,
+          0,
+          1,
+          1,
+          2,
+          2,
+          3,
+          3,
+          4,
+          4,
+          5,
+          5,
+          6,
+          6,
+          7,
+          7
+        ]
+      },
+      "notes": "Parte 16×16 de uma rampa transitável. Encaixa no miolo do telhado/concreto. Espelhar a montagem inteira para inverter o sentido, preservando a ordem dos tiles.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "rampa",
+        "part": "rampa_c7_f3",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "rampa_c8_f3",
+      "label": "Trecho inclinado · coluna 8, faixa 3",
+      "source": {
+        "x": 192,
+        "y": 32,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "none",
+      "collision": {
+        "type": "slope",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        },
+        "heights": [
+          7,
+          8,
+          8,
+          9,
+          9,
+          10,
+          10,
+          11,
+          11,
+          12,
+          12,
+          13,
+          13,
+          14,
+          14,
+          15
+        ]
+      },
+      "notes": "Parte 16×16 de uma rampa transitável. Encaixa no miolo do telhado/concreto. Espelhar a montagem inteira para inverter o sentido, preservando a ordem dos tiles.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "rampa",
+        "part": "rampa_c8_f3",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "rampa_c1_f4",
+      "label": "Trecho inclinado · coluna 1, faixa 4",
+      "source": {
+        "x": 80,
+        "y": 48,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "none",
+      "collision": {
+        "type": "slope",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        },
+        "heights": [
+          16,
+          16,
+          16,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "notes": "Parte 16×16 de uma rampa transitável. Encaixa no miolo do telhado/concreto. Espelhar a montagem inteira para inverter o sentido, preservando a ordem dos tiles.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "rampa",
+        "part": "rampa_c1_f4",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "rampa_c2_f4",
+      "label": "Trecho inclinado · coluna 2, faixa 4",
+      "source": {
+        "x": 96,
+        "y": 48,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "none",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      },
+      "notes": "Parte 16×16 de uma rampa transitável. Encaixa no miolo do telhado/concreto. Espelhar a montagem inteira para inverter o sentido, preservando a ordem dos tiles.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "rampa",
+        "part": "rampa_c2_f4",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "rampa_c3_f4",
+      "label": "Trecho inclinado · coluna 3, faixa 4",
+      "source": {
+        "x": 112,
+        "y": 48,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "none",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      },
+      "notes": "Parte 16×16 de uma rampa transitável. Encaixa no miolo do telhado/concreto. Espelhar a montagem inteira para inverter o sentido, preservando a ordem dos tiles.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "rampa",
+        "part": "rampa_c3_f4",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "rampa_c4_f4",
+      "label": "Trecho inclinado · coluna 4, faixa 4",
+      "source": {
+        "x": 128,
+        "y": 48,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "none",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      },
+      "notes": "Parte 16×16 de uma rampa transitável. Encaixa no miolo do telhado/concreto. Espelhar a montagem inteira para inverter o sentido, preservando a ordem dos tiles.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "rampa",
+        "part": "rampa_c4_f4",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "rampa_c5_f4",
+      "label": "Trecho inclinado · coluna 5, faixa 4",
+      "source": {
+        "x": 144,
+        "y": 48,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "none",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      },
+      "notes": "Parte 16×16 de uma rampa transitável. Encaixa no miolo do telhado/concreto. Espelhar a montagem inteira para inverter o sentido, preservando a ordem dos tiles.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "rampa",
+        "part": "rampa_c5_f4",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "rampa_c6_f4",
+      "label": "Trecho inclinado · coluna 6, faixa 4",
+      "source": {
+        "x": 160,
+        "y": 48,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "none",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      },
+      "notes": "Parte 16×16 de uma rampa transitável. Encaixa no miolo do telhado/concreto. Espelhar a montagem inteira para inverter o sentido, preservando a ordem dos tiles.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "rampa",
+        "part": "rampa_c6_f4",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "rampa_c7_f4",
+      "label": "Trecho inclinado · coluna 7, faixa 4",
+      "source": {
+        "x": 176,
+        "y": 48,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "none",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      },
+      "notes": "Parte 16×16 de uma rampa transitável. Encaixa no miolo do telhado/concreto. Espelhar a montagem inteira para inverter o sentido, preservando a ordem dos tiles.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "rampa",
+        "part": "rampa_c7_f4",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "rampa_c8_f4",
+      "label": "Trecho inclinado · coluna 8, faixa 4",
+      "source": {
+        "x": 192,
+        "y": 48,
+        "w": 16,
+        "h": 16
+      },
+      "role": "terrain",
+      "layer": 1,
+      "repeat": "none",
+      "collision": {
+        "type": "solid",
+        "rect": {
+          "x": 0,
+          "y": 0,
+          "w": 16,
+          "h": 16
+        }
+      },
+      "notes": "Parte 16×16 de uma rampa transitável. Encaixa no miolo do telhado/concreto. Espelhar a montagem inteira para inverter o sentido, preservando a ordem dos tiles.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "rampa",
+        "part": "rampa_c8_f4",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "antena_c1_cima",
+      "label": "Antena · topo 1",
+      "source": {
+        "x": 80,
+        "y": 64,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 4,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Braços e haste superior da antena, decoração sem colisão.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "antena",
+        "part": "antena_c1_cima",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "antena_c2_cima",
+      "label": "Antena · topo 2",
+      "source": {
+        "x": 96,
+        "y": 64,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 4,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Braços e haste superior da antena, decoração sem colisão.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "antena",
+        "part": "antena_c2_cima",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "antena_c3_cima",
+      "label": "Antena · topo 3",
+      "source": {
+        "x": 112,
+        "y": 64,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 4,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Braços e haste superior da antena, decoração sem colisão.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "antena",
+        "part": "antena_c3_cima",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "antena_base",
+      "label": "Antena · base / haste",
+      "source": {
+        "x": 96,
+        "y": 80,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 4,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Base da antena. Apoia no telhado; preservar o alinhamento com a haste superior.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "antena",
+        "part": "antena_base",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "respiro_telhado",
+      "label": "Respiro / caninho do telhado",
+      "source": {
+        "x": 80,
+        "y": 96,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 4,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Peça independente de 16×16. Função de obstáculo de fumaça em revisão com o autor.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "respiro",
+        "part": "respiro_telhado",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "varal_0_0",
+      "label": "Varal · cima 1",
+      "source": {
+        "x": 96,
+        "y": 96,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 4,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte do varal com postes, fio e roupas. Conservar os fragmentos de roupas entre tiles. Sem colisão.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "varal",
+        "part": "varal_0_0",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "varal_0_1",
+      "label": "Varal · cima 2",
+      "source": {
+        "x": 112,
+        "y": 96,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 4,
+      "repeat": "x",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte do varal com postes, fio e roupas. Conservar os fragmentos de roupas entre tiles. Sem colisão.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "varal",
+        "part": "varal_0_1",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "varal_0_2",
+      "label": "Varal · cima 3",
+      "source": {
+        "x": 128,
+        "y": 96,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 4,
+      "repeat": "x",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte do varal com postes, fio e roupas. Conservar os fragmentos de roupas entre tiles. Sem colisão.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "varal",
+        "part": "varal_0_2",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "varal_0_3",
+      "label": "Varal · cima 4",
+      "source": {
+        "x": 144,
+        "y": 96,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 4,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte do varal com postes, fio e roupas. Conservar os fragmentos de roupas entre tiles. Sem colisão.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "varal",
+        "part": "varal_0_3",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "varal_1_0",
+      "label": "Varal · baixo 1",
+      "source": {
+        "x": 96,
+        "y": 112,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 4,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte do varal com postes, fio e roupas. Conservar os fragmentos de roupas entre tiles. Sem colisão.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "varal",
+        "part": "varal_1_0",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "varal_1_1",
+      "label": "Varal · baixo 2",
+      "source": {
+        "x": 112,
+        "y": 112,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 4,
+      "repeat": "x",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte do varal com postes, fio e roupas. Conservar os fragmentos de roupas entre tiles. Sem colisão.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "varal",
+        "part": "varal_1_1",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "varal_1_2",
+      "label": "Varal · baixo 3",
+      "source": {
+        "x": 128,
+        "y": 112,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 4,
+      "repeat": "x",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte do varal com postes, fio e roupas. Conservar os fragmentos de roupas entre tiles. Sem colisão.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "varal",
+        "part": "varal_1_2",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "varal_1_3",
+      "label": "Varal · baixo 4",
+      "source": {
+        "x": 144,
+        "y": 112,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 4,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte do varal com postes, fio e roupas. Conservar os fragmentos de roupas entre tiles. Sem colisão. Este tile contém também a ponta esquerda do bloco/toldo vizinho; revisar a separação na arte.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "varal",
+        "part": "varal_1_3",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "bloco_telhado_1",
+      "label": "Bloco / cobertura · parte 2",
+      "source": {
+        "x": 160,
+        "y": 112,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 4,
+      "repeat": "x",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte 16×16 do bloco ao lado do varal. Função em revisão; as pontas apoiam no telhado.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "bloco_telhado",
+        "part": "bloco_telhado_1",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "bloco_telhado_2",
+      "label": "Bloco / cobertura · parte 3",
+      "source": {
+        "x": 176,
+        "y": 112,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 4,
+      "repeat": "x",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte 16×16 do bloco ao lado do varal. Função em revisão; as pontas apoiam no telhado.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "bloco_telhado",
+        "part": "bloco_telhado_2",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "bloco_telhado_3",
+      "label": "Bloco / cobertura · parte 4",
+      "source": {
+        "x": 192,
+        "y": 112,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 4,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte 16×16 do bloco ao lado do varal. Função em revisão; as pontas apoiam no telhado.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "bloco_telhado",
+        "part": "bloco_telhado_3",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "caixa_dagua_0_0",
+      "label": "Caixa d’água · tampa 1",
+      "source": {
+        "x": 80,
+        "y": 128,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 4,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte da caixa d’água; tampa e pés fecham o objeto, corpo repete verticalmente.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "caixa_dagua",
+        "part": "caixa_dagua_0_0",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "caixa_dagua_0_1",
+      "label": "Caixa d’água · tampa 2",
+      "source": {
+        "x": 96,
+        "y": 128,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 4,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte da caixa d’água; tampa e pés fecham o objeto, corpo repete verticalmente.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "caixa_dagua",
+        "part": "caixa_dagua_0_1",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "caixa_dagua_1_0",
+      "label": "Caixa d’água · corpo 1",
+      "source": {
+        "x": 80,
+        "y": 144,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 4,
+      "repeat": "y",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte da caixa d’água; tampa e pés fecham o objeto, corpo repete verticalmente.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "caixa_dagua",
+        "part": "caixa_dagua_1_0",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "caixa_dagua_1_1",
+      "label": "Caixa d’água · corpo 2",
+      "source": {
+        "x": 96,
+        "y": 144,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 4,
+      "repeat": "y",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte da caixa d’água; tampa e pés fecham o objeto, corpo repete verticalmente.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "caixa_dagua",
+        "part": "caixa_dagua_1_1",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "caixa_dagua_2_0",
+      "label": "Caixa d’água · pés 1",
+      "source": {
+        "x": 80,
+        "y": 160,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 4,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte da caixa d’água; tampa e pés fecham o objeto, corpo repete verticalmente.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "caixa_dagua",
+        "part": "caixa_dagua_2_0",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "caixa_dagua_2_1",
+      "label": "Caixa d’água · pés 2",
+      "source": {
+        "x": 96,
+        "y": 160,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 4,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte da caixa d’água; tampa e pés fecham o objeto, corpo repete verticalmente.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "caixa_dagua",
+        "part": "caixa_dagua_2_1",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "acesso_caixa_0_1",
+      "label": "Entrada com caixa · faixa 1, parte 2",
+      "source": {
+        "x": 128,
+        "y": 128,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 4,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte 16×16 da nova entrada com caixa d’água. A base da entrada apoia no telhado, à frente da mureta. Os pés da caixa e a cobertura compartilham a faixa central.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "acesso_caixa",
+        "part": "acesso_caixa_0_1",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "acesso_caixa_0_2",
+      "label": "Entrada com caixa · faixa 1, parte 3",
+      "source": {
+        "x": 144,
+        "y": 128,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 4,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte 16×16 da nova entrada com caixa d’água. A base da entrada apoia no telhado, à frente da mureta. Os pés da caixa e a cobertura compartilham a faixa central.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "acesso_caixa",
+        "part": "acesso_caixa_0_2",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "acesso_caixa_1_1",
+      "label": "Entrada com caixa · faixa 2, parte 2",
+      "source": {
+        "x": 128,
+        "y": 144,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 4,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte 16×16 da nova entrada com caixa d’água. A base da entrada apoia no telhado, à frente da mureta. Os pés da caixa e a cobertura compartilham a faixa central.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "acesso_caixa",
+        "part": "acesso_caixa_1_1",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "acesso_caixa_1_2",
+      "label": "Entrada com caixa · faixa 2, parte 3",
+      "source": {
+        "x": 144,
+        "y": 144,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 4,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte 16×16 da nova entrada com caixa d’água. A base da entrada apoia no telhado, à frente da mureta. Os pés da caixa e a cobertura compartilham a faixa central.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "acesso_caixa",
+        "part": "acesso_caixa_1_2",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "acesso_caixa_2_1",
+      "label": "Entrada com caixa · faixa 3, parte 2",
+      "source": {
+        "x": 128,
+        "y": 160,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 4,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte 16×16 da nova entrada com caixa d’água. A base da entrada apoia no telhado, à frente da mureta. Os pés da caixa e a cobertura compartilham a faixa central.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "acesso_caixa",
+        "part": "acesso_caixa_2_1",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "acesso_caixa_2_2",
+      "label": "Entrada com caixa · faixa 3, parte 3",
+      "source": {
+        "x": 144,
+        "y": 160,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 4,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte 16×16 da nova entrada com caixa d’água. A base da entrada apoia no telhado, à frente da mureta. Os pés da caixa e a cobertura compartilham a faixa central.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "acesso_caixa",
+        "part": "acesso_caixa_2_2",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "acesso_caixa_3_0",
+      "label": "Entrada com caixa · faixa 4, parte 1",
+      "source": {
+        "x": 112,
+        "y": 176,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 4,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte 16×16 da nova entrada com caixa d’água. A base da entrada apoia no telhado, à frente da mureta. Os pés da caixa e a cobertura compartilham a faixa central.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "acesso_caixa",
+        "part": "acesso_caixa_3_0",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "acesso_caixa_3_1",
+      "label": "Entrada com caixa · faixa 4, parte 2",
+      "source": {
+        "x": 128,
+        "y": 176,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 4,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte 16×16 da nova entrada com caixa d’água. A base da entrada apoia no telhado, à frente da mureta. Os pés da caixa e a cobertura compartilham a faixa central.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "acesso_caixa",
+        "part": "acesso_caixa_3_1",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "acesso_caixa_3_2",
+      "label": "Entrada com caixa · faixa 4, parte 3",
+      "source": {
+        "x": 144,
+        "y": 176,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 4,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte 16×16 da nova entrada com caixa d’água. A base da entrada apoia no telhado, à frente da mureta. Os pés da caixa e a cobertura compartilham a faixa central.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "acesso_caixa",
+        "part": "acesso_caixa_3_2",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "acesso_caixa_3_3",
+      "label": "Entrada com caixa · faixa 4, parte 4",
+      "source": {
+        "x": 160,
+        "y": 176,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 4,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte 16×16 da nova entrada com caixa d’água. A base da entrada apoia no telhado, à frente da mureta. Os pés da caixa e a cobertura compartilham a faixa central.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "acesso_caixa",
+        "part": "acesso_caixa_3_3",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "acesso_caixa_4_0",
+      "label": "Entrada com caixa · faixa 5, parte 1",
+      "source": {
+        "x": 112,
+        "y": 192,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 4,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte 16×16 da nova entrada com caixa d’água. A base da entrada apoia no telhado, à frente da mureta. Os pés da caixa e a cobertura compartilham a faixa central.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "acesso_caixa",
+        "part": "acesso_caixa_4_0",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "acesso_caixa_4_1",
+      "label": "Entrada com caixa · faixa 5, parte 2",
+      "source": {
+        "x": 128,
+        "y": 192,
+        "w": 16,
+        "h": 16
+      },
+      "role": "door",
+      "layer": 4,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte 16×16 da nova entrada com caixa d’água. A base da entrada apoia no telhado, à frente da mureta. Os pés da caixa e a cobertura compartilham a faixa central.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "acesso_caixa",
+        "part": "acesso_caixa_4_1",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "acesso_caixa_4_2",
+      "label": "Entrada com caixa · faixa 5, parte 3",
+      "source": {
+        "x": 144,
+        "y": 192,
+        "w": 16,
+        "h": 16
+      },
+      "role": "door",
+      "layer": 4,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte 16×16 da nova entrada com caixa d’água. A base da entrada apoia no telhado, à frente da mureta. Os pés da caixa e a cobertura compartilham a faixa central.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "acesso_caixa",
+        "part": "acesso_caixa_4_2",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "acesso_caixa_4_3",
+      "label": "Entrada com caixa · faixa 5, parte 4",
+      "source": {
+        "x": 160,
+        "y": 192,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 4,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte 16×16 da nova entrada com caixa d’água. A base da entrada apoia no telhado, à frente da mureta. Os pés da caixa e a cobertura compartilham a faixa central.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "acesso_caixa",
+        "part": "acesso_caixa_4_3",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "acesso_caixa_5_0",
+      "label": "Entrada com caixa · faixa 6, parte 1",
+      "source": {
+        "x": 112,
+        "y": 208,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 4,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte 16×16 da nova entrada com caixa d’água. A base da entrada apoia no telhado, à frente da mureta. Os pés da caixa e a cobertura compartilham a faixa central.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "acesso_caixa",
+        "part": "acesso_caixa_5_0",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "acesso_caixa_5_1",
+      "label": "Entrada com caixa · faixa 6, parte 2",
+      "source": {
+        "x": 128,
+        "y": 208,
+        "w": 16,
+        "h": 16
+      },
+      "role": "door",
+      "layer": 4,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte 16×16 da nova entrada com caixa d’água. A base da entrada apoia no telhado, à frente da mureta. Os pés da caixa e a cobertura compartilham a faixa central.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "acesso_caixa",
+        "part": "acesso_caixa_5_1",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "acesso_caixa_5_2",
+      "label": "Entrada com caixa · faixa 6, parte 3",
+      "source": {
+        "x": 144,
+        "y": 208,
+        "w": 16,
+        "h": 16
+      },
+      "role": "door",
+      "layer": 4,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte 16×16 da nova entrada com caixa d’água. A base da entrada apoia no telhado, à frente da mureta. Os pés da caixa e a cobertura compartilham a faixa central.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "acesso_caixa",
+        "part": "acesso_caixa_5_2",
+        "requiredNeighbors": []
+      }
+    },
+    {
+      "id": "acesso_caixa_5_3",
+      "label": "Entrada com caixa · faixa 6, parte 4",
+      "source": {
+        "x": 160,
+        "y": 208,
+        "w": 16,
+        "h": 16
+      },
+      "role": "decoration",
+      "layer": 4,
+      "repeat": "none",
+      "collision": {
+        "type": "none"
+      },
+      "notes": "Parte 16×16 da nova entrada com caixa d’água. A base da entrada apoia no telhado, à frente da mureta. Os pés da caixa e a cobertura compartilham a faixa central.",
+      "reviewChange": "new",
+      "assembly": {
+        "family": "acesso_caixa",
+        "part": "acesso_caixa_5_3",
+        "requiredNeighbors": []
+      }
     }
   ],
   "assemblies": [
@@ -1778,884 +3636,4625 @@
         "cano_pendente"
       ],
       "notes": "Coluna de cano. Aumente a altura repetindo a peça 16×16."
+    },
+    {
+      "id": "rampa",
+      "label": "Rampa de telhado / concreto",
+      "type": "pattern",
+      "minWidth": 8,
+      "minHeight": 4,
+      "defaultWidth": 8,
+      "defaultHeight": 4,
+      "rows": [
+        [
+          "rampa_c1_f1",
+          "rampa_c2_f1",
+          "rampa_c3_f1",
+          "rampa_c4_f1",
+          null,
+          null,
+          null,
+          null
+        ],
+        [
+          "rampa_c1_f2",
+          "rampa_c2_f2",
+          "rampa_c3_f2",
+          "rampa_c4_f2",
+          "rampa_c5_f2",
+          "rampa_c6_f2",
+          null,
+          null
+        ],
+        [
+          "rampa_c1_f3",
+          "rampa_c2_f3",
+          "rampa_c3_f3",
+          "rampa_c4_f3",
+          "rampa_c5_f3",
+          "rampa_c6_f3",
+          "rampa_c7_f3",
+          "rampa_c8_f3"
+        ],
+        [
+          "rampa_c1_f4",
+          "rampa_c2_f4",
+          "rampa_c3_f4",
+          "rampa_c4_f4",
+          "rampa_c5_f4",
+          "rampa_c6_f4",
+          "rampa_c7_f4",
+          "rampa_c8_f4"
+        ]
+      ],
+      "notes": "Rampa transitável de 26 tiles, encaixada entre miolos de telhado/concreto com desnível de 48 pixels. Espelhar a montagem inteira na horizontal para subir ou descer; nunca inverter somente os sprites mantendo a ordem dos tiles. Não esticar o desenho.",
+      "reviewChange": "new",
+      "surface": {
+        "type": "heightfield",
+        "heights": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          2,
+          2,
+          3,
+          3,
+          4,
+          4,
+          5,
+          5,
+          6,
+          6,
+          7,
+          7,
+          7,
+          8,
+          8,
+          9,
+          9,
+          10,
+          10,
+          11,
+          11,
+          12,
+          12,
+          13,
+          13,
+          14,
+          14,
+          15,
+          16,
+          16,
+          17,
+          17,
+          18,
+          18,
+          19,
+          19,
+          20,
+          20,
+          21,
+          21,
+          22,
+          22,
+          23,
+          23,
+          23,
+          24,
+          24,
+          25,
+          25,
+          26,
+          26,
+          27,
+          27,
+          28,
+          28,
+          29,
+          29,
+          30,
+          30,
+          31,
+          32,
+          32,
+          33,
+          33,
+          34,
+          34,
+          35,
+          35,
+          36,
+          36,
+          37,
+          37,
+          38,
+          38,
+          39,
+          39,
+          39,
+          40,
+          40,
+          41,
+          41,
+          42,
+          42,
+          43,
+          43,
+          44,
+          44,
+          45,
+          45,
+          46,
+          46,
+          47
+        ],
+        "rise": 48,
+        "flip": "horizontal",
+        "attachment": "roof-concrete-middle"
+      },
+      "interiorJoin": {
+        "replacements": {
+          "rampa_c1_f1": "piso_loop_telhado",
+          "rampa_c1_f2": "concreto_loop_cima",
+          "rampa_c1_f3": "concreto_loop_meio",
+          "rampa_c1_f4": "concreto_loop_meio"
+        },
+        "notes": "A primeira coluna do desenho é acabamento externo. Ao encaixar dentro do telhado, substituir por miolos; ao espelhar, a substituição vai para a coluna da direita."
+      }
+    },
+    {
+      "id": "antena",
+      "label": "Antena de televisão",
+      "type": "pattern",
+      "minWidth": 3,
+      "minHeight": 2,
+      "defaultWidth": 3,
+      "defaultHeight": 2,
+      "rows": [
+        [
+          "antena_c1_cima",
+          "antena_c2_cima",
+          "antena_c3_cima"
+        ],
+        [
+          null,
+          "antena_base",
+          null
+        ]
+      ],
+      "notes": "Quatro peças 16×16. Braços no topo e haste ao centro, com a base no telhado.",
+      "reviewChange": "new"
+    },
+    {
+      "id": "respiro",
+      "label": "Respiro do telhado",
+      "type": "pattern",
+      "minWidth": 1,
+      "minHeight": 1,
+      "defaultWidth": 1,
+      "defaultHeight": 1,
+      "rows": [
+        [
+          "respiro_telhado"
+        ]
+      ],
+      "notes": "Caninho metálico de uma peça 16×16.",
+      "reviewChange": "new"
+    },
+    {
+      "id": "varal",
+      "label": "Varal com roupas",
+      "type": "pattern",
+      "minWidth": 4,
+      "minHeight": 2,
+      "defaultWidth": 4,
+      "defaultHeight": 2,
+      "rows": [
+        [
+          "varal_0_0",
+          "varal_0_1",
+          "varal_0_2",
+          "varal_0_3"
+        ],
+        [
+          "varal_1_0",
+          "varal_1_1",
+          "varal_1_2",
+          "varal_1_3"
+        ]
+      ],
+      "notes": "Oito partes de 16×16. Repetir os módulos centrais entre os postes para ampliar, revisando os encaixes das roupas.",
+      "reviewChange": "new"
+    },
+    {
+      "id": "bloco_telhado",
+      "label": "Bloco ao lado do varal",
+      "type": "pattern",
+      "minWidth": 4,
+      "minHeight": 1,
+      "defaultWidth": 4,
+      "defaultHeight": 1,
+      "rows": [
+        [
+          "varal_1_3",
+          "bloco_telhado_1",
+          "bloco_telhado_2",
+          "bloco_telhado_3"
+        ]
+      ],
+      "notes": "Quatro tiles formam o bloco/cobertura. A ponta esquerda compartilha um tile com o poste do varal; confirmar antes de separar os objetos.",
+      "reviewChange": "new"
+    },
+    {
+      "id": "caixa_dagua",
+      "label": "Caixa d’água expansível",
+      "type": "stack",
+      "minWidth": 2,
+      "minHeight": 3,
+      "defaultWidth": 2,
+      "defaultHeight": 3,
+      "top": [
+        "caixa_dagua_0_0",
+        "caixa_dagua_0_1"
+      ],
+      "middle": [
+        "caixa_dagua_1_0",
+        "caixa_dagua_1_1"
+      ],
+      "bottom": [
+        "caixa_dagua_2_0",
+        "caixa_dagua_2_1"
+      ],
+      "notes": "Duas colunas. Tampa e pés mantidos; repita as duas partes do corpo para aumentar a altura.",
+      "reviewChange": "new"
+    },
+    {
+      "id": "acesso_caixa",
+      "label": "Entrada com caixa d’água",
+      "type": "pattern",
+      "minWidth": 4,
+      "minHeight": 6,
+      "defaultWidth": 4,
+      "defaultHeight": 6,
+      "rows": [
+        [
+          null,
+          "acesso_caixa_0_1",
+          "acesso_caixa_0_2",
+          null
+        ],
+        [
+          null,
+          "acesso_caixa_1_1",
+          "acesso_caixa_1_2",
+          null
+        ],
+        [
+          null,
+          "acesso_caixa_2_1",
+          "acesso_caixa_2_2",
+          null
+        ],
+        [
+          "acesso_caixa_3_0",
+          "acesso_caixa_3_1",
+          "acesso_caixa_3_2",
+          "acesso_caixa_3_3"
+        ],
+        [
+          "acesso_caixa_4_0",
+          "acesso_caixa_4_1",
+          "acesso_caixa_4_2",
+          "acesso_caixa_4_3"
+        ],
+        [
+          "acesso_caixa_5_0",
+          "acesso_caixa_5_1",
+          "acesso_caixa_5_2",
+          "acesso_caixa_5_3"
+        ]
+      ],
+      "notes": "18 peças formam a caixa menor e a entrada, incluindo a ponta acima da tampa. Apoiar a base diretamente no telhado. Os pés e a cobertura foram desenhados juntos: conservar esta montagem.",
+      "reviewChange": "new"
     }
   ],
   "reviewNotes": [
-    "Prédio e janelas mantêm colisão sólida como nas definições fornecidas.",
-    "A entrada apoia diretamente no telhado e aparece à frente da mureta, conforme a orientação do autor. Continua sem colisão de movimento; revisar se alguma parte deve bloquear o jogador.",
-    "Mureta, corrimão e ventilação foram tratados como decoração ao fundo, sem colisão; revisar se algum deve bloquear o jogador.",
-    "O destino da porta ainda não foi especificado.",
-    "Somente o personagem de referência foge do recorte 16×16. As margens transparentes de cada tile foram preservadas."
+    "Revisão extraída do Aseprite salvo; o PNG e a metadata usados pelo jogo continuam sendo a versão aprovada anterior.",
+    "Todas as peças novas são recortes 16×16. Montagens grandes juntam as partes, sem esticar o atlas.",
+    "A caixa d’água permite repetir o corpo verticalmente; há exemplos de duas alturas.",
+    "O tile da ponta direita inferior do varal contém também a ponta do bloco vizinho. Separar estes pixels na arte se os objetos precisarem ser usados isoladamente.",
+    "Os pés da caixa menor e o topo da nova entrada compartilham tiles. A montagem preserva a composição original.",
+    "A função do obstáculo de fumaça e suas forças de knockback serão registradas conforme a confirmação do autor.",
+    "A rampa é piso transitável: encaixa no meio do telhado/concreto, com colisão seguindo a borda pixel a pixel. O espelhamento troca a ordem das peças e a direção da inclinação."
   ],
   "scene": {
-    "width": 240,
-    "height": 176,
+    "width": 448,
+    "height": 256,
     "background": "#292738",
     "placements": [
       {
         "id": "p1",
         "tileId": "piso_telhado_esquerda",
         "x": 0,
-        "y": 80,
+        "y": 128,
         "flipX": false
       },
       {
         "id": "p2",
         "tileId": "piso_loop_telhado",
         "x": 16,
-        "y": 80,
+        "y": 128,
         "flipX": false
       },
       {
         "id": "p3",
         "tileId": "piso_loop_telhado_variante_2",
         "x": 32,
-        "y": 80,
+        "y": 128,
         "flipX": false
       },
       {
         "id": "p4",
         "tileId": "piso_loop_telhado_variante_3",
         "x": 48,
-        "y": 80,
+        "y": 128,
         "flipX": false
       },
       {
         "id": "p5",
         "tileId": "piso_loop_telhado",
         "x": 64,
-        "y": 80,
+        "y": 128,
         "flipX": false
       },
       {
         "id": "p6",
         "tileId": "piso_loop_telhado_variante_2",
         "x": 80,
-        "y": 80,
+        "y": 128,
         "flipX": false
       },
       {
         "id": "p7",
         "tileId": "piso_loop_telhado_variante_3",
         "x": 96,
-        "y": 80,
+        "y": 128,
         "flipX": false
       },
       {
         "id": "p8",
         "tileId": "piso_loop_telhado",
         "x": 112,
-        "y": 80,
+        "y": 128,
         "flipX": false
       },
       {
         "id": "p9",
         "tileId": "piso_loop_telhado_variante_2",
         "x": 128,
-        "y": 80,
+        "y": 128,
         "flipX": false
       },
       {
         "id": "p10",
         "tileId": "piso_loop_telhado_variante_3",
         "x": 144,
-        "y": 80,
+        "y": 128,
         "flipX": false
       },
       {
         "id": "p11",
         "tileId": "piso_loop_telhado",
         "x": 160,
-        "y": 80,
+        "y": 128,
         "flipX": false
       },
       {
         "id": "p12",
         "tileId": "piso_loop_telhado_variante_2",
         "x": 176,
-        "y": 80,
+        "y": 128,
         "flipX": false
       },
       {
         "id": "p13",
         "tileId": "piso_loop_telhado_variante_3",
         "x": 192,
-        "y": 80,
+        "y": 128,
         "flipX": false
       },
       {
         "id": "p14",
         "tileId": "piso_loop_telhado",
         "x": 208,
-        "y": 80,
+        "y": 128,
         "flipX": false
       },
       {
         "id": "p15",
-        "tileId": "piso_telhado_direita",
+        "tileId": "piso_loop_telhado_variante_2",
         "x": 224,
-        "y": 80,
+        "y": 128,
         "flipX": false
       },
       {
         "id": "p16",
-        "tileId": "concreto_esquerdo_cima",
-        "x": 0,
-        "y": 96,
+        "tileId": "piso_telhado_direita",
+        "x": 240,
+        "y": 128,
         "flipX": false
       },
       {
         "id": "p17",
-        "tileId": "concreto_loop_cima",
-        "x": 16,
-        "y": 96,
+        "tileId": "concreto_esquerdo_cima",
+        "x": 0,
+        "y": 144,
         "flipX": false
       },
       {
         "id": "p18",
-        "tileId": "janela_esquerda_cima",
-        "x": 32,
-        "y": 96,
+        "tileId": "concreto_loop_cima",
+        "x": 16,
+        "y": 144,
         "flipX": false
       },
       {
         "id": "p19",
-        "tileId": "janela_direita_cima",
-        "x": 48,
-        "y": 96,
+        "tileId": "janela_esquerda_cima",
+        "x": 32,
+        "y": 144,
         "flipX": false
       },
       {
         "id": "p20",
-        "tileId": "concreto_loop_cima",
-        "x": 64,
-        "y": 96,
+        "tileId": "janela_direita_cima",
+        "x": 48,
+        "y": 144,
         "flipX": false
       },
       {
         "id": "p21",
         "tileId": "concreto_loop_cima",
-        "x": 80,
-        "y": 96,
+        "x": 64,
+        "y": 144,
         "flipX": false
       },
       {
         "id": "p22",
-        "tileId": "janela_esquerda_cima",
-        "x": 96,
-        "y": 96,
+        "tileId": "concreto_loop_cima",
+        "x": 80,
+        "y": 144,
         "flipX": false
       },
       {
         "id": "p23",
-        "tileId": "janela_direita_cima",
-        "x": 112,
-        "y": 96,
+        "tileId": "janela_esquerda_cima",
+        "x": 96,
+        "y": 144,
         "flipX": false
       },
       {
         "id": "p24",
-        "tileId": "concreto_loop_cima",
-        "x": 128,
-        "y": 96,
+        "tileId": "janela_direita_cima",
+        "x": 112,
+        "y": 144,
         "flipX": false
       },
       {
         "id": "p25",
         "tileId": "concreto_loop_cima",
-        "x": 144,
-        "y": 96,
+        "x": 128,
+        "y": 144,
         "flipX": false
       },
       {
         "id": "p26",
-        "tileId": "janela_esquerda_cima",
-        "x": 160,
-        "y": 96,
+        "tileId": "concreto_loop_cima",
+        "x": 144,
+        "y": 144,
         "flipX": false
       },
       {
         "id": "p27",
-        "tileId": "janela_direita_cima",
-        "x": 176,
-        "y": 96,
+        "tileId": "janela_esquerda_cima",
+        "x": 160,
+        "y": 144,
         "flipX": false
       },
       {
         "id": "p28",
-        "tileId": "concreto_loop_cima",
-        "x": 192,
-        "y": 96,
+        "tileId": "janela_direita_cima",
+        "x": 176,
+        "y": 144,
         "flipX": false
       },
       {
         "id": "p29",
         "tileId": "concreto_loop_cima",
-        "x": 208,
-        "y": 96,
+        "x": 192,
+        "y": 144,
         "flipX": false
       },
       {
         "id": "p30",
-        "tileId": "concreto_direito_cima",
-        "x": 224,
-        "y": 96,
+        "tileId": "concreto_loop_cima",
+        "x": 208,
+        "y": 144,
         "flipX": false
       },
       {
         "id": "p31",
-        "tileId": "concreto_esquerdo_meio",
-        "x": 0,
-        "y": 112,
+        "tileId": "concreto_loop_cima",
+        "x": 224,
+        "y": 144,
         "flipX": false
       },
       {
         "id": "p32",
-        "tileId": "concreto_loop_meio",
-        "x": 16,
-        "y": 112,
+        "tileId": "concreto_direito_cima",
+        "x": 240,
+        "y": 144,
         "flipX": false
       },
       {
         "id": "p33",
-        "tileId": "janela_esquerda_baixo",
-        "x": 32,
-        "y": 112,
+        "tileId": "concreto_esquerdo_meio",
+        "x": 0,
+        "y": 160,
         "flipX": false
       },
       {
         "id": "p34",
-        "tileId": "janela_direita_baixo",
-        "x": 48,
-        "y": 112,
+        "tileId": "concreto_loop_meio",
+        "x": 16,
+        "y": 160,
         "flipX": false
       },
       {
         "id": "p35",
-        "tileId": "concreto_loop_meio",
-        "x": 64,
-        "y": 112,
+        "tileId": "janela_esquerda_baixo",
+        "x": 32,
+        "y": 160,
         "flipX": false
       },
       {
         "id": "p36",
-        "tileId": "concreto_loop_meio",
-        "x": 80,
-        "y": 112,
+        "tileId": "janela_direita_baixo",
+        "x": 48,
+        "y": 160,
         "flipX": false
       },
       {
         "id": "p37",
-        "tileId": "janela_esquerda_baixo",
-        "x": 96,
-        "y": 112,
+        "tileId": "concreto_loop_meio",
+        "x": 64,
+        "y": 160,
         "flipX": false
       },
       {
         "id": "p38",
-        "tileId": "janela_direita_baixo",
-        "x": 112,
-        "y": 112,
+        "tileId": "concreto_loop_meio",
+        "x": 80,
+        "y": 160,
         "flipX": false
       },
       {
         "id": "p39",
-        "tileId": "concreto_loop_meio",
-        "x": 128,
-        "y": 112,
+        "tileId": "janela_esquerda_baixo",
+        "x": 96,
+        "y": 160,
         "flipX": false
       },
       {
         "id": "p40",
-        "tileId": "concreto_loop_meio",
-        "x": 144,
-        "y": 112,
+        "tileId": "janela_direita_baixo",
+        "x": 112,
+        "y": 160,
         "flipX": false
       },
       {
         "id": "p41",
-        "tileId": "janela_esquerda_baixo",
-        "x": 160,
-        "y": 112,
+        "tileId": "concreto_loop_meio",
+        "x": 128,
+        "y": 160,
         "flipX": false
       },
       {
         "id": "p42",
-        "tileId": "janela_direita_baixo",
-        "x": 176,
-        "y": 112,
+        "tileId": "concreto_loop_meio",
+        "x": 144,
+        "y": 160,
         "flipX": false
       },
       {
         "id": "p43",
-        "tileId": "concreto_loop_meio",
-        "x": 192,
-        "y": 112,
+        "tileId": "janela_esquerda_baixo",
+        "x": 160,
+        "y": 160,
         "flipX": false
       },
       {
         "id": "p44",
-        "tileId": "concreto_loop_meio",
-        "x": 208,
-        "y": 112,
+        "tileId": "janela_direita_baixo",
+        "x": 176,
+        "y": 160,
         "flipX": false
       },
       {
         "id": "p45",
-        "tileId": "concreto_direito_meio",
-        "x": 224,
-        "y": 112,
+        "tileId": "concreto_loop_meio",
+        "x": 192,
+        "y": 160,
         "flipX": false
       },
       {
         "id": "p46",
-        "tileId": "concreto_esquerdo_meio",
-        "x": 0,
-        "y": 128,
+        "tileId": "concreto_loop_meio",
+        "x": 208,
+        "y": 160,
         "flipX": false
       },
       {
         "id": "p47",
         "tileId": "concreto_loop_meio",
-        "x": 16,
-        "y": 128,
+        "x": 224,
+        "y": 160,
         "flipX": false
       },
       {
         "id": "p48",
-        "tileId": "concreto_loop_meio",
-        "x": 32,
-        "y": 128,
+        "tileId": "concreto_direito_meio",
+        "x": 240,
+        "y": 160,
         "flipX": false
       },
       {
         "id": "p49",
-        "tileId": "concreto_loop_meio",
-        "x": 48,
-        "y": 128,
+        "tileId": "concreto_esquerdo_meio",
+        "x": 0,
+        "y": 176,
         "flipX": false
       },
       {
         "id": "p50",
         "tileId": "concreto_loop_meio",
-        "x": 64,
-        "y": 128,
+        "x": 16,
+        "y": 176,
         "flipX": false
       },
       {
         "id": "p51",
         "tileId": "concreto_loop_meio",
-        "x": 80,
-        "y": 128,
+        "x": 32,
+        "y": 176,
         "flipX": false
       },
       {
         "id": "p52",
         "tileId": "concreto_loop_meio",
-        "x": 96,
-        "y": 128,
+        "x": 48,
+        "y": 176,
         "flipX": false
       },
       {
         "id": "p53",
         "tileId": "concreto_loop_meio",
-        "x": 112,
-        "y": 128,
+        "x": 64,
+        "y": 176,
         "flipX": false
       },
       {
         "id": "p54",
         "tileId": "concreto_loop_meio",
-        "x": 128,
-        "y": 128,
+        "x": 80,
+        "y": 176,
         "flipX": false
       },
       {
         "id": "p55",
         "tileId": "concreto_loop_meio",
-        "x": 144,
-        "y": 128,
+        "x": 96,
+        "y": 176,
         "flipX": false
       },
       {
         "id": "p56",
         "tileId": "concreto_loop_meio",
-        "x": 160,
-        "y": 128,
+        "x": 112,
+        "y": 176,
         "flipX": false
       },
       {
         "id": "p57",
         "tileId": "concreto_loop_meio",
-        "x": 176,
-        "y": 128,
+        "x": 128,
+        "y": 176,
         "flipX": false
       },
       {
         "id": "p58",
         "tileId": "concreto_loop_meio",
-        "x": 192,
-        "y": 128,
+        "x": 144,
+        "y": 176,
         "flipX": false
       },
       {
         "id": "p59",
         "tileId": "concreto_loop_meio",
-        "x": 208,
-        "y": 128,
+        "x": 160,
+        "y": 176,
         "flipX": false
       },
       {
         "id": "p60",
-        "tileId": "concreto_direito_meio",
-        "x": 224,
-        "y": 128,
+        "tileId": "concreto_loop_meio",
+        "x": 176,
+        "y": 176,
         "flipX": false
       },
       {
         "id": "p61",
-        "tileId": "concreto_esquerdo_meio",
-        "x": 0,
-        "y": 144,
+        "tileId": "concreto_loop_meio",
+        "x": 192,
+        "y": 176,
         "flipX": false
       },
       {
         "id": "p62",
         "tileId": "concreto_loop_meio",
-        "x": 16,
-        "y": 144,
+        "x": 208,
+        "y": 176,
         "flipX": false
       },
       {
         "id": "p63",
         "tileId": "concreto_loop_meio",
-        "x": 32,
-        "y": 144,
+        "x": 224,
+        "y": 176,
         "flipX": false
       },
       {
         "id": "p64",
-        "tileId": "concreto_loop_meio",
-        "x": 48,
-        "y": 144,
+        "tileId": "concreto_direito_meio",
+        "x": 240,
+        "y": 176,
         "flipX": false
       },
       {
         "id": "p65",
-        "tileId": "concreto_loop_meio",
-        "x": 64,
-        "y": 144,
+        "tileId": "concreto_esquerdo_meio",
+        "x": 0,
+        "y": 192,
         "flipX": false
       },
       {
         "id": "p66",
         "tileId": "concreto_loop_meio",
-        "x": 80,
-        "y": 144,
+        "x": 16,
+        "y": 192,
         "flipX": false
       },
       {
         "id": "p67",
         "tileId": "concreto_loop_meio",
-        "x": 96,
-        "y": 144,
+        "x": 32,
+        "y": 192,
         "flipX": false
       },
       {
         "id": "p68",
         "tileId": "concreto_loop_meio",
-        "x": 112,
-        "y": 144,
+        "x": 48,
+        "y": 192,
         "flipX": false
       },
       {
         "id": "p69",
         "tileId": "concreto_loop_meio",
-        "x": 128,
-        "y": 144,
+        "x": 64,
+        "y": 192,
         "flipX": false
       },
       {
         "id": "p70",
         "tileId": "concreto_loop_meio",
-        "x": 144,
-        "y": 144,
+        "x": 80,
+        "y": 192,
         "flipX": false
       },
       {
         "id": "p71",
         "tileId": "concreto_loop_meio",
-        "x": 160,
-        "y": 144,
+        "x": 96,
+        "y": 192,
         "flipX": false
       },
       {
         "id": "p72",
         "tileId": "concreto_loop_meio",
-        "x": 176,
-        "y": 144,
+        "x": 112,
+        "y": 192,
         "flipX": false
       },
       {
         "id": "p73",
         "tileId": "concreto_loop_meio",
+        "x": 128,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "id": "p74",
+        "tileId": "concreto_loop_meio",
+        "x": 144,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "id": "p75",
+        "tileId": "concreto_loop_meio",
+        "x": 160,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "id": "p76",
+        "tileId": "concreto_loop_meio",
+        "x": 176,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "id": "p77",
+        "tileId": "concreto_loop_meio",
+        "x": 192,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "id": "p78",
+        "tileId": "concreto_loop_meio",
+        "x": 208,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "id": "p79",
+        "tileId": "concreto_loop_meio",
+        "x": 224,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "id": "p80",
+        "tileId": "concreto_direito_meio",
+        "x": 240,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "id": "p81",
+        "tileId": "concreto_esquerdo_meio",
+        "x": 0,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "id": "p82",
+        "tileId": "concreto_loop_meio",
+        "x": 16,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "id": "p83",
+        "tileId": "concreto_loop_meio",
+        "x": 32,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "id": "p84",
+        "tileId": "concreto_loop_meio",
+        "x": 48,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "id": "p85",
+        "tileId": "concreto_loop_meio",
+        "x": 64,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "id": "p86",
+        "tileId": "concreto_loop_meio",
+        "x": 80,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "id": "p87",
+        "tileId": "concreto_loop_meio",
+        "x": 96,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "id": "p88",
+        "tileId": "concreto_loop_meio",
+        "x": 112,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "id": "p89",
+        "tileId": "concreto_loop_meio",
+        "x": 128,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "id": "p90",
+        "tileId": "concreto_loop_meio",
+        "x": 144,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "id": "p91",
+        "tileId": "concreto_loop_meio",
+        "x": 160,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "id": "p92",
+        "tileId": "concreto_loop_meio",
+        "x": 176,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "id": "p93",
+        "tileId": "concreto_loop_meio",
+        "x": 192,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "id": "p94",
+        "tileId": "concreto_loop_meio",
+        "x": 208,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "id": "p95",
+        "tileId": "concreto_loop_meio",
+        "x": 224,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "id": "p96",
+        "tileId": "concreto_direito_meio",
+        "x": 240,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "id": "p97",
+        "tileId": "concreto_esquerdo_meio",
+        "x": 0,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "id": "p98",
+        "tileId": "concreto_loop_meio",
+        "x": 16,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "id": "p99",
+        "tileId": "concreto_loop_meio",
+        "x": 32,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "id": "p100",
+        "tileId": "concreto_loop_meio",
+        "x": 48,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "id": "p101",
+        "tileId": "concreto_loop_meio",
+        "x": 64,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "id": "p102",
+        "tileId": "concreto_loop_meio",
+        "x": 80,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "id": "p103",
+        "tileId": "concreto_loop_meio",
+        "x": 96,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "id": "p104",
+        "tileId": "concreto_loop_meio",
+        "x": 112,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "id": "p105",
+        "tileId": "concreto_loop_meio",
+        "x": 128,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "id": "p106",
+        "tileId": "concreto_loop_meio",
+        "x": 144,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "id": "p107",
+        "tileId": "concreto_loop_meio",
+        "x": 160,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "id": "p108",
+        "tileId": "concreto_loop_meio",
+        "x": 176,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "id": "p109",
+        "tileId": "concreto_loop_meio",
+        "x": 192,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "id": "p110",
+        "tileId": "concreto_loop_meio",
+        "x": 208,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "id": "p111",
+        "tileId": "concreto_loop_meio",
+        "x": 224,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "id": "p112",
+        "tileId": "concreto_direito_meio",
+        "x": 240,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "id": "p113",
+        "tileId": "concreto_esquerdo_baixo",
+        "x": 0,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "id": "p114",
+        "tileId": "concreto_loop_baixo",
+        "x": 16,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "id": "p115",
+        "tileId": "concreto_loop_baixo_variante_2",
+        "x": 32,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "id": "p116",
+        "tileId": "concreto_loop_baixo_variante_3",
+        "x": 48,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "id": "p117",
+        "tileId": "concreto_loop_baixo",
+        "x": 64,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "id": "p118",
+        "tileId": "concreto_loop_baixo_variante_2",
+        "x": 80,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "id": "p119",
+        "tileId": "concreto_loop_baixo_variante_3",
+        "x": 96,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "id": "p120",
+        "tileId": "concreto_loop_baixo",
+        "x": 112,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "id": "p121",
+        "tileId": "concreto_loop_baixo_variante_2",
+        "x": 128,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "id": "p122",
+        "tileId": "concreto_loop_baixo_variante_3",
+        "x": 144,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "id": "p123",
+        "tileId": "concreto_loop_baixo",
+        "x": 160,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "id": "p124",
+        "tileId": "concreto_loop_baixo_variante_2",
+        "x": 176,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "id": "p125",
+        "tileId": "concreto_loop_baixo_variante_3",
+        "x": 192,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "id": "p126",
+        "tileId": "concreto_loop_baixo",
+        "x": 208,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "id": "p127",
+        "tileId": "concreto_loop_baixo_variante_2",
+        "x": 224,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "id": "p128",
+        "tileId": "concreto_direito_baixo",
+        "x": 240,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "id": "p129",
+        "tileId": "piso_telhado_esquerda",
+        "x": 320,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "id": "p130",
+        "tileId": "piso_loop_telhado",
+        "x": 336,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "id": "p131",
+        "tileId": "piso_loop_telhado_variante_2",
+        "x": 352,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "id": "p132",
+        "tileId": "piso_loop_telhado_variante_3",
+        "x": 368,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "id": "p133",
+        "tileId": "piso_loop_telhado",
+        "x": 384,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "id": "p134",
+        "tileId": "piso_loop_telhado_variante_2",
+        "x": 400,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "id": "p135",
+        "tileId": "piso_loop_telhado_variante_3",
+        "x": 416,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "id": "p136",
+        "tileId": "piso_telhado_direita",
+        "x": 432,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "id": "p137",
+        "tileId": "concreto_esquerdo_cima",
+        "x": 320,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "id": "p138",
+        "tileId": "concreto_loop_cima",
+        "x": 336,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "id": "p139",
+        "tileId": "janela_esquerda_cima",
+        "x": 352,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "id": "p140",
+        "tileId": "janela_direita_cima",
+        "x": 368,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "id": "p141",
+        "tileId": "concreto_loop_cima",
+        "x": 384,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "id": "p142",
+        "tileId": "concreto_loop_cima",
+        "x": 400,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "id": "p143",
+        "tileId": "concreto_loop_cima",
+        "x": 416,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "id": "p144",
+        "tileId": "concreto_direito_cima",
+        "x": 432,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "id": "p145",
+        "tileId": "concreto_esquerdo_meio",
+        "x": 320,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "id": "p146",
+        "tileId": "concreto_loop_meio",
+        "x": 336,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "id": "p147",
+        "tileId": "janela_esquerda_baixo",
+        "x": 352,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "id": "p148",
+        "tileId": "janela_direita_baixo",
+        "x": 368,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "id": "p149",
+        "tileId": "concreto_loop_meio",
+        "x": 384,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "id": "p150",
+        "tileId": "concreto_loop_meio",
+        "x": 400,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "id": "p151",
+        "tileId": "concreto_loop_meio",
+        "x": 416,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "id": "p152",
+        "tileId": "concreto_direito_meio",
+        "x": 432,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "id": "p153",
+        "tileId": "concreto_esquerdo_meio",
+        "x": 320,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "id": "p154",
+        "tileId": "concreto_loop_meio",
+        "x": 336,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "id": "p155",
+        "tileId": "concreto_loop_meio",
+        "x": 352,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "id": "p156",
+        "tileId": "concreto_loop_meio",
+        "x": 368,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "id": "p157",
+        "tileId": "concreto_loop_meio",
+        "x": 384,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "id": "p158",
+        "tileId": "concreto_loop_meio",
+        "x": 400,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "id": "p159",
+        "tileId": "concreto_loop_meio",
+        "x": 416,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "id": "p160",
+        "tileId": "concreto_direito_meio",
+        "x": 432,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "id": "p161",
+        "tileId": "concreto_esquerdo_meio",
+        "x": 320,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "id": "p162",
+        "tileId": "concreto_loop_meio",
+        "x": 336,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "id": "p163",
+        "tileId": "concreto_loop_meio",
+        "x": 352,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "id": "p164",
+        "tileId": "concreto_loop_meio",
+        "x": 368,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "id": "p165",
+        "tileId": "concreto_loop_meio",
+        "x": 384,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "id": "p166",
+        "tileId": "concreto_loop_meio",
+        "x": 400,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "id": "p167",
+        "tileId": "concreto_loop_meio",
+        "x": 416,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "id": "p168",
+        "tileId": "concreto_direito_meio",
+        "x": 432,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "id": "p169",
+        "tileId": "concreto_esquerdo_baixo",
+        "x": 320,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "id": "p170",
+        "tileId": "concreto_loop_baixo",
+        "x": 336,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "id": "p171",
+        "tileId": "concreto_loop_baixo_variante_2",
+        "x": 352,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "id": "p172",
+        "tileId": "concreto_loop_baixo_variante_3",
+        "x": 368,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "id": "p173",
+        "tileId": "concreto_loop_baixo",
+        "x": 384,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "id": "p174",
+        "tileId": "concreto_loop_baixo_variante_2",
+        "x": 400,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "id": "p175",
+        "tileId": "concreto_loop_baixo_variante_3",
+        "x": 416,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "id": "p176",
+        "tileId": "concreto_direito_baixo",
+        "x": 432,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "id": "p177",
+        "tileId": "mureta_esquerda",
+        "x": 0,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p178",
+        "tileId": "mureta_loop",
+        "x": 16,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p179",
+        "tileId": "mureta_loop",
+        "x": 32,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p180",
+        "tileId": "mureta_loop",
+        "x": 48,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p181",
+        "tileId": "mureta_loop",
+        "x": 64,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p182",
+        "tileId": "mureta_loop",
+        "x": 80,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p183",
+        "tileId": "mureta_loop",
+        "x": 96,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p184",
+        "tileId": "mureta_loop",
+        "x": 112,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p185",
+        "tileId": "mureta_loop",
+        "x": 128,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p186",
+        "tileId": "mureta_loop",
+        "x": 144,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p187",
+        "tileId": "mureta_loop",
+        "x": 160,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p188",
+        "tileId": "mureta_loop",
+        "x": 176,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p189",
+        "tileId": "mureta_loop",
+        "x": 192,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p190",
+        "tileId": "mureta_loop",
+        "x": 208,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p191",
+        "tileId": "mureta_loop",
+        "x": 224,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p192",
+        "tileId": "mureta_direita",
+        "x": 240,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p193",
+        "tileId": "corrimao_pilar",
+        "x": 320,
+        "y": 144,
+        "flipX": true
+      },
+      {
+        "id": "p194",
+        "tileId": "corrimao_loop",
+        "x": 336,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "id": "p195",
+        "tileId": "corrimao_loop",
+        "x": 352,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "id": "p196",
+        "tileId": "corrimao_loop",
+        "x": 368,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "id": "p197",
+        "tileId": "corrimao_loop",
+        "x": 384,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "id": "p198",
+        "tileId": "corrimao_loop",
+        "x": 400,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "id": "p199",
+        "tileId": "corrimao_loop",
+        "x": 416,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "id": "p200",
+        "tileId": "corrimao_pilar",
+        "x": 432,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "id": "p201",
+        "tileId": "acesso_cobertura_esquerda",
+        "x": 16,
+        "y": 80,
+        "flipX": false
+      },
+      {
+        "id": "p202",
+        "tileId": "acesso_cobertura_meio_1",
+        "x": 32,
+        "y": 80,
+        "flipX": false
+      },
+      {
+        "id": "p203",
+        "tileId": "acesso_cobertura_meio_2",
+        "x": 48,
+        "y": 80,
+        "flipX": false
+      },
+      {
+        "id": "p204",
+        "tileId": "acesso_cobertura_direita",
+        "x": 64,
+        "y": 80,
+        "flipX": false
+      },
+      {
+        "id": "p205",
+        "tileId": "acesso_parede_esquerda_cima",
+        "x": 16,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "id": "p206",
+        "tileId": "porta_esquerda_cima",
+        "x": 32,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "id": "p207",
+        "tileId": "porta_direita_cima",
+        "x": 48,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "id": "p208",
+        "tileId": "acesso_parede_direita_cima",
+        "x": 64,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "id": "p209",
+        "tileId": "acesso_parede_esquerda_baixo",
+        "x": 16,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p210",
+        "tileId": "porta_esquerda_baixo",
+        "x": 32,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p211",
+        "tileId": "porta_direita_baixo",
+        "x": 48,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p212",
+        "tileId": "acesso_parede_direita_baixo",
+        "x": 64,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p213",
+        "tileId": "caixa_dagua_0_0",
+        "x": 80,
+        "y": 80,
+        "flipX": false
+      },
+      {
+        "id": "p214",
+        "tileId": "caixa_dagua_0_1",
+        "x": 96,
+        "y": 80,
+        "flipX": false
+      },
+      {
+        "id": "p215",
+        "tileId": "caixa_dagua_1_0",
+        "x": 80,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "id": "p216",
+        "tileId": "caixa_dagua_1_1",
+        "x": 96,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "id": "p217",
+        "tileId": "caixa_dagua_2_0",
+        "x": 80,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p218",
+        "tileId": "caixa_dagua_2_1",
+        "x": 96,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p219",
+        "tileId": "respiro_telhado",
+        "x": 112,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p220",
+        "tileId": "varal_0_0",
+        "x": 128,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "id": "p221",
+        "tileId": "varal_0_1",
+        "x": 144,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "id": "p222",
+        "tileId": "varal_0_2",
+        "x": 160,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "id": "p223",
+        "tileId": "varal_0_3",
+        "x": 176,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "id": "p224",
+        "tileId": "varal_1_0",
+        "x": 128,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p225",
+        "tileId": "varal_1_1",
+        "x": 144,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p226",
+        "tileId": "varal_1_2",
+        "x": 160,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p227",
+        "tileId": "varal_1_3",
+        "x": 176,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p228",
+        "tileId": "varal_1_3",
+        "x": 192,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p229",
+        "tileId": "bloco_telhado_1",
+        "x": 208,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p230",
+        "tileId": "bloco_telhado_2",
+        "x": 224,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p231",
+        "tileId": "bloco_telhado_3",
+        "x": 240,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p232",
+        "tileId": "antena_c1_cima",
+        "x": 304,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "id": "p233",
+        "tileId": "antena_c2_cima",
+        "x": 320,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "id": "p234",
+        "tileId": "antena_c3_cima",
+        "x": 336,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "id": "p235",
+        "tileId": "antena_base",
+        "x": 320,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "id": "p236",
+        "tileId": "acesso_caixa_0_1",
+        "x": 352,
+        "y": 64,
+        "flipX": false
+      },
+      {
+        "id": "p237",
+        "tileId": "acesso_caixa_0_2",
+        "x": 368,
+        "y": 64,
+        "flipX": false
+      },
+      {
+        "id": "p238",
+        "tileId": "acesso_caixa_1_1",
+        "x": 352,
+        "y": 80,
+        "flipX": false
+      },
+      {
+        "id": "p239",
+        "tileId": "acesso_caixa_1_2",
+        "x": 368,
+        "y": 80,
+        "flipX": false
+      },
+      {
+        "id": "p240",
+        "tileId": "acesso_caixa_2_1",
+        "x": 352,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "id": "p241",
+        "tileId": "acesso_caixa_2_2",
+        "x": 368,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "id": "p242",
+        "tileId": "acesso_caixa_3_0",
+        "x": 336,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p243",
+        "tileId": "acesso_caixa_3_1",
+        "x": 352,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p244",
+        "tileId": "acesso_caixa_3_2",
+        "x": 368,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p245",
+        "tileId": "acesso_caixa_3_3",
+        "x": 384,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "id": "p246",
+        "tileId": "acesso_caixa_4_0",
+        "x": 336,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "id": "p247",
+        "tileId": "acesso_caixa_4_1",
+        "x": 352,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "id": "p248",
+        "tileId": "acesso_caixa_4_2",
+        "x": 368,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "id": "p249",
+        "tileId": "acesso_caixa_4_3",
+        "x": 384,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "id": "p250",
+        "tileId": "acesso_caixa_5_0",
+        "x": 336,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "id": "p251",
+        "tileId": "acesso_caixa_5_1",
+        "x": 352,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "id": "p252",
+        "tileId": "acesso_caixa_5_2",
+        "x": 368,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "id": "p253",
+        "tileId": "acesso_caixa_5_3",
+        "x": 384,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "id": "p254",
+        "tileId": "cano_pendente",
+        "x": 16,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "id": "p255",
+        "tileId": "cano_pendente",
+        "x": 16,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "id": "p256",
+        "tileId": "cano_pendente",
+        "x": 16,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "id": "p257",
+        "tileId": "cano_pendente",
+        "x": 16,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "id": "p258",
+        "tileId": "cano_pendente",
+        "x": 16,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "id": "p259",
+        "tileId": "cano_pendente",
+        "x": 224,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "id": "p260",
+        "tileId": "cano_pendente",
+        "x": 224,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "id": "p261",
+        "tileId": "cano_pendente",
+        "x": 224,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "id": "p262",
+        "tileId": "cano_pendente",
+        "x": 224,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "id": "p263",
+        "tileId": "cano_pendente",
+        "x": 224,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "id": "p264",
+        "tileId": "personagem_referencia",
+        "x": 48,
+        "y": 100,
+        "flipX": false
+      }
+    ]
+  },
+  "reviewStatus": "pending",
+  "sourceProject": "src/aseprite/open_world_tileset.aseprite",
+  "reviewExamples": [
+    {
+      "assemblyId": "rampa",
+      "width": 8,
+      "height": 4,
+      "label": "Rampa · descida"
+    },
+    {
+      "assemblyId": "rampa",
+      "width": 8,
+      "height": 4,
+      "flipX": true,
+      "label": "Rampa · subida (espelhada)"
+    },
+    {
+      "assemblyId": "antena",
+      "width": 3,
+      "height": 2
+    },
+    {
+      "assemblyId": "respiro",
+      "width": 1,
+      "height": 1
+    },
+    {
+      "assemblyId": "varal",
+      "width": 4,
+      "height": 2
+    },
+    {
+      "assemblyId": "bloco_telhado",
+      "width": 4,
+      "height": 1
+    },
+    {
+      "assemblyId": "caixa_dagua",
+      "width": 2,
+      "height": 3
+    },
+    {
+      "assemblyId": "caixa_dagua",
+      "width": 2,
+      "height": 5,
+      "label": "Caixa d’água · corpo expandido"
+    },
+    {
+      "assemblyId": "acesso_caixa",
+      "width": 4,
+      "height": 6
+    }
+  ],
+  "rampDemo": {
+    "placements": [
+      {
+        "tileId": "piso_loop_telhado",
+        "x": 0,
+        "y": 48,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 0,
+        "y": 64,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 0,
+        "y": 80,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 0,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 0,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 0,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 0,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 0,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 0,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 0,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 0,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 0,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 0,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "tileId": "piso_loop_telhado",
+        "x": 16,
+        "y": 48,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 16,
+        "y": 64,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 16,
+        "y": 80,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 16,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 16,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 16,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 16,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 16,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 16,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 16,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 16,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 16,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 16,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "tileId": "piso_loop_telhado",
+        "x": 32,
+        "y": 48,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 32,
+        "y": 64,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 32,
+        "y": 80,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 32,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 32,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 32,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 32,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 32,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 32,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 32,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 32,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 32,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 32,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "tileId": "piso_loop_telhado",
+        "x": 48,
+        "y": 48,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 48,
+        "y": 64,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 48,
+        "y": 80,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 48,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 48,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 48,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 48,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 48,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 48,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 48,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 48,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 48,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 48,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 64,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 64,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 64,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 64,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 64,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 64,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 64,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 64,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 64,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 80,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 80,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 80,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 80,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 80,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 80,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 80,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 80,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 80,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 96,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 96,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 96,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 96,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 96,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 96,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 96,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 96,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 96,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 112,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 112,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 112,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 112,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 112,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 112,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 112,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 112,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 112,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 128,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 128,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 128,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 128,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 128,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 128,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 128,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 128,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 128,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 144,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 144,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 144,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 144,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 144,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 144,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 144,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 144,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 144,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 160,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 160,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 160,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 160,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 160,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 160,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 160,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 160,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 160,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 176,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 176,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 176,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 176,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 176,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 176,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 176,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 176,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 176,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "tileId": "piso_loop_telhado",
+        "x": 192,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 192,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 192,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
         "x": 192,
         "y": 144,
         "flipX": false
       },
       {
-        "id": "p74",
+        "tileId": "concreto_loop_meio",
+        "x": 192,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 192,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 192,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 192,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 192,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 192,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "tileId": "piso_loop_telhado",
+        "x": 208,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 208,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 208,
+        "y": 128,
+        "flipX": false
+      },
+      {
         "tileId": "concreto_loop_meio",
         "x": 208,
         "y": 144,
         "flipX": false
       },
       {
-        "id": "p75",
-        "tileId": "concreto_direito_meio",
+        "tileId": "concreto_loop_meio",
+        "x": 208,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 208,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 208,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 208,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 208,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 208,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "tileId": "piso_loop_telhado",
+        "x": 224,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 224,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 224,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
         "x": 224,
         "y": 144,
         "flipX": false
       },
       {
-        "id": "p76",
-        "tileId": "concreto_esquerdo_baixo",
-        "x": 0,
-        "y": 160,
-        "flipX": false
-      },
-      {
-        "id": "p77",
-        "tileId": "concreto_loop_baixo",
-        "x": 16,
-        "y": 160,
-        "flipX": false
-      },
-      {
-        "id": "p78",
-        "tileId": "concreto_loop_baixo_variante_2",
-        "x": 32,
-        "y": 160,
-        "flipX": false
-      },
-      {
-        "id": "p79",
-        "tileId": "concreto_loop_baixo_variante_3",
-        "x": 48,
-        "y": 160,
-        "flipX": false
-      },
-      {
-        "id": "p80",
-        "tileId": "concreto_loop_baixo",
-        "x": 64,
-        "y": 160,
-        "flipX": false
-      },
-      {
-        "id": "p81",
-        "tileId": "concreto_loop_baixo_variante_2",
-        "x": 80,
-        "y": 160,
-        "flipX": false
-      },
-      {
-        "id": "p82",
-        "tileId": "concreto_loop_baixo_variante_3",
-        "x": 96,
-        "y": 160,
-        "flipX": false
-      },
-      {
-        "id": "p83",
-        "tileId": "concreto_loop_baixo",
-        "x": 112,
-        "y": 160,
-        "flipX": false
-      },
-      {
-        "id": "p84",
-        "tileId": "concreto_loop_baixo_variante_2",
-        "x": 128,
-        "y": 160,
-        "flipX": false
-      },
-      {
-        "id": "p85",
-        "tileId": "concreto_loop_baixo_variante_3",
-        "x": 144,
-        "y": 160,
-        "flipX": false
-      },
-      {
-        "id": "p86",
-        "tileId": "concreto_loop_baixo",
-        "x": 160,
-        "y": 160,
-        "flipX": false
-      },
-      {
-        "id": "p87",
-        "tileId": "concreto_loop_baixo_variante_2",
-        "x": 176,
-        "y": 160,
-        "flipX": false
-      },
-      {
-        "id": "p88",
-        "tileId": "concreto_loop_baixo_variante_3",
-        "x": 192,
-        "y": 160,
-        "flipX": false
-      },
-      {
-        "id": "p89",
-        "tileId": "concreto_loop_baixo",
-        "x": 208,
-        "y": 160,
-        "flipX": false
-      },
-      {
-        "id": "p90",
-        "tileId": "concreto_direito_baixo",
+        "tileId": "concreto_loop_meio",
         "x": 224,
         "y": 160,
         "flipX": false
       },
       {
-        "id": "p91",
-        "tileId": "corrimao_pilar",
+        "tileId": "concreto_loop_meio",
+        "x": 224,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 224,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 224,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 224,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 224,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "tileId": "piso_loop_telhado",
+        "x": 240,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 240,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 240,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 240,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 240,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 240,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 240,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 240,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 240,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 240,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 256,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 256,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 256,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 256,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 256,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 256,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 256,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 256,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 256,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 272,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 272,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 272,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 272,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 272,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 272,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 272,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 272,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 272,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 288,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 288,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 288,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 288,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 288,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 288,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 288,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 288,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 288,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 304,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 304,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 304,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 304,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 304,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 304,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 304,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 304,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 304,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 320,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 320,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 320,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 320,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 320,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 320,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 320,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 320,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 320,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 336,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 336,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 336,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 336,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 336,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 336,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 336,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 336,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 336,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 352,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 352,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 352,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 352,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 352,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 352,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 352,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 352,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 352,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 368,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 368,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 368,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 368,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 368,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 368,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 368,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 368,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 368,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "tileId": "piso_loop_telhado",
+        "x": 384,
+        "y": 48,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 384,
+        "y": 64,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 384,
+        "y": 80,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 384,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 384,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 384,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 384,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 384,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 384,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 384,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 384,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 384,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 384,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "tileId": "piso_loop_telhado",
+        "x": 400,
+        "y": 48,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 400,
+        "y": 64,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 400,
+        "y": 80,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 400,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 400,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 400,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 400,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 400,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 400,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 400,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 400,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 400,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 400,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "tileId": "piso_loop_telhado",
+        "x": 416,
+        "y": 48,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 416,
+        "y": 64,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 416,
+        "y": 80,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 416,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 416,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 416,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 416,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 416,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 416,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 416,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 416,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 416,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 416,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "tileId": "piso_loop_telhado",
+        "x": 432,
+        "y": 48,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 432,
+        "y": 64,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 432,
+        "y": 80,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 432,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 432,
+        "y": 112,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 432,
+        "y": 128,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 432,
+        "y": 144,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 432,
+        "y": 160,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 432,
+        "y": 176,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 432,
+        "y": 192,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 432,
+        "y": 208,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 432,
+        "y": 224,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 432,
+        "y": 240,
+        "flipX": false
+      },
+      {
+        "tileId": "piso_loop_telhado",
+        "x": 64,
+        "y": 48,
+        "flipX": false
+      },
+      {
+        "tileId": "rampa_c2_f1",
+        "x": 80,
+        "y": 48,
+        "flipX": false
+      },
+      {
+        "tileId": "rampa_c3_f1",
         "x": 96,
+        "y": 48,
+        "flipX": false
+      },
+      {
+        "tileId": "rampa_c4_f1",
+        "x": 112,
+        "y": 48,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_cima",
+        "x": 64,
+        "y": 64,
+        "flipX": false
+      },
+      {
+        "tileId": "rampa_c2_f2",
+        "x": 80,
+        "y": 64,
+        "flipX": false
+      },
+      {
+        "tileId": "rampa_c3_f2",
+        "x": 96,
+        "y": 64,
+        "flipX": false
+      },
+      {
+        "tileId": "rampa_c4_f2",
+        "x": 112,
+        "y": 64,
+        "flipX": false
+      },
+      {
+        "tileId": "rampa_c5_f2",
+        "x": 128,
+        "y": 64,
+        "flipX": false
+      },
+      {
+        "tileId": "rampa_c6_f2",
+        "x": 144,
+        "y": 64,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 64,
+        "y": 80,
+        "flipX": false
+      },
+      {
+        "tileId": "rampa_c2_f3",
+        "x": 80,
+        "y": 80,
+        "flipX": false
+      },
+      {
+        "tileId": "rampa_c3_f3",
+        "x": 96,
+        "y": 80,
+        "flipX": false
+      },
+      {
+        "tileId": "rampa_c4_f3",
+        "x": 112,
+        "y": 80,
+        "flipX": false
+      },
+      {
+        "tileId": "rampa_c5_f3",
+        "x": 128,
+        "y": 80,
+        "flipX": false
+      },
+      {
+        "tileId": "rampa_c6_f3",
+        "x": 144,
+        "y": 80,
+        "flipX": false
+      },
+      {
+        "tileId": "rampa_c7_f3",
+        "x": 160,
+        "y": 80,
+        "flipX": false
+      },
+      {
+        "tileId": "rampa_c8_f3",
+        "x": 176,
+        "y": 80,
+        "flipX": false
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 64,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "tileId": "rampa_c2_f4",
+        "x": 80,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "tileId": "rampa_c3_f4",
+        "x": 96,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "tileId": "rampa_c4_f4",
+        "x": 112,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "tileId": "rampa_c5_f4",
+        "x": 128,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "tileId": "rampa_c6_f4",
+        "x": 144,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "tileId": "rampa_c7_f4",
+        "x": 160,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "tileId": "rampa_c8_f4",
+        "x": 176,
+        "y": 96,
+        "flipX": false
+      },
+      {
+        "tileId": "piso_loop_telhado",
+        "x": 368,
+        "y": 48,
+        "flipX": false
+      },
+      {
+        "tileId": "rampa_c2_f1",
+        "x": 352,
+        "y": 48,
+        "flipX": true
+      },
+      {
+        "tileId": "rampa_c3_f1",
+        "x": 336,
+        "y": 48,
+        "flipX": true
+      },
+      {
+        "tileId": "rampa_c4_f1",
+        "x": 320,
+        "y": 48,
+        "flipX": true
+      },
+      {
+        "tileId": "concreto_loop_cima",
+        "x": 368,
+        "y": 64,
+        "flipX": false
+      },
+      {
+        "tileId": "rampa_c2_f2",
+        "x": 352,
         "y": 64,
         "flipX": true
       },
       {
-        "id": "p92",
-        "tileId": "corrimao_loop",
-        "x": 112,
+        "tileId": "rampa_c3_f2",
+        "x": 336,
         "y": 64,
+        "flipX": true
+      },
+      {
+        "tileId": "rampa_c4_f2",
+        "x": 320,
+        "y": 64,
+        "flipX": true
+      },
+      {
+        "tileId": "rampa_c5_f2",
+        "x": 304,
+        "y": 64,
+        "flipX": true
+      },
+      {
+        "tileId": "rampa_c6_f2",
+        "x": 288,
+        "y": 64,
+        "flipX": true
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 368,
+        "y": 80,
         "flipX": false
       },
       {
-        "id": "p93",
-        "tileId": "corrimao_loop",
-        "x": 128,
-        "y": 64,
+        "tileId": "rampa_c2_f3",
+        "x": 352,
+        "y": 80,
+        "flipX": true
+      },
+      {
+        "tileId": "rampa_c3_f3",
+        "x": 336,
+        "y": 80,
+        "flipX": true
+      },
+      {
+        "tileId": "rampa_c4_f3",
+        "x": 320,
+        "y": 80,
+        "flipX": true
+      },
+      {
+        "tileId": "rampa_c5_f3",
+        "x": 304,
+        "y": 80,
+        "flipX": true
+      },
+      {
+        "tileId": "rampa_c6_f3",
+        "x": 288,
+        "y": 80,
+        "flipX": true
+      },
+      {
+        "tileId": "rampa_c7_f3",
+        "x": 272,
+        "y": 80,
+        "flipX": true
+      },
+      {
+        "tileId": "rampa_c8_f3",
+        "x": 256,
+        "y": 80,
+        "flipX": true
+      },
+      {
+        "tileId": "concreto_loop_meio",
+        "x": 368,
+        "y": 96,
         "flipX": false
       },
       {
-        "id": "p94",
-        "tileId": "corrimao_loop",
-        "x": 144,
-        "y": 64,
-        "flipX": false
+        "tileId": "rampa_c2_f4",
+        "x": 352,
+        "y": 96,
+        "flipX": true
       },
       {
-        "id": "p95",
-        "tileId": "corrimao_loop",
-        "x": 160,
-        "y": 64,
-        "flipX": false
+        "tileId": "rampa_c3_f4",
+        "x": 336,
+        "y": 96,
+        "flipX": true
       },
       {
-        "id": "p96",
-        "tileId": "corrimao_loop",
-        "x": 176,
-        "y": 64,
-        "flipX": false
+        "tileId": "rampa_c4_f4",
+        "x": 320,
+        "y": 96,
+        "flipX": true
       },
       {
-        "id": "p97",
-        "tileId": "corrimao_loop",
+        "tileId": "rampa_c5_f4",
+        "x": 304,
+        "y": 96,
+        "flipX": true
+      },
+      {
+        "tileId": "rampa_c6_f4",
+        "x": 288,
+        "y": 96,
+        "flipX": true
+      },
+      {
+        "tileId": "rampa_c7_f4",
+        "x": 272,
+        "y": 96,
+        "flipX": true
+      },
+      {
+        "tileId": "rampa_c8_f4",
+        "x": 256,
+        "y": 96,
+        "flipX": true
+      }
+    ],
+    "surfaces": [
+      {
+        "x": 0,
+        "width": 64,
+        "y": 49
+      },
+      {
+        "x": 64,
+        "width": 128,
+        "y": 48,
+        "heights": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          2,
+          2,
+          3,
+          3,
+          4,
+          4,
+          5,
+          5,
+          6,
+          6,
+          7,
+          7,
+          7,
+          8,
+          8,
+          9,
+          9,
+          10,
+          10,
+          11,
+          11,
+          12,
+          12,
+          13,
+          13,
+          14,
+          14,
+          15,
+          16,
+          16,
+          17,
+          17,
+          18,
+          18,
+          19,
+          19,
+          20,
+          20,
+          21,
+          21,
+          22,
+          22,
+          23,
+          23,
+          23,
+          24,
+          24,
+          25,
+          25,
+          26,
+          26,
+          27,
+          27,
+          28,
+          28,
+          29,
+          29,
+          30,
+          30,
+          31,
+          32,
+          32,
+          33,
+          33,
+          34,
+          34,
+          35,
+          35,
+          36,
+          36,
+          37,
+          37,
+          38,
+          38,
+          39,
+          39,
+          39,
+          40,
+          40,
+          41,
+          41,
+          42,
+          42,
+          43,
+          43,
+          44,
+          44,
+          45,
+          45,
+          46,
+          46,
+          47
+        ]
+      },
+      {
         "x": 192,
-        "y": 64,
-        "flipX": false
+        "width": 64,
+        "y": 97
       },
       {
-        "id": "p98",
-        "tileId": "corrimao_loop",
-        "x": 208,
-        "y": 64,
-        "flipX": false
-      },
-      {
-        "id": "p99",
-        "tileId": "corrimao_pilar",
-        "x": 224,
-        "y": 64,
-        "flipX": false
-      },
-      {
-        "id": "p100",
-        "tileId": "mureta_esquerda",
-        "x": 16,
-        "y": 64,
-        "flipX": false
-      },
-      {
-        "id": "p101",
-        "tileId": "mureta_loop",
-        "x": 32,
-        "y": 64,
-        "flipX": false
-      },
-      {
-        "id": "p102",
-        "tileId": "mureta_loop",
-        "x": 48,
-        "y": 64,
-        "flipX": false
-      },
-      {
-        "id": "p103",
-        "tileId": "mureta_loop",
-        "x": 64,
-        "y": 64,
-        "flipX": false
-      },
-      {
-        "id": "p104",
-        "tileId": "mureta_loop",
-        "x": 80,
-        "y": 64,
-        "flipX": false
-      },
-      {
-        "id": "p105",
-        "tileId": "mureta_loop",
-        "x": 96,
-        "y": 64,
-        "flipX": false
-      },
-      {
-        "id": "p106",
-        "tileId": "mureta_loop",
-        "x": 112,
-        "y": 64,
-        "flipX": false
-      },
-      {
-        "id": "p107",
-        "tileId": "mureta_loop",
-        "x": 128,
-        "y": 64,
-        "flipX": false
-      },
-      {
-        "id": "p108",
-        "tileId": "mureta_direita",
-        "x": 144,
-        "y": 64,
-        "flipX": false
-      },
-      {
-        "id": "p109",
-        "tileId": "acesso_cobertura_esquerda",
-        "x": 16,
-        "y": 32,
-        "flipX": false
-      },
-      {
-        "id": "p110",
-        "tileId": "acesso_cobertura_meio_1",
-        "x": 32,
-        "y": 32,
-        "flipX": false
-      },
-      {
-        "id": "p111",
-        "tileId": "acesso_cobertura_meio_2",
-        "x": 48,
-        "y": 32,
-        "flipX": false
-      },
-      {
-        "id": "p112",
-        "tileId": "acesso_cobertura_direita",
-        "x": 64,
-        "y": 32,
-        "flipX": false
-      },
-      {
-        "id": "p113",
-        "tileId": "acesso_parede_esquerda_cima",
-        "x": 16,
+        "x": 256,
+        "width": 128,
         "y": 48,
-        "flipX": false
+        "heights": [
+          47,
+          46,
+          46,
+          45,
+          45,
+          44,
+          44,
+          43,
+          43,
+          42,
+          42,
+          41,
+          41,
+          40,
+          40,
+          39,
+          39,
+          39,
+          38,
+          38,
+          37,
+          37,
+          36,
+          36,
+          35,
+          35,
+          34,
+          34,
+          33,
+          33,
+          32,
+          32,
+          31,
+          30,
+          30,
+          29,
+          29,
+          28,
+          28,
+          27,
+          27,
+          26,
+          26,
+          25,
+          25,
+          24,
+          24,
+          23,
+          23,
+          23,
+          22,
+          22,
+          21,
+          21,
+          20,
+          20,
+          19,
+          19,
+          18,
+          18,
+          17,
+          17,
+          16,
+          16,
+          15,
+          14,
+          14,
+          13,
+          13,
+          12,
+          12,
+          11,
+          11,
+          10,
+          10,
+          9,
+          9,
+          8,
+          8,
+          7,
+          7,
+          7,
+          6,
+          6,
+          5,
+          5,
+          4,
+          4,
+          3,
+          3,
+          2,
+          2,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ]
       },
       {
-        "id": "p114",
-        "tileId": "porta_esquerda_cima",
-        "x": 32,
-        "y": 48,
-        "flipX": false
-      },
-      {
-        "id": "p115",
-        "tileId": "porta_direita_cima",
-        "x": 48,
-        "y": 48,
-        "flipX": false
-      },
-      {
-        "id": "p116",
-        "tileId": "acesso_parede_direita_cima",
-        "x": 64,
-        "y": 48,
-        "flipX": false
-      },
-      {
-        "id": "p117",
-        "tileId": "acesso_parede_esquerda_baixo",
-        "x": 16,
-        "y": 64,
-        "flipX": false
-      },
-      {
-        "id": "p118",
-        "tileId": "porta_esquerda_baixo",
-        "x": 32,
-        "y": 64,
-        "flipX": false
-      },
-      {
-        "id": "p119",
-        "tileId": "porta_direita_baixo",
-        "x": 48,
-        "y": 64,
-        "flipX": false
-      },
-      {
-        "id": "p120",
-        "tileId": "acesso_parede_direita_baixo",
-        "x": 64,
-        "y": 64,
-        "flipX": false
-      },
-      {
-        "id": "p121",
-        "tileId": "ventilacao_esquerda",
-        "x": 128,
-        "y": 64,
-        "flipX": false
-      },
-      {
-        "id": "p122",
-        "tileId": "ventilacao_direita",
-        "x": 144,
-        "y": 64,
-        "flipX": false
-      },
-      {
-        "id": "p123",
-        "tileId": "personagem_referencia",
-        "x": 192,
-        "y": 52,
-        "flipX": false
+        "x": 384,
+        "width": 64,
+        "y": 49
       }
     ]
+  },
+  "reviewHazard": {
+    "assemblyId": null,
+    "status": "awaiting-identification",
+    "behavior": {
+      "type": "smoke-emitter",
+      "direction": "up",
+      "period": 3,
+      "activeDuration": 1.8,
+      "knockback": {
+        "horizontal": 180,
+        "vertical": -180,
+        "cooldown": 0.7
+      }
+    }
   }
 }
-  </script>
+</script>
 </body>
 </html>

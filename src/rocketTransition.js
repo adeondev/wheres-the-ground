@@ -127,5 +127,10 @@ export function createRocketTransition({ onStart = () => {}, onCovered = () => {
     ctx.restore();
   }
 
-  return { ready, start, update, draw, get active() { return active; } };
+  function cancel() {
+    active = false;
+    stamps = [];
+    context.clearRect(0, 0, surface.width, surface.height);
+  }
+  return { ready, start, update, draw, cancel, get active() { return active; } };
 }
