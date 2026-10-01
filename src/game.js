@@ -15,7 +15,7 @@ import { createCityRun, drawCityRunHud, loadRunnerPortrait } from './cityRun.js?
 import { createEffects } from './effects.js?v=route-obstacles';
 import { drawRocketFlame } from './fireVfx.js';
 import { createInput } from './input.js?v=route-obstacles';
-import { createIntro } from './intro.js';
+import { createIntro } from './intro.js?v=mobile-controls';
 import { createRocketTransition } from './rocketTransition.js?v=stage2-console';
 import { drawNpcs, nearbyNpc, npcJumpOffset, startNpcInteraction, updateNpcs } from './npcs.js?v=station-cop-cropped';
 import { BOOST_FIRE } from './palette.js';
