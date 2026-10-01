@@ -216,7 +216,7 @@ body.crt-on .controls-hint { text-shadow: -1px 0 #ff8f8f80, 1px 0 #71dbe880, 1px
   --touch-pixel: 3px;
   --touch-button: 48px;
   --touch-gap: 6px;
-  --touch-icon: 27px;
+  --touch-icon: 36px;
   --touch-talk-width: 36px;
   --touch-talk-height: 30px;
   --touch-font: 8px;
@@ -235,7 +235,7 @@ body.crt-on .controls-hint { text-shadow: -1px 0 #ff8f8f80, 1px 0 #71dbe880, 1px
     --touch-pixel: 4px;
     --touch-button: 64px;
     --touch-gap: 8px;
-    --touch-icon: 36px;
+    --touch-icon: 45px;
     --touch-talk-width: 48px;
     --touch-talk-height: 40px;
     --touch-font: 10px;
@@ -260,8 +260,8 @@ body.crt-on .controls-hint { text-shadow: -1px 0 #ff8f8f80, 1px 0 #71dbe880, 1px
   border-radius: 0;
   appearance: none;
   -webkit-appearance: none;
-  background: #201c33 url('assets/sprites/ui/keycap_press.png') left top / 200% 100% no-repeat;
-  box-shadow: 0 var(--touch-pixel) 0 #090914;
+  background: transparent;
+  box-shadow: none;
   color: #f4ecff;
   image-rendering: pixelated;
   pointer-events: auto;
@@ -270,13 +270,14 @@ body.crt-on .controls-hint { text-shadow: -1px 0 #ff8f8f80, 1px 0 #71dbe880, 1px
   -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
 }
-.touch-controls button:active { background-position: right top; box-shadow: none; transform: translateY(var(--touch-pixel)); }
+.touch-controls button:active { opacity: .65; transform: translateY(var(--touch-pixel)); }
+.touch-controls button:focus-visible { outline: 2px solid #f4ecff; outline-offset: -2px; }
 .touch-controls svg {
   width: var(--touch-icon);
   height: var(--touch-icon);
   fill: currentColor;
   shape-rendering: crispEdges;
-  filter: drop-shadow(var(--touch-pixel) var(--touch-pixel) 0 #090914);
+  filter: drop-shadow(2px 2px 0 #090914) drop-shadow(-2px -2px 0 #090914);
 }
 .touch-controls [data-key="right"] svg { transform: scaleX(-1); }
 .touch-controls [data-key="jump"] { color: #ffc281; }
@@ -288,7 +289,7 @@ body.crt-on .controls-hint { text-shadow: -1px 0 #ff8f8f80, 1px 0 #71dbe880, 1px
   color: #f4ecff;
   font: bold var(--touch-font) monospace;
   letter-spacing: -1px;
-  text-shadow: 1px 1px #090914;
+  text-shadow: 2px 0 #090914, -2px 0 #090914, 0 2px #090914, 0 -2px #090914;
 }
 .touch-interact .touch-controls [data-key="interact"] { display: flex; }
 .touch-device .controls-hint { display: none; }
