@@ -498,15 +498,19 @@ loadingScreen.addEventListener('keydown', event => {
 
 function resize() {
   const bounds = canvas.getBoundingClientRect();
-  canvas.width = Math.max(1, Math.round(bounds.width));
-  canvas.height = Math.max(1, Math.round(bounds.height));
+  // Renderiza em pixels físicos no celular, com limite para não pesar em paisagem.
+  const pixelRatio = touchDevice
+    ? Math.max(1, Math.floor(Math.min(window.devicePixelRatio || 1, 3,
+      Math.sqrt(1_500_000 / Math.max(1, bounds.width * bounds.height)))))
+    : 1;
+  canvas.width = Math.max(1, Math.round(bounds.width * pixelRatio));
+  canvas.height = Math.max(1, Math.round(bounds.height * pixelRatio));
   uiScale = canvas.height / GAME_HEIGHT;
   viewWidth = canvas.width / uiScale;
-  const pixelSize = uiScale;
   videoFrameCanvas.width = Math.ceil(viewWidth);
   videoFrameCanvas.height = viewHeight;
   videoFrameCtx.imageSmoothingEnabled = false;
-  document.documentElement.style.setProperty('--ui-scale', `${pixelSize / 3}`);
+  document.documentElement.style.setProperty('--ui-scale', `${bounds.height / GAME_HEIGHT / 3}`);
   ctx.imageSmoothingEnabled = false;
   world ??= createWorld();
   sceneCanvas.width = world.id === 'rooftops' ? Math.ceil(canvas.width / scenePixelScale()) + 24 : world.width;

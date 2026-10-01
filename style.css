@@ -90,6 +90,9 @@ body.crt-on #crt-overlay::after {
   animation: crtSweep 9s linear infinite;
 }
 
+.touch-device.crt-on #game { filter: none; clip-path: none; }
+.touch-device.crt-on #crt-overlay { display: none; }
+
 body.crt-on .hud,
 body.crt-on .controls-hint { text-shadow: -1px 0 #ff8f8f80, 1px 0 #71dbe880, 1px 1px #101827; }
 
