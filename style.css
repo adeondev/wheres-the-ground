@@ -193,7 +193,7 @@ body.crt-on .controls-hint { text-shadow: -1px 0 #ff8f8f80, 1px 0 #71dbe880, 1px
 .no-powers .touch-controls [data-key="dash"],
 .no-powers .touch-controls [data-key="blast"] { display: none !important; }
 
-.no-powers.tutorial-dash .touch-controls [data-key="dash"] { display: block !important; }
+.no-powers.tutorial-dash .touch-controls [data-key="dash"] { display: flex !important; }
 .tutorial-locked .touch-controls [data-key="left"],
 .tutorial-locked .touch-controls [data-key="right"] { display: none !important; }
 .tutorial-locked:not(.tutorial-space) .touch-controls [data-key="jump"] { display: none !important; }
@@ -210,6 +210,13 @@ body.crt-on .controls-hint { text-shadow: -1px 0 #ff8f8f80, 1px 0 #71dbe880, 1px
 }
 
 .touch-device .touch-controls {
+  --touch-pixel: 3px;
+  --touch-button: 48px;
+  --touch-gap: 6px;
+  --touch-icon: 27px;
+  --touch-talk-width: 36px;
+  --touch-talk-height: 30px;
+  --touch-font: 8px;
   position: fixed;
   z-index: 30;
   left: calc(12px + env(safe-area-inset-left));
@@ -220,28 +227,67 @@ body.crt-on .controls-hint { text-shadow: -1px 0 #ff8f8f80, 1px 0 #71dbe880, 1px
   justify-content: space-between;
   pointer-events: none;
 }
-.touch-controls > div { display: flex; gap: calc(8px * var(--touch-scale, 1)); }
+@media (min-width: 380px) and (min-height: 650px) {
+  .touch-device .touch-controls {
+    --touch-pixel: 4px;
+    --touch-button: 64px;
+    --touch-gap: 8px;
+    --touch-icon: 36px;
+    --touch-talk-width: 48px;
+    --touch-talk-height: 40px;
+    --touch-font: 10px;
+  }
+}
+.touch-controls > div { display: flex; gap: var(--touch-gap); }
 .touch-controls > div:last-child {
   display: grid;
-  grid-template-columns: repeat(2, calc(52px * var(--touch-scale, 1)));
-  gap: calc(8px * var(--touch-scale, 1));
+  grid-template-columns: repeat(2, var(--touch-button));
+  gap: var(--touch-gap);
 }
 .touch-controls button {
-  width: calc(52px * var(--touch-scale, 1));
-  height: calc(58px * var(--touch-scale, 1));
-  border: 2px solid #ffffffb0;
-  border-radius: 12px;
-  background: #172536d9;
-  color: white;
-  font: bold calc(24px * var(--touch-scale, 1)) monospace;
+  width: var(--touch-button);
+  height: var(--touch-button);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--touch-pixel);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  background: #201c33 url('assets/sprites/ui/keycap_press.png') left top / 200% 100% no-repeat;
+  box-shadow: 0 var(--touch-pixel) 0 #090914;
+  color: #f4ecff;
+  image-rendering: pixelated;
   pointer-events: auto;
   touch-action: none;
   user-select: none;
   -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
-.touch-controls button:active { background: #ffffff55; }
-.touch-controls [data-key="interact"] { display: none; font-size: calc(12px * var(--touch-scale, 1)); }
-.touch-interact .touch-controls [data-key="interact"] { display: block; }
+.touch-controls button:active { background-position: right top; box-shadow: none; transform: translateY(var(--touch-pixel)); }
+.touch-controls svg {
+  width: var(--touch-icon);
+  height: var(--touch-icon);
+  fill: currentColor;
+  shape-rendering: crispEdges;
+  filter: drop-shadow(var(--touch-pixel) var(--touch-pixel) 0 #090914);
+}
+.touch-controls [data-key="right"] svg { transform: scaleX(-1); }
+.touch-controls [data-key="jump"] { color: #ffc281; }
+.touch-controls [data-key="dash"] { color: #8deaff; }
+.touch-controls [data-key="blast"] { color: #ffa886; }
+.touch-controls [data-key="interact"] { display: none; color: #ffe0a3; }
+.touch-controls [data-key="interact"] svg { width: var(--touch-talk-width); height: var(--touch-talk-height); }
+.touch-controls [data-key="interact"] span {
+  color: #f4ecff;
+  font: bold var(--touch-font) monospace;
+  letter-spacing: -1px;
+  text-shadow: 1px 1px #090914;
+}
+.touch-interact .touch-controls [data-key="interact"] { display: flex; }
 .touch-device .controls-hint { display: none; }
 
 /* Rooftop meters are drawn in the sprite HUD beside the minimap. */

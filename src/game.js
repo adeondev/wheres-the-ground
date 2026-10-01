@@ -507,8 +507,6 @@ function resize() {
   videoFrameCanvas.height = viewHeight;
   videoFrameCtx.imageSmoothingEnabled = false;
   document.documentElement.style.setProperty('--ui-scale', `${pixelSize / 3}`);
-  document.documentElement.style.setProperty('--touch-scale', `${Math.max(0.9,
-    Math.min(1.25, bounds.width / 390, bounds.height / 700))}`);
   ctx.imageSmoothingEnabled = false;
   world ??= createWorld();
   sceneCanvas.width = world.id === 'rooftops' ? Math.ceil(canvas.width / scenePixelScale()) + 24 : world.width;
