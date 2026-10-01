@@ -48,6 +48,9 @@ const fuelLabel = document.querySelector('#fuel-label');
 const reserveLabel = document.querySelector('#reserve-label');
 const controlsHint = document.querySelector('.controls-hint');
 const fullControlsHint = controlsHint.textContent;
+const touchDevice = navigator.maxTouchPoints > 0 ||
+  window.matchMedia('(pointer: coarse), (any-pointer: coarse), (hover: none)').matches;
+document.body.classList.toggle('touch-device', touchDevice);
 const commandConsole = createCommandConsole({
   onOpen: () => { input.reset(); audio.setPowersCharging(false); audio.updateBooster(false); },
   onClose: () => input.reset(),
@@ -504,7 +507,8 @@ function resize() {
   videoFrameCanvas.height = viewHeight;
   videoFrameCtx.imageSmoothingEnabled = false;
   document.documentElement.style.setProperty('--ui-scale', `${pixelSize / 3}`);
-  document.documentElement.style.setProperty('--touch-scale', `${Math.min(pixelSize / 3, bounds.width / 390)}`);
+  document.documentElement.style.setProperty('--touch-scale', `${Math.max(0.9,
+    Math.min(1.25, bounds.width / 390, bounds.height / 700))}`);
   ctx.imageSmoothingEnabled = false;
   world ??= createWorld();
   sceneCanvas.width = world.id === 'rooftops' ? Math.ceil(canvas.width / scenePixelScale()) + 24 : world.width;
@@ -1175,7 +1179,7 @@ function draw() {
     if (cityChapter?.showObjective) dialogue.drawPrompt(ctx,'Vá até a delegacia',viewWidth/2,51,viewWidth,1);
   }
 
-  if (canShowKeycapHint && !walkPromptDismissed && !rooftopTutorial?.guidance) {
+  if (!touchDevice && canShowKeycapHint && !walkPromptDismissed && !rooftopTutorial?.guidance) {
     dialogue.drawKeycapPrompt(ctx, 'Aperte {keycap A} e {keycap D} para andar.', viewWidth, viewHeight, animationTime, {
       a: Boolean(input.held.left),
       d: Boolean(input.held.right),
@@ -1183,21 +1187,29 @@ function draw() {
   }
 
   if (canShowKeycapHint && rooftopTutorial?.guidance?.hint) {
-    dialogue.drawTutorialHint(ctx, rooftopTutorial.guidance.hint,
+    const hint = rooftopTutorial.guidance.hint;
+    const mobileHint = touchDevice ? {
+      ...hint,
+      text: hint.text.replaceAll('Espaço', 'PULO').replaceAll('Shift', 'IMPULSO'),
+      keys: hint.keys.map(key => ({ ' ': 'PULO', shift: 'IMPULSO', a: 'ESQ', d: 'DIR' }[key.toLowerCase()] ?? key)),
+    } : hint;
+    dialogue.drawTutorialHint(ctx, mobileHint,
       (renderPlayerX + player.w / 2 - sourceX) * renderZoomX,
       (renderPlayerY - sourceY) * renderZoomY, player.h * renderZoomY, viewWidth, viewHeight);
   }
   if (canShowKeycapHint && !rooftopTutorial?.guidance && rooftopTutorial?.prompt) {
     const lines = [];
     const limit = Math.max(18, Math.floor((viewWidth - 30) / 6));
+    const prompt = touchDevice ? rooftopTutorial.prompt.replaceAll('Espaço', 'PULO').replaceAll('Shift', 'IMPULSO')
+      : rooftopTutorial.prompt;
     if (rooftopTutorial.extended) {
       let line = '';
-      for (const word of rooftopTutorial.prompt.split(' ')) {
+      for (const word of prompt.split(' ')) {
         if (line && line.length + word.length + 1 > limit) { lines.push(line); line = ''; }
         line += (line ? ' ' : '') + word;
       }
       if (line) lines.push(line);
-    } else lines.push(rooftopTutorial.prompt);
+    } else lines.push(prompt);
     lines.forEach((line, index) => dialogue.drawKeycapPrompt(ctx, line, viewWidth, viewHeight, animationTime,
       { space: input.held.jump, shift: input.held.dash }, { centerX: viewWidth / 2, y: 40 + index * 23 }));
   }
@@ -1207,14 +1219,14 @@ function draw() {
 
   const npc = canShowKeycapHint && (world.id === 'classroom' || rooftopTutorial?.canInteract)
     ? nearbyNpc(world, player) : null;
+  document.body.classList.toggle('touch-interact', Boolean(touchDevice && npc && !npc.firstTalked));
   if (npc && !npc.firstTalked) {
-    dialogue.drawKeycapPrompt(ctx, '{keycap Z} para interagir', viewWidth, viewHeight, animationTime, {
+    const centerX = (npc.x - sourceX) * renderZoomX;
+    const y = (npc.y - npc.h - sourceY) * renderZoomY - 4;
+    if (touchDevice) dialogue.drawPrompt(ctx, 'FALAR', centerX, Math.max(8, y - 12), viewWidth, 1);
+    else dialogue.drawKeycapPrompt(ctx, '{keycap Z} para interagir', viewWidth, viewHeight, animationTime, {
       z: Boolean(input.held.interact),
-    }, {
-      centerX: (npc.x - sourceX) * renderZoomX,
-      y: (npc.y - npc.h - sourceY) * renderZoomY - 4,
-      hasPill: false,
-    });
+    }, { centerX, y, hasPill: false });
   }
   cityChapter?.drawPhone(ctx, viewWidth, viewHeight, dialogue.drawPrompt);
   dialogue.draw(ctx, viewWidth, viewHeight);

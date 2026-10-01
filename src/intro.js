@@ -489,9 +489,11 @@ export function createIntro(audio, { onFinish = () => {} } = {}) {
     const beatPulse = 0.72 + 0.28 * getLogoBeatPose(smoothMusicTime).pulse;
     ctx.globalAlpha = currentAlpha * beatPulse;
 
-    const line1 = 'PRESS ANY KEY';
-    const line2 = 'TO START';
-    const textScale = 1.5;
+    const touchDevice = navigator.maxTouchPoints > 0 ||
+      window.matchMedia('(pointer: coarse), (any-pointer: coarse), (hover: none)').matches;
+    const line1 = touchDevice ? 'TOQUE NA TELA' : 'PRESS ANY KEY';
+    const line2 = touchDevice ? 'PRA JOGAR' : 'TO START';
+    const textScale = touchDevice ? 1 : 1.5;
     const w1 = measureTextWidth(line1, textScale);
     const w2 = measureTextWidth(line2, textScale);
 
@@ -765,14 +767,13 @@ export function createIntro(audio, { onFinish = () => {} } = {}) {
     }
   });
 
-  // Clique ou toque no canvas durante o showcase também inicia o jogo
-  window.addEventListener('pointerdown', () => {
+  // No toque, a primeira interação pula para o título; a próxima inicia o jogo.
+  window.addEventListener('pointerdown', event => {
     if (!active) return;
+    event.preventDefault();
     if (phase === 'seg6_showcase') {
       startGameFromShowcase();
-    } else if (smoothMusicTime >= 84) {
-      audio.resumeIntroMusicAt(smoothMusicTime);
-    }
+    } else skipToTitle();
   });
 
   return {

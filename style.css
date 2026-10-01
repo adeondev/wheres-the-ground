@@ -17,6 +17,15 @@ html, body {
   touch-action: none;
 }
 
+@media (orientation: portrait) and (max-width: 600px) {
+  #game {
+    position: absolute;
+    top: 50%;
+    height: min(75vw, calc(100dvh - 180px));
+    transform: translateY(calc(-50% - 55px));
+  }
+}
+
 #loading-screen {
   display: none;
   position: fixed;
@@ -182,14 +191,9 @@ body.crt-on .controls-hint { text-shadow: -1px 0 #ff8f8f80, 1px 0 #71dbe880, 1px
 
 .no-powers .hud,
 .no-powers .touch-controls [data-key="dash"],
-.no-powers .touch-controls [data-key="blast"],
-.no-powers .touch-controls [data-key="talk"],
-.no-powers .touch-controls [data-key="crt"] { display: none !important; }
+.no-powers .touch-controls [data-key="blast"] { display: none !important; }
 
 .no-powers.tutorial-dash .touch-controls [data-key="dash"] { display: block !important; }
-.learned-powers .touch-controls [data-key="blast"],
-.learned-powers .touch-controls [data-key="talk"],
-.learned-powers .touch-controls [data-key="crt"] { display: none !important; }
 .tutorial-locked .touch-controls [data-key="left"],
 .tutorial-locked .touch-controls [data-key="right"] { display: none !important; }
 .tutorial-locked:not(.tutorial-space) .touch-controls [data-key="jump"] { display: none !important; }
@@ -205,43 +209,45 @@ body.crt-on .controls-hint { text-shadow: -1px 0 #ff8f8f80, 1px 0 #71dbe880, 1px
   .controls-hint { display: none; }
 }
 
-@media (pointer: coarse) {
-  .touch-controls {
-    position: fixed;
-    inset: auto calc(12px * var(--touch-scale, 1)) calc(18px * var(--touch-scale, 1));
-    display: flex;
-    justify-content: space-between;
-    pointer-events: none;
-  }
-
-  .touch-controls > div { display: flex; gap: calc(6px * var(--touch-scale, 1)); }
-
-  .touch-controls button {
-    width: calc(44px * var(--touch-scale, 1));
-    height: calc(52px * var(--touch-scale, 1));
-    border: calc(2px * var(--touch-scale, 1)) solid #ffffff80;
-    border-radius: calc(12px * var(--touch-scale, 1));
-    background: #17253699;
-    color: white;
-    font-size: calc(22px * var(--touch-scale, 1));
-    pointer-events: auto;
-    touch-action: none;
-    user-select: none;
-  }
-
-  .touch-controls button:active { background: #ffffff55; }
-  .touch-controls button[data-key="crt"] { font-size: calc(11px * var(--touch-scale, 1)); font-weight: bold; }
-  .controls-hint { display: none; }
+.touch-device .touch-controls {
+  position: fixed;
+  z-index: 30;
+  left: calc(12px + env(safe-area-inset-left));
+  right: calc(12px + env(safe-area-inset-right));
+  bottom: calc(14px + env(safe-area-inset-bottom));
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  pointer-events: none;
 }
-
-@media (pointer: coarse) and (max-width: 360px) {
-  .touch-controls button { width: calc(36px * var(--touch-scale, 1)); height: calc(48px * var(--touch-scale, 1)); font-size: calc(18px * var(--touch-scale, 1)); }
-  .touch-controls > div { gap: calc(4px * var(--touch-scale, 1)); }
+.touch-controls > div { display: flex; gap: calc(8px * var(--touch-scale, 1)); }
+.touch-controls > div:last-child {
+  display: grid;
+  grid-template-columns: repeat(2, calc(52px * var(--touch-scale, 1)));
+  gap: calc(8px * var(--touch-scale, 1));
 }
+.touch-controls button {
+  width: calc(52px * var(--touch-scale, 1));
+  height: calc(58px * var(--touch-scale, 1));
+  border: 2px solid #ffffffb0;
+  border-radius: 12px;
+  background: #172536d9;
+  color: white;
+  font: bold calc(24px * var(--touch-scale, 1)) monospace;
+  pointer-events: auto;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.touch-controls button:active { background: #ffffff55; }
+.touch-controls [data-key="interact"] { display: none; font-size: calc(12px * var(--touch-scale, 1)); }
+.touch-interact .touch-controls [data-key="interact"] { display: block; }
+.touch-device .controls-hint { display: none; }
 
 /* Rooftop meters are drawn in the sprite HUD beside the minimap. */
 .sprite-hud .hud { display: none; }
 
 .phone-open .touch-controls { opacity: .25; pointer-events: none; }
+.phone-open .touch-controls button { pointer-events: none; }
 
 .phone-open .controls-hint { display: none; }
