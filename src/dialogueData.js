@@ -6,22 +6,18 @@ export const dialogueScenes = {
         speaker: 'Gabriel', voice: 'gabriel', portrait: 'gabriel',
         text: 'Boa noite, professor.',
       },
+        {
+        speaker: 'Gabriel', voice: 'gabriel', portrait: 'gabriel',
+        text: 'Cadê todo mundo? Porque só está você aqui?',
+      },
       {
         speaker: 'Milênio', voice: 'milenio', portrait: 'milenio',
-        text: 'Oi Gabriel, boa noite... Pensei que você nem viria hoje. Você nunca vem de sexta-feira.',
+        text: 'Boa noite Gabriel, não sei o que aconteceu, algo está estranho.',
       },
       {
         speaker: 'Gabriel', voice: 'gabriel', portrait: 'gabriel',
         expression: 'suspicious',
-        text: 'Já são quase 19:20, professor. Por que ninguém da turma chegou ainda? A escola tá um silêncio estranho...',
-      },
-      {
-        speaker: 'Milênio', voice: 'milenio', portrait: 'milenio',
-        text: 'Então... sobre isso...[pause=0.2] Na verdade, eu não-', autoAdvance: 0.16,
-      },
-      {
-        speaker: 'Gabriel', voice: 'gabriel', portrait: 'gabriel',
-        text: 'Se não vai ter aula hoje, vou pedir pra ir embora. Até mais, professor.',
+        text: 'Vou ir embora, o dia amanheceu difererente, parece que não está real.',
       },
     ],
     onExit: state => {
@@ -55,7 +51,7 @@ export const dialogueScenes = {
     lines: [
       {
         speaker: 'Milênio', voice: 'milenio', portrait: 'milenio',
-        text: 'Tem uma coisa muito séria do governo acontecendo aqui perto... Eu não sei se deveria te envolver nisso, mas acredito em você. Vamos lá, não temos muito tempo...',
+        text: 'Tem uma coisa muito séria acontecendo aqui... Eu não sei se deveria te envolver nisso, mas acredito em você. Vamos lá, não temos muito tempo...',
       },
     ],
     onExit: state => {
@@ -74,7 +70,7 @@ export const dialogueScenes = {
       },
       {
         speaker: 'Milênio', voice: 'milenio', portrait: 'milenio',
-        text: '...Certo. O que acontece é que, pessoas internas de dentro do governo estão desenvolvendo um aparato para um tipo de vacina em que, o objeto preferido dessa pessoa se torna sua fonte de poder.',
+        text: '.Eu tenho uma vacina em que o objeto preferido da pessoa se torna sua fonte de poder.',
       },
       {
         speaker: 'Gabriel', voice: 'gabriel', portrait: 'gabriel',
@@ -83,7 +79,7 @@ export const dialogueScenes = {
       },
       {
         speaker: 'Milênio', voice: 'milenio', portrait: 'milenio',
-        text: 'Exato. Estão procurando um receptáculo. Mas eu roubei uma das fórmulas.',
+        text: 'Exato. Estão procurando um receptáculo. Eu tenho uma das fórmulas.',
       },
       {
         speaker: 'Milênio', voice: 'milenio', portrait: 'milenio',
@@ -97,23 +93,6 @@ export const dialogueScenes = {
       {
         speaker: 'Milênio', voice: 'milenio', portrait: 'milenio',
         text: 'Exato! ... Mas, preciso que você por vontade própria aceite. Eu vou ser direto. Ainda está em fase de testes, e eu não sei o quão perigoso essa agulha pode ser. Se funcionar, parabéns. Você tem poderes.',
-      },
-      {
-        speaker: 'Gabriel', voice: 'gabriel', portrait: 'gabriel',
-        expression: 'suspicious',
-        text: 'E vocês não tem mais ninguém para testar?',
-      },
-      {
-        speaker: 'Milênio', voice: 'milenio', portrait: 'milenio',
-        text: 'Como? Ninguém sabe que eu tenho isso. Eu temo o que o governo pode fazer.',
-      },
-      {
-        speaker: 'Gabriel', voice: 'gabriel', portrait: 'gabriel',
-        text: 'O governo não faria nada de mal.',
-      },
-      {
-        speaker: 'Milênio', voice: 'milenio', portrait: 'milenio',
-        text: 'É sempre bom ter o antí-vírus antes de pegar o vírus, não é? O que me diz? Vai querer testar?',
       },
       {
         speaker: 'Gabriel', voice: 'gabriel', portrait: 'gabriel',
@@ -278,7 +257,7 @@ export const dialogueScenes = {
       { speaker: 'Policial', voice: 'policial', portrait: 'none', text: 'Você entende por que essa história é difícil de acreditar?' },
       { speaker: 'Gabriel', voice: 'gabriel', portrait: 'gabriel', text: 'Entendo. Eu também não acreditaria.' },
       { speaker: 'Policial', voice: 'policial', portrait: 'none', text: 'E esse professor? Por que não veio com você?' },
-      { speaker: 'Gabriel', voice: 'gabriel', portrait: 'gabriel', text: 'Foi ele que me mandou pra cá. Disse que tem gente do governo atrás da fórmula.' },
+      { speaker: 'Gabriel', voice: 'gabriel', portrait: 'gabriel', text: 'Foi ele que me mandou pra cá. Ele tem a fórmula.' },
       { speaker: 'Policial', voice: 'policial', portrait: 'none', text: 'Isso ficou pior, não melhor. Você tem alguma prova?' },
       { speaker: 'Gabriel', voice: 'gabriel', portrait: 'gabriel', expression: 'excited', text: 'Tenho. Só afasta esses papéis.' },
       { speaker: 'Policial', voice: 'policial', portrait: 'none', text: 'Se você incendiar minha mesa, a conversa acaba.' },
@@ -317,7 +296,7 @@ export const dialogueScenes = {
       { speaker: 'Gabriel', voice: 'gabriel', portrait: 'gabriel', expression: 'suspicious', text: 'Calma, professor. Eu só estava testando. Não quebrei nada... eu acho.' },
       { speaker: 'Milênio', voice: 'milenio', portrait: 'milenio', text: '[shake]Gabriel, escuta. Se aqueles holofotes te pegarem, fica parado até a luz sair de você.[/shake]' },
       { speaker: 'Gabriel', voice: 'gabriel', portrait: 'gabriel', expression: 'suspicious', text: 'Holofotes!? Tudo isso por causa de um pouco de fumaça?' },
-      { speaker: 'Milênio', voice: 'milenio', portrait: 'milenio', text: '[shake]O governo está atrás da fórmula. Eles não vão achar que é só fumaça.[/shake]' },
+      { speaker: 'Milênio', voice: 'milenio', portrait: 'milenio', text: '[shake] Viram e estão atrás da fórmula. Eles não vão achar que é só fumaça.[/shake]' },
       { speaker: 'Gabriel', voice: 'gabriel', portrait: 'gabriel', text: 'Tá. Entendi. Pra onde eu vou?' },
       { speaker: 'Milênio', voice: 'milenio', portrait: 'milenio', text: '[shake]Corre pra delegacia se explicar. Segue os prédios mais altos, depois da avenida.[/shake]' },
       { speaker: 'Gabriel', voice: 'gabriel', portrait: 'gabriel', text: 'Pode deixar. E respira, professor. Eu te ligo quando chegar.' },
