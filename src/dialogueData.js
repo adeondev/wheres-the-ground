@@ -208,36 +208,13 @@ export const dialogueScenes = {
     lines: [
       {
         speaker: 'Mãe', voice: 'mom', portrait: 'none',
-        text: 'Filho, você vai sair de blusa nesse calor de novo? Todo dia você vai de blusa. Se não é blusa, é aquela camisa longa UV velha.',
+        text: 'Boa aula na escola filho, juízo.',
       },
       {
         speaker: 'Gabriel', voice: 'gabriel', portrait: 'gabriel',
-        text: 'Claro, a primeira coisa que eu faço quando chego lá é ligar o ar-condicionado no 16. Se os outros forem sem blusa, passam frio.',
+        text: 'Pode deixar, mãe.',
       },
-      {
-        speaker: 'Mãe', voice: 'mom', portrait: 'none',
-        text: 'Não é motivo pra sair parecendo que vai pra antártida! E aliás, que horas você foi dormir ontem?',
-      },
-      {
-        speaker: 'Gabriel', voice: 'gabriel', portrait: 'gabriel',
-        text: 'Acho que uma ou duas horas da manhã.',
-      },
-      {
-        speaker: 'Mãe', voice: 'mom', portrait: 'none',
-        text: 'Aposto que tava vendo vídeo daquele canal de foguetes de novo. Como era o nome mesmo...?',
-      },
-      {
-        speaker: 'Gabriel', voice: 'gabriel', portrait: 'gabriel',
-        text: 'Space Orbit.',
-      },
-      {
-        speaker: 'Mãe', voice: 'mom', portrait: 'none',
-        text: 'Isso. Vê se não dorme na aula. E leva a garrafa d\'água e toma cuidado na volta. Vai com Deus filho, juízo. Te amo.',
-      },
-      {
-        speaker: 'Gabriel', voice: 'gabriel', portrait: 'gabriel',
-        text: 'Amém, mãe. Também te amo. Fica com Deus também.',
-      },
+
     ],
   },
   stationArrival: {
