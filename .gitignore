@@ -1,4 +1,18 @@
-__pycache__/
+# Python e caches
+*.py
 *.py[cod]
+__pycache__/
+
+# Scripts e arquivos locais de desenvolvimento / prototipagem
+*.ps1
+.assets/
+prototype/
+sprite_reconstruction/
+tools/pixelart_web/
+tools/*.py
+scripts/make_tileset_review.py
+
+# Arquivos de sistema
 .DS_Store
 Thumbs.db
+
